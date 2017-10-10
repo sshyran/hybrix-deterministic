@@ -1,0 +1,105 @@
+{
+  "_args": [
+    [
+      "lisk-js",
+      "/home/joachim/Sync/Build/IoC/module-deterministic"
+    ]
+  ],
+  "_from": "lisk-js@latest",
+  "_id": "lisk-js@0.4.5",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/lisk-js",
+  "_nodeVersion": "6.10.3",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/lisk-js-0.4.5.tgz_1501775358533_0.22896519373171031"
+  },
+  "_npmUser": {
+    "email": "admin@lisk.io",
+    "name": "lisk"
+  },
+  "_npmVersion": "3.10.10",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "lisk-js",
+    "raw": "lisk-js",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/lisk-js/-/lisk-js-0.4.5.tgz",
+  "_shasum": "54309938cc5d8fe04996382a96cd7db939d760b8",
+  "_shrinkwrap": null,
+  "_spec": "lisk-js",
+  "_where": "/home/joachim/Sync/Build/IoC/module-deterministic",
+  "author": {
+    "email": "admin@lisk.io",
+    "name": "Lisk Foundation"
+  },
+  "bugs": {
+    "url": "https://github.com/LiskHQ/lisk-js/issues"
+  },
+  "dependencies": {
+    "browserify-bignum": "=1.3.0-2",
+    "buffer": "=5.0.6",
+    "bytebuffer": "=5.0.1",
+    "crypto-browserify": "=3.11.0",
+    "ed2curve": "=0.2.1",
+    "js-nacl": "github:liskhq/js-nacl#6dc1417",
+    "popsicle": "=9.1.0"
+  },
+  "description": "JavaScript library for sending Lisk transactions from the client or server",
+  "devDependencies": {
+    "chai": "=4.0.0",
+    "chai-http": "=3.0.0",
+    "coveralls": "=2.13.1",
+    "grunt": "=1.0.1",
+    "grunt-browserify": "=5.0.0",
+    "grunt-contrib-nodeunit": "=1.0.0",
+    "grunt-contrib-uglify": "=3.0.1",
+    "grunt-contrib-watch": "=1.0.0",
+    "grunt-coveralls": "=1.0.1",
+    "grunt-eslint": "=19.0.0",
+    "grunt-exec": "=2.0.0",
+    "grunt-force": "=1.0.0",
+    "istanbul": "=0.4.5",
+    "load-grunt-tasks": "=3.5.2",
+    "mocha": "=3.4.2",
+    "mocha-lcov-reporter": "=1.3.0",
+    "nyc": "=10.3.2",
+    "should": "=11.2.1",
+    "sinon": "=2.2.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "54309938cc5d8fe04996382a96cd7db939d760b8",
+    "tarball": "https://registry.npmjs.org/lisk-js/-/lisk-js-0.4.5.tgz"
+  },
+  "gitHead": "26c50c30d6f6af706efa2a808f9104f80f94d24f",
+  "homepage": "https://github.com/LiskHQ/lisk-js#readme",
+  "license": "GPL-3",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "lisk",
+      "email": "admin@lisk.io"
+    }
+  ],
+  "name": "lisk-js",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/LiskHQ/lisk-js.git"
+  },
+  "scripts": {
+    "jenkins": "grunt jenkins --verbose",
+    "test": "nyc mocha"
+  },
+  "version": "0.4.5"
+}
