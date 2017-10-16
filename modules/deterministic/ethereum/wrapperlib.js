@@ -20,7 +20,8 @@ if (typeof window === 'object') {
 
 ethereumjs = {
   ethUtil : require('ethereumjs-util'),
-  ethTx : require('ethereumjs-tx')
+  ethTx   : require('ethereumjs-tx'),
+  ethABI  : require('ethereumjs-abi')
 }
 
 module.exports = ethereumjs;

@@ -45,6 +45,12 @@ var wrapper = (
 				return rawTx;
 			},
 
+      // encode ABI smart contract calls
+      encode : function(data) {
+        return '0x'+wrapperlib.ethABI.simpleEncode(data.func,data.address).toString('hex');
+        // more complex is possible: var encoded = abi.encode(tokenAbi, "balanceOf(uint256 address)", [ "0x0000000000000000000000000000000000000000" ])
+      }      
+
 		}
 
 		return functions;
