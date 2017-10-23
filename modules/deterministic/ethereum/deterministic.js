@@ -8,7 +8,19 @@
 var wrapper = (
 	function() {
 
+    // encode ABI smart contract calls
+    // call it by explicitly specifying the variables you want to pass along
+    //
+    // EXAMPLES:
+    //            encode({ 'func':'balanceOf(address):(uint256)', 'vars':['target'], 'target':data.target });
+    //            encode({ 'func':'transfer(address,uint256):(uint256)', 'vars':['target','amount'], 'target':data.target,'amount':'0x'+parseInt(data.amount).toString(16) });
+    // FIXME:     remove eval
+    function encode(data) {
+      return '0x'+eval( 'wrapperlib.ethABI.simpleEncode(data.func,data.'+data.vars.join(',data.')+')' ).toString('hex');
+    }
+
 		var functions = {
+          
 			// create deterministic public and private keys based on a seed
 			keys : function(data) {
         var privateKey = wrapperlib.ethUtil.sha256(data.seed);
@@ -23,16 +35,29 @@ var wrapper = (
       },
 
 			transaction : function(data) {
-        // set the parameters
-        var txParams = {    // optional-> data: payloadData
-          nonce: '0x'+parseInt(data.unspent.nonce).toString(16), // nonce
-          gasPrice: '0x'+parseInt(data.fee/21000).toString(16),   // we use toString(16) here to specify HEX radix
-          gasLimit: '0x'+parseInt(21000).toString(16),       //  but don't use it elsewhere
-          to: data.target, 
-          value: '0x'+parseInt(data.amount).toString(16)
-        };
-        // DEBUG: logger(JSON.stringify(txParams));
-
+        if(data.mode!='token') {
+          // set the parameters
+          var txParams = {    // optional-> data: payloadData
+            nonce: '0x'+parseInt(data.unspent.nonce).toString(16),  // nonce
+            gasPrice: '0x'+parseInt(data.fee/21000).toString(16),   // we use toString(16) here to specify HEX radix
+            gasLimit: '0x'+parseInt(21000).toString(16),            //  but don't use it elsewhere
+            to: data.target,                                        // send it to ...
+            value: '0x'+parseInt(data.amount).toString(16)          // the amount to send
+          };
+        } else {
+          // TEST: var encoded = encode({'func':'balanceOf(address):(uint256)','vars':['target'],'target':data.target});        
+          var encoded = encode({ 'func':'transfer(address,uint256):(bool)','vars':['target','amount'],'target':data.target,'amount':'0x'+parseInt(data.amount).toString(16) }); // returns the encoded binary (as a Buffer) data to be sent
+          // set the parameters
+          var txParams = {
+            nonce: '0x'+parseInt(data.unspent.nonce).toString(16),  // nonce
+            gasPrice: '0x'+parseInt(data.fee/(21000*2.465)).toString(16),   // we use toString(16) here to specify HEX radix
+            gasLimit: '0x'+parseInt(51765).toString(16),           //  but don't use it elsewhere
+            to: data.contract,                                      // send payload to contract address
+            value: '0x'+parseInt(0).toString(16),                   // set to zero, since we're sending tokens
+            data: encoded                                           // payload as encoded using the smart contract
+          };
+        }
+        
         // Transaction is created
         var tx = new wrapperlib.ethTx(txParams);
 
@@ -40,16 +65,12 @@ var wrapper = (
         tx.sign(data.keys.privateKey);
         var serializedTx = tx.serialize();
         var rawTx = '0x' + serializedTx.toString('hex');
-        // DEBUG: logger('rawTx: '+rawTx);
-
+        // DEBUG: return encoded;
 				return rawTx;
 			},
 
       // encode ABI smart contract calls
-      encode : function(data) {
-        return '0x'+wrapperlib.ethABI.simpleEncode(data.func,data.address).toString('hex');
-        // more complex is possible: var encoded = abi.encode(tokenAbi, "balanceOf(uint256 address)", [ "0x0000000000000000000000000000000000000000" ])
-      }      
+      encode : function(data) { return encode(data); }
 
 		}
 

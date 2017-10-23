@@ -2,7 +2,6 @@
 
 // shim for randomBytes to avoid require('crypto') incompatibilities
 // solves bug: "There was an error collecting entropy from the browser
-//const crypto = nodeJScrypto;
 const randomBytes = crypto.randomBytes;
 if (typeof window === 'object') {
   const wCrypto = window.crypto = window.crypto || {}
