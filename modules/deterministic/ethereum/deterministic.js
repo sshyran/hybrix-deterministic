@@ -1,9 +1,6 @@
 // (C) 2017 Internet of Coins / Metasync / Joachim de Koning
 // hybridd module - ethereum/deterministic.js
 // Deterministic encryption wrapper for Ethereum
-//
-// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
-//
 
 var wrapper = (
 	function() {
@@ -14,9 +11,8 @@ var wrapper = (
     // EXAMPLES:
     //            encode({ 'func':'balanceOf(address):(uint256)', 'vars':['target'], 'target':data.target });
     //            encode({ 'func':'transfer(address,uint256):(uint256)', 'vars':['target','amount'], 'target':data.target,'amount':'0x'+parseInt(data.amount).toString(16) });
-    // FIXME:     remove eval
     function encode(data) {
-      return '0x'+eval( 'wrapperlib.ethABI.simpleEncode(data.func,data.'+data.vars.join(',data.')+')' ).toString('hex');
+      return '0x'+( new Function( 'wrapperlib','data', 'return wrapperlib.ethABI.simpleEncode(data.func,data.'+data.vars.join(',data.')+');' ) )(wrapperlib,data).toString('hex');
     }
 
 		var functions = {
