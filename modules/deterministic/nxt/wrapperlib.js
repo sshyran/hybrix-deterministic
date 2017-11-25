@@ -16,10 +16,7 @@ if (typeof window === 'object') {
 }
 
 // inclusion of necessary requires
-var ethereumjs = {
-  ethUtil : require('ethereumjs-util'),
-  ethTx   : require('ethereumjs-tx'),
-  ethABI  : require('ethereumjs-abi')
-}
 
-module.exports = ethereumjs;
+var nxtjs = require('nxtjs');
+
+module.exports = nxtjs;
