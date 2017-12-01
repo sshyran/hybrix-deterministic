@@ -1,4 +1,6 @@
-// wrapperlib to include all temporary globalized libraries for the virtual DOM
+//
+// wrapperlib to include libraries for incorporation into the virtual DOM
+//
 
 // shim for randomBytes to avoid require('crypto') incompatibilities
 // solves bug: "There was an error collecting entropy from the browser

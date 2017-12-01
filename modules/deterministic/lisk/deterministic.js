@@ -7,9 +7,6 @@
 
 var wrapper = (
 	function() {
-    // DEPRECATED
-		//var lisk = require('./lisk-js/index.js');
-    //var LSK = wrapperlib.api({testnet: false});
 
 		var functions = {
 			// create deterministic public and private keys based on a seed

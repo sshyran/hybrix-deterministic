@@ -19,7 +19,22 @@ var wrapper = (
 
             // generate a unique wallet address from a given public key
             address: function(data) {
-                return wrapperlib.publicKeyToAccountId(data.publicKey);
+                var address = wrapperlib.publicKeyToAccountId(data.publicKey);
+                var output = null;
+                switch (data.mode) {
+                  case 'burst':
+                    output = 'BURST'+address.substr(3);
+                  case 'burst-token':
+                    output = 'BURST'+address.substr(3);
+                  case 'xel':
+                    output = 'XEL'+address.substr(3);
+                  case 'xel-token':
+                    output = 'XEL'+address.substr(3);
+                  break;
+                  default:
+                    output = address;
+                }
+                return output;
             },
 
             transaction: function(data) {
