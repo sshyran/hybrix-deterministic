@@ -24,15 +24,19 @@ var wrapper = (
                 switch (data.mode) {
                   case 'burst':
                     output = 'BURST'+address.substr(3);
+                  break;
                   case 'burst-token':
                     output = 'BURST'+address.substr(3);
-                  case 'xel':
+                  break;
+                  case 'elastic':
                     output = 'XEL'+address.substr(3);
-                  case 'xel-token':
+                  break;
+                  case 'elastic-token':
                     output = 'XEL'+address.substr(3);
                   break;
                   default:
                     output = address;
+                  break;
                 }
                 return output;
             },
