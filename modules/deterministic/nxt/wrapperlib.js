@@ -2,6 +2,7 @@
 
 // shim for randomBytes to avoid require('crypto') incompatibilities
 // solves bug: "There was an error collecting entropy from the browser
+/* NOT NEEDED
 const randomBytes = crypto.randomBytes;
 if (typeof window === 'object') {
   const wCrypto = window.crypto = window.crypto || {}
@@ -14,9 +15,9 @@ if (typeof window === 'object') {
     }
   }
 }
+*/
 
 // inclusion of necessary requires
-
 var nxtjs = require('nxtjs');
 
 module.exports = nxtjs;
