@@ -15,26 +15,30 @@ var wrapper = (
     var functions = {         
       // create deterministic public and private keys based on a seed
       keys : function(data) {
-        //function rng () { return new Buffer('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz') }
-        //var altcoin = wrapperlib.networks.litecoin  <= USE data.mode (can be bitcoin, litecoin, zcash, etc!)
         var hash = wrapperlib.crypto.sha256(data.seed);
         var d = BigInteger.fromBuffer(hash);
-        var keyPair = new wrapperlib.ECPair(d);
-        var wif = keyPair.toWIF()
-        // returns object { WIF:'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct' }
-        return { WIF:wif };
+        if(data.mode==='bitcoin') {
+          var keyPair = new wrapperlib.ECPair(d);       // backwards compatibility for BTC
+        } else {
+          var keyPair = new wrapperlib.ECPair(d,null,{
+                          compressed: false,
+                          network: wrapperlib.networks[data.mode]
+                        });
+        }
+        var wif = keyPair.toWIF();
+        return { WIF:wif };                 // returns object { WIF:'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct' }
       },
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        var keyPair = wrapperlib.ECPair.fromWIF(data.WIF)
+        var keyPair = wrapperlib.ECPair.fromWIF(data.WIF,wrapperlib.networks[data.mode])
         return keyPair.getAddress();
       },
 
       transaction : function(data) {
         // return deterministic transaction data
-        var keyPair = wrapperlib.ECPair.fromWIF( data.keys.WIF );
-        var tx = new wrapperlib.TransactionBuilder();
+        var keyPair = wrapperlib.ECPair.fromWIF(data.keys.WIF,wrapperlib.networks[data.mode]);
+        var tx = new wrapperlib.TransactionBuilder(wrapperlib.networks[data.mode]);
 
         // add inputs
         for(var i in data.unspent.unspents) {
@@ -49,7 +53,6 @@ var wrapper = (
         // sign inputs
         for(var i in data.unspent.unspents) {
           tx.sign(parseInt(i),keyPair);
-          //var privKey = Bitcoin.ECKey.fromBytes(privKeys[walletAddress.index], true);
         }
 
         return tx.build().toHex();
@@ -59,7 +62,7 @@ var wrapper = (
         // Calculate Transaction ID
         //var txid = wrapperlib.bufferutils.reverse(result.getHash()).toString('hex')
         //return txid;
-      },
+      }
     }
 
     return functions;
