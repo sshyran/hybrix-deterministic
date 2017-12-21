@@ -58,7 +58,7 @@ var wrapper = (
         return tx.build().toHex();
 
         // Other options for later:
-        // Adding a message: https://wrapperlib.stackexchange.com/questions/30834/create-op-return-tx-with-altcoinjs-lib
+        // Adding a message: https://bitcoin.stackexchange.com/questions/30834/create-op-return-tx-with-bitcoinjs-lib
         // Calculate Transaction ID
         //var txid = wrapperlib.bufferutils.reverse(result.getHash()).toString('hex')
         //return txid;
