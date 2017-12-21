@@ -105,15 +105,16 @@ if(typeof deterministic!='object' || deterministic=={}) {
   // create a signed transaction
   //
   input = {
-            source:tx[mode].source_address,
-            target:tx[mode].target_address,
-            amount:toInt(tx[mode].amount,tx[mode].factor),
-            fee:toInt(tx[mode].fee,tx[mode].factor),
-            factor:tx[mode].factor,
-            contract:tx[mode].contract,
-            keys:tx[mode].keys,
-            seed:tx[mode].seed,
-            unspent:tx[mode].unspent
+            source:   tx[mode].source_address,
+            target:   tx[mode].target_address,
+            amount:   toInt(tx[mode].amount, tx[mode].factor),
+            fee:      toInt(tx[mode].fee, tx[mode].factor),
+            factor:   tx[mode].factor,
+            contract: tx[mode].contract,
+            keys:     tx[mode].keys,
+            seed:     tx[mode].seed,
+            unspent:  tx[mode].unspent,
+            mode:     mode.split('.')[1]
           }
   var result = deterministic.transaction(input);
   logger('SIGNED TRANSACTION: '+result);

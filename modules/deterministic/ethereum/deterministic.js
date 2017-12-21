@@ -31,7 +31,8 @@ var wrapper = (
 
       // create and sign a transaction
 			transaction : function(data) {
-        if(data.mode!='token') {
+        if (data.mode != 'token') {
+          // Base ETH mode
           var txParams = {                                          // optional-> data: payloadData
             nonce: '0x'+parseInt(data.unspent.nonce).toString(16),  // nonce
             gasPrice: '0x'+parseInt(data.fee/21000).toString(16),   // we use toString(16) here to specify HEX radix
@@ -40,6 +41,7 @@ var wrapper = (
             value: '0x'+parseInt(data.amount).toString(16)          // the amount to send
           };
         } else {
+          // ERC20-compatible token mode
           var encoded = encode({ 'func':'transfer(address,uint256):(bool)','vars':['target','amount'],'target':data.target,'amount':'0x'+parseInt(data.amount).toString(16) }); // returns the encoded binary (as a Buffer) data to be sent
           var txParams = {
             nonce: '0x'+parseInt(data.unspent.nonce).toString(16),          // nonce
