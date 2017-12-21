@@ -47,21 +47,35 @@ var deterministic = activate( LZString.decompressFromEncodedURIComponent(dcode) 
 var input = {}
 
 var tx = {
-      'ethereum.token': {
-        'seed':'correct horse battery staple',                  // seed string for deterministic wallet
-        'keys':null,                                            // cryptographic keys (will be generated)
-        'source_address':null,                                  // where to transact from (will be generated)
-        'target_address':'0x8Bbf8f56ed5C694beF9F0f6D74365D663517E67a',  // where to transact to
-        'contract':'0x2f4baef93489b09b5e4b923795361a65a26f55e5',  // smart contract address
-        'amount':0.1,                                           // amount to send
-        'fee':0.00075,                                          // fee for the miners or the system
-        'unspent':{                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
-                    'unspents':[{"amount":"1.00","txid":"eee76ed5dae07eb798dd309ccbf1b08bad4e0e8fee806d28fe08b9cbed67ed95","txn":0}], // Bitcoin
-                    'nonce':'0x00', // Ethereum needs a nonce, so we in that case add it here into 'unspent requirements' #BETTERSUGGESTION ?
-                  },
-        'factor':8,                                             // amount of decimals, i.e.: 10^x
-      }
-    }
+  'bitcoinjslib.bitcoin': {
+    'seed':'correct horse battery staple',                  // seed string for deterministic wallet
+    'keys':null,                                            // cryptographic keys (will be generated)
+    'source_address':null,                                  // where to transact from (will be generated)
+    'target_address':'1NqE1uw9iSqq3U4KpbTmYvjiAwHj85XUMj',  // where to transact to
+    'amount':0.1,                                           // amount to send
+    'fee':0.00075,                                          // fee for the miners or the system
+    'unspent': {                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
+      'unspents':[{ "amount":"1.00",
+                    "txid":"eee76ed5dae07eb798dd309ccbf1b08bad4e0e8fee806d28fe08b9cbed67ed95",
+                    "txn":0
+                 }]
+    },
+    'factor':8,                                             // amount of decimals, i.e.: 10^x
+  },
+  'ethereum.token': {
+    'seed':'correct horse battery staple',                  // seed string for deterministic wallet
+    'keys':null,                                            // cryptographic keys (will be generated)
+    'source_address':null,                                  // where to transact from (will be generated)
+    'target_address':'0x8Bbf8f56ed5C694beF9F0f6D74365D663517E67a',  // where to transact to
+    'contract':'0x2f4baef93489b09b5e4b923795361a65a26f55e5',  // smart contract address
+    'amount':0.1,                                           // amount to send
+    'fee':0.00075,                                          // fee for the miners or the system
+    'unspent':{                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
+      'nonce':'0x00', // Ethereum needs a nonce, so we in that case add it here into 'unspent requirements' #BETTERSUGGESTION ?
+    },
+    'factor':8,                                             // amount of decimals, i.e.: 10^x
+  }
+}
 
 if(typeof deterministic!='object' || deterministic=={}) {
   logger('Error: Cannot load deterministic wrapper!');
