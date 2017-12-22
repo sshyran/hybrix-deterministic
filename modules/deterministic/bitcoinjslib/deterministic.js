@@ -16,11 +16,13 @@ var wrapper = (
       // create deterministic public and private keys based on a seed
       keys : function(data) {
         var hash = wrapperlib.crypto.sha256(data.seed);
-        var d = BigInteger.fromBuffer(hash);
-        if(data.mode==='bitcoin') {
-          var keyPair = new wrapperlib.ECPair(d);       // backwards compatibility for BTC
+        var privk = BigInteger.fromBuffer(hash);
+        var pubk  = null;
+
+        if (data.mode === 'bitcoin') {
+          var keyPair = new wrapperlib.ECPair(privk);       // backwards compatibility for BTC
         } else {
-          var keyPair = new wrapperlib.ECPair(d,null,{
+          var keyPair = new wrapperlib.ECPair(privk, pubk, {
                           compressed: false,
                           network: wrapperlib.networks[data.mode]
                         });
