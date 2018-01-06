@@ -64,6 +64,23 @@ var tx = {
     },
     'factor':8,                                             // amount of decimals, i.e.: 10^x
   },
+  'zcash.mainnet': {
+    'seed':'correct horse battery staple',                                // seed string for deterministic wallet
+    'keys':null,                                            // cryptographic keys (will be generated)
+    'source_address':null,                                  // where to transact from (will be generated)
+    'target_address':'tmWo6RU62mqrSVaqtqPEcFbpfYfvKreui5p',  // where to transact to
+    'amount':0.1,                                           // amount to send
+    'fee':0.00075,                                          // fee for the miners or the system
+    'unspent': {                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
+      'unspents':[{ "amount":"3.00",
+                    "txid":"a2ec5005129f7b9e4150d7b076ae3ce4cc714a948edb520ee19a855bbd646bfe",
+                    "txn":1,
+                    "address" : "tmWo6RU62mqrSVaqtqPEcFbpfYfvKreui5p",
+                    "script" : "76a914e74046b01145f2f3b005d168614e0142c54e58e588ac"
+                 }]
+    },
+    'factor':8,                                             // amount of decimals, i.e.: 10^x
+  },
   'ethereum.token': {
     'seed':'correct horse battery staple',                  // seed string for deterministic wallet
     'keys':null,                                            // cryptographic keys (will be generated)
