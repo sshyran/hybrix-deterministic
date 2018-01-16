@@ -40,6 +40,8 @@ toInt = function(input,factor) {
 //
 
 var mode = 'ethereum.token';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
+
+var submode = mode.split('.')[1];
 dcode = String(fs.readFileSync('./modules/deterministic/'+mode.split('.')[0]+'/deterministic.js.lzma'))
 //require(LZString.decompressFromEncodedURIComponent(dcode));
 var deterministic = activate( LZString.decompressFromEncodedURIComponent(dcode) );
@@ -84,7 +86,7 @@ if(typeof deterministic!='object' || deterministic=={}) {
   //
   // generate cryptographic keys based on a seed string
   //
-  input = { seed: tx[mode].seed }
+  input = { seed: tx[mode].seed, mode: submode }
   var result = deterministic.keys(input);
   tx[mode].keys = result;
   logger('SEED: '+input.seed);
@@ -92,7 +94,7 @@ if(typeof deterministic!='object' || deterministic=={}) {
   //
   // produce a public address based on cryptographic keys
   //
-  var result = deterministic.address(tx[mode].keys);
+  var result = deterministic.address({ keys: tx[mode].keys, mode: submode });
   tx[mode].source_address = result;
   logger('PUBLIC ADDRESS: '+result);
 
@@ -114,7 +116,7 @@ if(typeof deterministic!='object' || deterministic=={}) {
             keys:     tx[mode].keys,
             seed:     tx[mode].seed,
             unspent:  tx[mode].unspent,
-            mode:     mode.split('.')[1]
+            mode:     submode
           }
   var result = deterministic.transaction(input);
   logger('SIGNED TRANSACTION: '+result);
