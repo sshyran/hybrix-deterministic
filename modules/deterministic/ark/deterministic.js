@@ -17,7 +17,7 @@ var wrapper = (
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        return wrapperlib.crypto.getAddress(data.publicKey);
+        return wrapperlib.crypto.getAddress(data.keys.publicKey);
       },
 
 			transaction : function(data) {

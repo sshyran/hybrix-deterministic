@@ -25,7 +25,7 @@ var wrapper = (
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        var publicKey = wrapperlib.ethUtil.privateToPublic(data.privateKey);
+        var publicKey = wrapperlib.ethUtil.privateToPublic(data.keys.privateKey);
         return '0x'+wrapperlib.ethUtil.publicToAddress(publicKey).toString('hex');
       },
 

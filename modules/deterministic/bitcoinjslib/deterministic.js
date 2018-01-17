@@ -33,7 +33,7 @@ var wrapper = (
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        var keyPair = wrapperlib.ECPair.fromWIF(data.WIF,wrapperlib.networks[data.mode])
+        var keyPair = wrapperlib.ECPair.fromWIF(data.keys.WIF,wrapperlib.networks[data.mode])
         return keyPair.getAddress();
       },
 
