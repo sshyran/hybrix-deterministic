@@ -64,22 +64,36 @@ var tx = {
     },
     'factor':8,                                             // amount of decimals, i.e.: 10^x
   },
-  'zcash.mainnet': {
-    'seed':'correct horse battery staple',                                // seed string for deterministic wallet
-    'keys':null,                                            // cryptographic keys (will be generated)
-    'source_address':null,                                  // where to transact from (will be generated)
-    'target_address':'tmWo6RU62mqrSVaqtqPEcFbpfYfvKreui5p',  // where to transact to
-    'amount':0.1,                                           // amount to send
-    'fee':0.00075,                                          // fee for the miners or the system
-    'unspent': {                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
-      'unspents':[{ "amount":"3.00",
-                    "txid":"a2ec5005129f7b9e4150d7b076ae3ce4cc714a948edb520ee19a855bbd646bfe",
-                    "txn":1,
-                    "address" : "tmWo6RU62mqrSVaqtqPEcFbpfYfvKreui5p",
-                    "script" : "76a914e74046b01145f2f3b005d168614e0142c54e58e588ac"
-                 }]
+  'zcash.testnet': {
+    'seed': 'correct horse battery staple',                  // seed string for deterministic wallet
+    'keys': null,                                            // cryptographic keys (will be generated from seed)
+    'source_address': null,                                  // where to transact from (will be generated from seed)
+    'target_address': 'tmUzQde5E4cMtdHPmeXfipEVUbDF8QBbuKY', // where to transact to
+    'amount': 0.1,                                           // amount to send
+    'fee'   : 0.00075,                                       // fee for the miners or the system
+    'unspent': {                                             // UTXOs to spend
+      // how to get this data from zcashd:
+      // 1. out := zcash-cli getrawtransaction <txid>
+      // 2. zcash-cli decoderawtransaction <out>
+      // 3. look for vout to the address you own (most probably in scriptPubKey.addresses)
+      // 3.1. "n" for "txn"
+      // 3.2. "value" for "amount"
+      // 3.3. "scriptPubKey.hex" for "script"
+      'unspents': [  { "txid": "34b681c3bab292592789c0dc95b010677034096143bbe4bee4c7c53e58646feb",
+                       "txn" : 0,
+                       "amount" : "0.5",
+                       "address": "tmLqLxdaL7z4wjvXzmC3EkZCyQ4b17eMQzR", // WIF: cUB8G5cFtxc4usfgfovqRgCo8qTQUJtctLV8t6YYNfULg3GtehdX
+                       "script" : "76a91479fbfc3f34e7745860d76137da68f362380c606c88ac"
+                     }
+                   // , { "txid": "24edc3a79ad1c2ae76166f782288a5b4488a237e9b49d10f95380d9aabe3ef78",
+                   //     "txn" : 1,
+                   //     "amount" : "0.5",
+                   //     "address": "tmTenn5WF8fPp8mg5W8xZU2JwyEqaJvY3BE", // WIF: 935ZTXVqEatu6BaEX6CHrzpXquDKurpVXD7q1FQ1K3pt8VwmG2L
+                   //     "script" : "76a914c4c5d791fcb4654a1ef5e03fe0ad3d9c598f982788ac"
+                   //   }
+                   ]
     },
-    'factor':8,                                             // amount of decimals, i.e.: 10^x
+    'factor': 8,                                             // amount of decimals, i.e.: 10^x
   },
   'ethereum.token': {
     'seed':'correct horse battery staple',                  // seed string for deterministic wallet
