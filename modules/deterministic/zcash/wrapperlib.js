@@ -5,8 +5,7 @@
 
 // inclusion of necessary requires
 var zcashbitcorelib = {
-  zcash : require('zcash-bitcore-lib'),
-  zcashjs: require('./zcash-bitcoinjs')
+  zcash : require('zcash-bitcore-lib')
 }
 
 module.exports = zcashbitcorelib;
