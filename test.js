@@ -39,7 +39,7 @@ toInt = function(input,factor) {
 // first we read from the compiled package and activate the code
 //
 
-var mode = 'ethereum.token';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
+var mode = 'zcash.testnet';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
 
 var submode = mode.split('.')[1];
 dcode = String(fs.readFileSync('./modules/deterministic/'+mode.split('.')[0]+'/deterministic.js.lzma'))
