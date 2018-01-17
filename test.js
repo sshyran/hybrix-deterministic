@@ -85,15 +85,9 @@ var tx = {
                        "address": "tmLqLxdaL7z4wjvXzmC3EkZCyQ4b17eMQzR", // WIF: cUB8G5cFtxc4usfgfovqRgCo8qTQUJtctLV8t6YYNfULg3GtehdX
                        "script" : "76a91479fbfc3f34e7745860d76137da68f362380c606c88ac"
                      }
-                   // , { "txid": "24edc3a79ad1c2ae76166f782288a5b4488a237e9b49d10f95380d9aabe3ef78",
-                   //     "txn" : 1,
-                   //     "amount" : "0.5",
-                   //     "address": "tmTenn5WF8fPp8mg5W8xZU2JwyEqaJvY3BE", // WIF: 935ZTXVqEatu6BaEX6CHrzpXquDKurpVXD7q1FQ1K3pt8VwmG2L
-                   //     "script" : "76a914c4c5d791fcb4654a1ef5e03fe0ad3d9c598f982788ac"
-                   //   }
-                   ]
+                  ]
     },
-    'factor': 8,                                             // amount of decimals, i.e.: 10^x
+    'factor': 8                                              // amount of decimals, i.e.: 10^x
   },
   'ethereum.token': {
     'seed':'correct horse battery staple',                  // seed string for deterministic wallet
