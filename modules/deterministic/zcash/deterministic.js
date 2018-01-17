@@ -11,6 +11,10 @@ var wrapper = (
     var ecurve = require('ecurve');
     var BigInteger = require('bigi');
 
+    toSatoshis = function(float, factor) {
+      return float * Math.pow(10, factor);
+    }
+
     var functions = {         
       // create deterministic public and private keys based on a seed
       keys : function(data) {
@@ -64,46 +68,23 @@ var wrapper = (
       },
 
       transaction : function(data) {
-        console.log("transaction data.mode: ", data.mode);
-        var privKey = wrapperlib.zcash.PrivateKey(data.keys.WIF, data.mode);
+        var privKey       = wrapperlib.zcash.PrivateKey(data.keys.WIF, data.mode);
+        var recipientAddr = wrapperlib.zcash.Address(data.target, data.mode);
+        var changeAddr    = wrapperlib.zcash.Address(data.source, data.mode);
 
-        var tx = new wrapperlib.zcash.Transaction();
-
-        // add inputs
-        for (var i in data.unspent.unspents) {
-          tx.from({ txId:        data.unspent.unspents[i].txid,
-                    outputIndex: parseInt(data.unspent.unspents[i].txn),
-                    address:     data.unspent.unspents[i].address,
-                    script:      data.unspent.unspents[i].script,
-                    satoshis:    parseInt(data.unspent.unspents[i].amount)
-                  });
-        }
-
-        // add outputs
-        tx.to(data.target, parseInt(data.amount));
-        var outchange = parseInt(data.unspent.change); // fee is already being deducted when calculating unspents
-        if (outchange > 0) {
-          tx.to(data.source, outchange);
-        }
-
-        // sign inputs
-        tx.sign(privKey);
-
-
-        // var privateKey = new bitcore.PrivateKey('L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7Vs6nZDTF2BRUVwy');
-        // var utxo = {
-        //   "txId" : "115e8f72f39fad874cfab0deed11a80f24f967a84079fb56ddf53ea02e308986",
-        //   "outputIndex" : 0,
-        //   "address" : "17XBj6iFEsf8kzDMGQk5ghZipxX49VXuaV",
-        //   "script" : "76a91447862fe165e6121af80d5dde1ecb478ed170565b88ac",
-        //   "satoshis" : 50000
-        // };
-
-        // var transaction = new wrapperlib.zcash.Transaction()
-        //   .from(utxo)
-        //   .to('tmWo6RU62mqrSVaqtqPEcFbpfYfvKreui5p', 15000)
-        //   .sign(privKey);
-
+        var tx = new wrapperlib.zcash.Transaction()
+          .from(data.unspent.unspents.map(function(utxo){
+                  return { txId:        utxo.txid,
+                           outputIndex: utxo.txn,
+                           address:     utxo.address,
+                           script:      utxo.script,
+                           satoshis:    toSatoshis(utxo.amount, data.factor)
+                         };
+                }))
+          .to(recipientAddr, parseInt(data.amount))
+          .fee(parseInt(data.fee))
+          .change(changeAddr)
+          .sign(privKey);
 
         return tx.serialize();
       }

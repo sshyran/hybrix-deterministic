@@ -81,7 +81,7 @@ var tx = {
       // 3.3. "scriptPubKey.hex" for "script"
       'unspents': [  { "txid": "34b681c3bab292592789c0dc95b010677034096143bbe4bee4c7c53e58646feb",
                        "txn" : 0,
-                       "amount" : "0.5",
+                       "amount" : 0.5,
                        "address": "tmLqLxdaL7z4wjvXzmC3EkZCyQ4b17eMQzR", // WIF: cUB8G5cFtxc4usfgfovqRgCo8qTQUJtctLV8t6YYNfULg3GtehdX
                        "script" : "76a91479fbfc3f34e7745860d76137da68f362380c606c88ac"
                      }
