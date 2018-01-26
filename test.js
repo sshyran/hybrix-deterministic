@@ -101,6 +101,15 @@ var tx = {
       'nonce':'0x00', // Ethereum needs a nonce, so we in that case add it here into 'unspent requirements' #BETTERSUGGESTION ?
     },
     'factor':8,                                             // amount of decimals, i.e.: 10^x
+  },
+  'nem.testnet': {
+    'seed':'correct horse battery staple',                  // seed string for deterministic wallet
+    'keys':null,                                            // cryptographic keys (will be generated)
+    'source_address':null,                                  // where to transact from (will be generated)
+    'target_address':'TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S',  // where to transact to
+    'amount':0.1,                                           // amount to send
+    'fee':0.00075,                                          // fee for the miners or the system
+    'factor':6,                                             // amount of decimals, i.e.: 10^x
   }
 }
 
