@@ -92,25 +92,6 @@ var wrapper = (
 
         console.log("result: ", result);
         return result;
-        // var privKey       = data.keys.privateKey;
-        // var recipientAddr = wrapperlib.zcash.Address(data.target, data.mode);
-        // var changeAddr    = wrapperlib.zcash.Address(data.source, data.mode);
-
-        // var tx = new wrapperlib.zcash.Transaction()
-        //   .from(data.unspent.unspents.map(function(utxo){
-        //           return { txId:        utxo.txid,
-        //                    outputIndex: utxo.txn,
-        //                    address:     utxo.address,
-        //                    script:      utxo.script,
-        //                    satoshis:    toSatoshis(utxo.amount, data.factor)
-        //                  };
-        //         }))
-        //   .to(recipientAddr, parseInt(data.amount))
-        //   .fee(parseInt(data.fee))
-        //   .change(changeAddr)
-        //   .sign(privKey);
-
-        // return tx.serialize();
       }
     }
 
