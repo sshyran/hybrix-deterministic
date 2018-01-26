@@ -153,7 +153,7 @@ if(typeof deterministic!='object' || deterministic=={}) {
             mode:     submode
           }
   var result = deterministic.transaction(input);
-  logger('SIGNED TRANSACTION: '+result);
+  logger('SIGNED TRANSACTION: ' + JSON.stringify(result, null, 2));
 
 }
 
