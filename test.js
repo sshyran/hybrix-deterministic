@@ -121,9 +121,12 @@ if(typeof deterministic!='object' || deterministic=={}) {
   // generate cryptographic keys based on a seed string
   //
   input = { seed: tx[mode].seed, mode: submode }
+  logger('SEED: ' + input.seed);
+
   var result = deterministic.keys(input);
+  logger('KEYS: ' + JSON.stringify(result, null, 2));
+
   tx[mode].keys = result;
-  logger('SEED: '+input.seed);
   
   //
   // produce a public address based on cryptographic keys
