@@ -18,7 +18,6 @@ var wrapper = (
         var passphrase = data.seed;
         var privKey = wrapperlib.nem.crypto.helpers.derivePassSha(passphrase, 6000).priv;
 
-        console.log("privKey: ", privKey);
         return { privateKey: privKey };
       },
 
@@ -30,67 +29,55 @@ var wrapper = (
         var pubKey  = wrapperlib.nem.crypto.keyPair.create(privKey).publicKey;
         var network = wrapperlib.nem.model.network.data[data.mode]; // asset encoding?
 
-        var addr = wrapperlib.nem.model.address.toAddress(pubKey, network);
+        console.log("network: ", network);
+
+        var addr = wrapperlib.nem.model.address.toAddress(pubKey.toString(), network.id);
 
         if (!wrapperlib.nem.model.address.isValid(addr)) {
           throw new Error("Can't generate address from private key. "
                              + "Generated address " + addr
                              + "is not valid");
         }
-        if (!wrapperlib.nem.model.address.isFromNetwork(addr, network)) {
+        if (!wrapperlib.nem.model.address.isFromNetwork(addr, network.id)) {
           throw new Error("Can't generate address from private key. "
                              + "Generated address " + addr
                              + "is not valid for " + network);
         }
-
+        if (!wrapperlib.nem.crypto.helpers.checkAddress(privKey, network.id, addr)) {
+          throw new Error("Private key doesn't correspond to the expected address " + addr);
+        }
 
         return addr;
       },
 
       transaction : function(data) {
+        var network = wrapperlib.nem.model.network.data[data.mode]; // asset encoding?
+
+        var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, data.amount, data.message);
+        console.log("transferTransaction: ", transferTransaction);
+
+        var common = wrapperlib.nem.model.objects.get("common");
+        common.privateKey = data.keys.privateKey;
+        var transactionEntity = wrapperlib.nem.model.transactions.prepare("transferTransaction")(common, transferTransaction, network.id);
+        console.log("transactionEntity: ", transactionEntity);
 
 // Note:
 // Amounts are in the smallest unit possible in a prepared transaction object:
-
 // 1000000 = 1 XEM
-
-        var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, data.amount, data.message);
-
-// {
-//     "amount": 10,
-//     "recipient": "TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S",
-//     "recipientPublicKey": "",
-//     "isMultisig": false,
-//     "multisigAccount" : "",
-//     "message": "Hello",
-//     "isEncrypted" : false,
-//     "mosaics": []
-// }
-
-        // nem.model.network.data.testnet.id =?= data.mode
-        var common = wrapperlib.nem.model.objects.get("common");
-        common.privateKey = data.keys.privateKey;
-        var transactionEntity = wrapperlib.nem.model.transactions.prepare("transferTransaction")(common, transferTransaction, data.mode);
-
 
         // initialise keypair object based on private key
         var kp = wrapperlib.nem.crypto.keyPair.create(common.privateKey);
         // serialise transaction object
         var serialized = wrapperlib.nem.utils.serialization.serializeTransaction(transactionEntity);
-
-        console.log("serialized: ", wrapperlib.nem.utils.convert.ua2hex(serialized));
-
         // sign serialised transaction
         var signature = kp.sign(serialized);
 
         // build result object
         var result = { 
-                'data': wrapperlib.nem.utils.convert.ua2hex(serialized),
-                'signature': signature.toString()
+          'data': wrapperlib.nem.utils.convert.ua2hex(serialized),
+          'signature': signature.toString()
         };
 
-
-        console.log("result: ", result);
         return result;
       }
     }
