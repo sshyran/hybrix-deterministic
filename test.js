@@ -106,10 +106,10 @@ var tx = {
     'seed':'correct horse battery staple',                  // seed string for deterministic wallet
     'keys':null,                                            // cryptographic keys (will be generated)
     'source_address':null,                                  // where to transact from (will be generated)
-    'target_address':'TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S',  // where to transact to
+    'target_address':'TD367M-ZTCOJP-N3XBDG-EOKHO4-HFZDQB-B25X5I-54Z2',  // where to transact to
     'amount':0.1,                                           // amount to send
     'fee':0.00075,                                          // fee for the miners or the system
-    'factor':6,                                             // amount of decimals, i.e.: 10^x
+    'factor':1,                                             // amount of decimals, i.e.: 10^x (6, but nem-sdk is doing this conversion for us)
   }
 }
 
