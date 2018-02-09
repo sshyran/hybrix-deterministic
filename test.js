@@ -39,7 +39,7 @@ toInt = function(input,factor) {
 // first we read from the compiled package and activate the code
 //
 
-var mode = 'zcash.testnet';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
+var mode = 'nem.testnet';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
 
 var submode = mode.split('.')[1];
 dcode = String(fs.readFileSync('./modules/deterministic/'+mode.split('.')[0]+'/deterministic.js.lzma'))
@@ -102,6 +102,15 @@ var tx = {
     },
     'factor':8,                                             // amount of decimals, i.e.: 10^x
   },
+  // 'nem.testnet': {
+  //   'seed':'correct horse battery staple',                  // seed string for deterministic wallet
+  //   'keys':null,                                            // cryptographic keys (will be generated)
+  //   'source_address':null,                                  // where to transact from (will be generated)
+  //   'target_address':'TD367M-ZTCOJP-N3XBDG-EOKHO4-HFZDQB-B25X5I-54Z2',  // where to transact to
+  //   'amount':0.1,                                           // amount to send
+  //   'fee':0.00075,                                          // fee for the miners or the system
+  //   'factor':1,                                             // amount of decimals, i.e.: 10^x (6, but nem-sdk is doing this conversion for us)
+  // },
   'nem.testnet': {
     'seed':'correct horse battery staple',                  // seed string for deterministic wallet
     'keys':null,                                            // cryptographic keys (will be generated)
@@ -110,6 +119,41 @@ var tx = {
     'amount':0.1,                                           // amount to send
     'fee':0.00075,                                          // fee for the miners or the system
     'factor':1,                                             // amount of decimals, i.e.: 10^x (6, but nem-sdk is doing this conversion for us)
+    'mosaics': [
+      { 'amount': 1,
+        'definition': {
+          "creator": "d1526d17eddc91180e355bbc68dd9bb4204937efa06b8c84e5f0468b663b2d95",
+          "description": "custom 100 gold iphone",
+          "id": {
+            "namespaceId": "apple",
+            "name": "gold_iphone"
+          },
+          "properties": [
+            {
+              "name": "divisibility",
+              "value": "0"
+            },
+            {
+              "name": "initialSupply",
+              "value": "100"
+            },
+            {
+              "name": "supplyMutable",
+              "value": "true"
+            },
+            {
+              "name": "transferable",
+              "value": "true"
+            }
+          ],
+          "levy": {}
+        }
+      },
+      // { 'fullname': "namespacex.boosters:teslaroadster"
+      //   'amount': 1,
+      //   'description': {}
+      // },
+    ]
   }
 }
 
@@ -153,7 +197,8 @@ if(typeof deterministic!='object' || deterministic=={}) {
             keys:     tx[mode].keys,
             seed:     tx[mode].seed,
             unspent:  tx[mode].unspent,
-            mode:     submode
+            mode:     submode,
+            mosaics:  tx[mode].mosaics  // nem-specific
           }
   var result = deterministic.transaction(input);
   logger('SIGNED TRANSACTION: ' + JSON.stringify(result, null, 2));
