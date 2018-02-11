@@ -21,6 +21,8 @@ var wrapper = (
       // var namespace = "apple";
       // var mosaic = "gold_iphone";
       // getMosaicDefinition(namespace, mosaic);
+      // or, alternatively, http://127.0.0.1:7890/namespace/mosaic/definition/page?namespace=makoto.metal.coins can be called and filtered
+      // (https://nemproject.github.io/#retrieving-mosaic-definitions)
 
       var mosaicAttachment = wrapperlib.nem.model.objects.create("mosaicAttachment")(namespace, mosaic, 0);
 
@@ -138,19 +140,17 @@ var wrapper = (
 
       transaction : function(data) {
         var network = wrapperlib.nem.model.network.data[data.mode];
-
-        var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, data.amount, data.message);
-        console.log("transferTransaction: ", transferTransaction);
-
         var common = wrapperlib.nem.model.objects.get("common");
         common.privateKey = data.keys.privateKey;
 
-
         var transactionEntity = undefined;
-        if (data.mosaics == undefined) {
+        if (typeof data.mosaics == 'undefined' || !data.mosaics) {
+          var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, data.amount, data.message);
           transactionEntity = txEntityRegular(network, common, transferTransaction, data);
+        } else {
+          var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, 1, data.message);
+          transactionEntity = txEntityMosaic(network, common, transferTransaction, data);
         }
-        transactionEntity = txEntityMosaic(network, common, transferTransaction, data);
         console.log("transactionEntity: ", JSON.stringify(transactionEntity, null, 2));
         // Note:
         // Amounts are in the smallest unit possible in a prepared transaction object:

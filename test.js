@@ -116,17 +116,46 @@ var tx = {
     'keys':null,                                            // cryptographic keys (will be generated)
     'source_address':null,                                  // where to transact from (will be generated)
     'target_address':'TD367M-ZTCOJP-N3XBDG-EOKHO4-HFZDQB-B25X5I-54Z2',  // where to transact to
-    'amount':0.1,                                           // amount to send
+    'amount':0.1,                                           // amount to send, for xem transfer mode, ignored in mosaic mode
     'fee':0.00075,                                          // fee for the miners or the system
     'factor':1,                                             // amount of decimals, i.e.: 10^x (6, but nem-sdk is doing this conversion for us)
-    'mosaics': [
+    'mosaics': [                                            // regular xem transfer if undefined
+      { 'amount': 1.35,
+        'definition': {
+          "creator": "cf07d5d757cbb0df22a8e9ee931034afc86bec9fafe3487f1ecdc2d584e3a6bd",
+          "description": "WunderWaffel",
+          "id": {
+            "namespaceId": "namespacex",
+            "name": "wunderwaffel"
+          },
+          "properties": [
+            {
+              "name": "divisibility",
+              "value": "3"
+            },
+            {
+              "name": "initialSupply",
+              "value": "1000"
+            },
+            {
+              "name": "supplyMutable",
+              "value": "true"
+            },
+            {
+              "name": "transferable",
+              "value": "true"
+            }
+          ],
+          "levy": {}
+        }
+      },
       { 'amount': 1,
         'definition': {
-          "creator": "d1526d17eddc91180e355bbc68dd9bb4204937efa06b8c84e5f0468b663b2d95",
-          "description": "custom 100 gold iphone",
+          "creator": "cf07d5d757cbb0df22a8e9ee931034afc86bec9fafe3487f1ecdc2d584e3a6bd",
+          "description": "Tesla Rodster",
           "id": {
-            "namespaceId": "apple",
-            "name": "gold_iphone"
+            "namespaceId": "namespacex.boosters",
+            "name": "teslarodster"
           },
           "properties": [
             {
@@ -146,13 +175,17 @@ var tx = {
               "value": "true"
             }
           ],
-          "levy": {}
+          "levy": {
+            "fee": 5,
+            "recipient": "TD367MZTCOJPN3XBDGEOKHO4HFZDQBB25X5I54Z2",
+            "type": 1,
+            "mosaicId": {
+              "namespaceId": "nem",
+              "name": "xem"
+            }
+          }
         }
-      },
-      // { 'fullname': "namespacex.boosters:teslaroadster"
-      //   'amount': 1,
-      //   'description': {}
-      // },
+      }
     ]
   }
 }
