@@ -105,6 +105,7 @@ if(typeof deterministic!='object' || deterministic=={}) {
   var result = deterministic.keys(input);
   tx[mode].keys = result;
   logger('SEED: '+input.seed);
+  logger(JSON.stringify(result));
 
   //
   // produce a public address based on cryptographic keys
