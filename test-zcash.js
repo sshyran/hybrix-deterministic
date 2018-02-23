@@ -39,7 +39,7 @@ toInt = function(input,factor) {
 // first we read from the compiled package and activate the code
 //
 
-var mode = 'zcash.testnet';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
+var mode = 'zcash.livenet';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
 
 var submode = mode.split('.')[1];
 dcode = String(fs.readFileSync('./modules/deterministic/'+mode.split('.')[0]+'/deterministic.js.lzma'))
@@ -49,18 +49,21 @@ var deterministic = activate( LZString.decompressFromEncodedURIComponent(dcode) 
 var input = {}
 
 var tx = {
-  'bitcoinjslib.bitcoin': {
+  'zcash.livenet': {
     'seed':'correct horse battery staple',                  // seed string for deterministic wallet
     'keys':null,                                            // cryptographic keys (will be generated)
     'source_address':null,                                  // where to transact from (will be generated)
-    'target_address':'1NqE1uw9iSqq3U4KpbTmYvjiAwHj85XUMj',  // where to transact to
+    'target_address':'t1TjXXF7Rt65ruMatZELMu9E5yK2wH37EW3', // where to transact to
     'amount':0.1,                                           // amount to send
     'fee':0.00075,                                          // fee for the miners or the system
     'unspent': {                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
-      'unspents':[{ "amount":"1.00",
-                    "txid":"eee76ed5dae07eb798dd309ccbf1b08bad4e0e8fee806d28fe08b9cbed67ed95",
-                    "txn":0
-                 }]
+      'unspents': [  { "txid": "34b681c3bab292592789c0dc95b010677034096143bbe4bee4c7c53e58646feb",
+                       "txn" : 0,
+                       "amount" : 0.5,
+                       "address": "tmLqLxdaL7z4wjvXzmC3EkZCyQ4b17eMQzR", // WIF: cUB8G5cFtxc4usfgfovqRgCo8qTQUJtctLV8t6YYNfULg3GtehdX
+                       "script" : "76a91479fbfc3f34e7745860d76137da68f362380c606c88ac"
+                     }
+                  ]
     },
     'factor':8,                                             // amount of decimals, i.e.: 10^x
   },
@@ -88,19 +91,6 @@ var tx = {
                   ]
     },
     'factor': 8                                              // amount of decimals, i.e.: 10^x
-  },
-  'ethereum.token': {
-    'seed':'correct horse battery staple',                  // seed string for deterministic wallet
-    'keys':null,                                            // cryptographic keys (will be generated)
-    'source_address':null,                                  // where to transact from (will be generated)
-    'target_address':'0x8Bbf8f56ed5C694beF9F0f6D74365D663517E67a',  // where to transact to
-    'contract':'0x2f4baef93489b09b5e4b923795361a65a26f55e5',  // smart contract address
-    'amount':0.1,                                           // amount to send
-    'fee':0.00075,                                          // fee for the miners or the system
-    'unspent':{                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
-      'nonce':'0x00', // Ethereum needs a nonce, so we in that case add it here into 'unspent requirements' #BETTERSUGGESTION ?
-    },
-    'factor':8,                                             // amount of decimals, i.e.: 10^x
   }
 }
 
@@ -115,7 +105,7 @@ if(typeof deterministic!='object' || deterministic=={}) {
   var result = deterministic.keys(input);
   tx[mode].keys = result;
   logger('SEED: '+input.seed);
-  
+
   //
   // produce a public address based on cryptographic keys
   //
