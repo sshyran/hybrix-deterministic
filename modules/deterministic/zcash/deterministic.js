@@ -36,7 +36,7 @@ var wrapper = (
                              + "is not valid for " + data.mode);
         }
 
-        return addr;
+        return addr.toString();
       },
 
       transaction : function(data) {
@@ -44,12 +44,17 @@ var wrapper = (
         var recipientAddr = wrapperlib.zcash.Address(data.target, data.mode);
         var changeAddr    = wrapperlib.zcash.Address(data.source, data.mode);
 
-	logger(JSON.stringify({ txId:        utxo.txid,
+	/* DEBUG
+	data.unspent.unspents.map(function(utxo){
+                  logger(JSON.stringify(
+			{ txId:        utxo.txid,
                            outputIndex: utxo.txn,
                            address:     utxo.address,
                            script:      utxo.script,
-                           satoshis:    Number(toInt(utxo.amount, data.factor))
-                         }));
+                           satoshis:    parseInt(toSatoshis(utxo.amount,data.factor))
+                         } ));
+                });
+	*/
 
         var tx = new wrapperlib.zcash.Transaction()
           .from(data.unspent.unspents.map(function(utxo){
@@ -57,7 +62,7 @@ var wrapper = (
                            outputIndex: utxo.txn,
                            address:     utxo.address,
                            script:      utxo.script,
-                           satoshis:    Number(toInt(utxo.amount, data.factor))
+                           satoshis:    parseInt(toSatoshis(utxo.amount,data.factor))
                          };
                 }))
           .to(recipientAddr, parseInt(data.amount))
