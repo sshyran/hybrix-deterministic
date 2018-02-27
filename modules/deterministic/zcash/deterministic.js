@@ -20,14 +20,13 @@ var wrapper = (
         var bn   = wrapperlib.zcash.crypto.BN.fromBuffer(hash);
 
         var privKey = new wrapperlib.zcash.PrivateKey(bn, data.mode);
-        var wif     = privKey.toWIF();
-
-        return { WIF: wif };
+        var wif     = String(privKey.toWIF());
+        return { WIF:wif };
       },
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        var privKey = wrapperlib.zcash.PrivateKey(data.keys.WIF, data.mode);
+        var privKey = wrapperlib.zcash.PrivateKey(data.WIF, data.mode);
         var addr    = privKey.toAddress();
 
         if (!wrapperlib.zcash.Address.isValid(addr, data.mode)) {
@@ -36,7 +35,7 @@ var wrapper = (
                              + "is not valid for " + data.mode);
         }
 
-        return addr;
+        return addr.toString();
       },
 
       transaction : function(data) {
