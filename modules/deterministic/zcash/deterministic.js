@@ -27,7 +27,7 @@ var wrapper = (
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        var privKey = wrapperlib.zcash.PrivateKey(data.keys.WIF, data.mode);
+        var privKey = wrapperlib.zcash.PrivateKey(data.WIF, data.mode);
         var addr    = privKey.toAddress();
 
         if (!wrapperlib.zcash.Address.isValid(addr, data.mode)) {
@@ -43,6 +43,13 @@ var wrapper = (
         var privKey       = wrapperlib.zcash.PrivateKey(data.keys.WIF, data.mode);
         var recipientAddr = wrapperlib.zcash.Address(data.target, data.mode);
         var changeAddr    = wrapperlib.zcash.Address(data.source, data.mode);
+
+	logger(JSON.stringify({ txId:        utxo.txid,
+                           outputIndex: utxo.txn,
+                           address:     utxo.address,
+                           script:      utxo.script,
+                           satoshis:    Number(toInt(utxo.amount, data.factor))
+                         }));
 
         var tx = new wrapperlib.zcash.Transaction()
           .from(data.unspent.unspents.map(function(utxo){
