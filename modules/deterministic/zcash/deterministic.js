@@ -50,7 +50,7 @@ var wrapper = (
                            outputIndex: utxo.txn,
                            address:     utxo.address,
                            script:      utxo.script,
-                           satoshis:    toSatoshis(utxo.amount, data.factor)
+                           satoshis:    Number(toInt(utxo.amount, data.factor))
                          };
                 }))
           .to(recipientAddr, parseInt(data.amount))
