@@ -39,11 +39,7 @@ toInt = function(input,factor) {
 // first we read from the compiled package and activate the code
 //
 
-<<<<<<< HEAD:test-zcash.js
 var mode = 'zcash.livenet';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
-=======
-var mode = 'zcash.testnet';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
->>>>>>> zcash:test.js
 
 var submode = mode.split('.')[1];
 dcode = String(fs.readFileSync('./modules/deterministic/'+mode.split('.')[0]+'/deterministic.js.lzma'))
@@ -93,22 +89,6 @@ var tx = {
                        "script" : "76a91479fbfc3f34e7745860d76137da68f362380c606c88ac"
                      }
                   ]
-<<<<<<< HEAD:test-zcash.js
-=======
-    },
-    'factor': 8                                              // amount of decimals, i.e.: 10^x
-  },
-  'ethereum.token': {
-    'seed':'correct horse battery staple',                  // seed string for deterministic wallet
-    'keys':null,                                            // cryptographic keys (will be generated)
-    'source_address':null,                                  // where to transact from (will be generated)
-    'target_address':'0x8Bbf8f56ed5C694beF9F0f6D74365D663517E67a',  // where to transact to
-    'contract':'0x2f4baef93489b09b5e4b923795361a65a26f55e5',  // smart contract address
-    'amount':0.1,                                           // amount to send
-    'fee':0.00075,                                          // fee for the miners or the system
-    'unspent':{                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
-      'nonce':'0x00', // Ethereum needs a nonce, so we in that case add it here into 'unspent requirements' #BETTERSUGGESTION ?
->>>>>>> zcash:test.js
     },
     'factor': 8                                              // amount of decimals, i.e.: 10^x
   }
