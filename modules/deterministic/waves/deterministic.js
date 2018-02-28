@@ -1,53 +1,90 @@
-// (C) 2018 Internet of Coins
-// hybridd module - waves/deterministic_source.js
-// Deterministic encryption wrapper for Waves
-//
-// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
-//
+// (C) 2017 Internet of Coins / Metasync / Joachim de Koning
+// hybridd module - ethereum/deterministic.js
+// Deterministic encryption wrapper for NXT
 
-// https://github.com/wavesplatform/curve25519-js
 
 var wrapper = (
-  function() {
+    function() {
 
-    var functions = {
-      // create deterministic public and private keys based on a seed
-      keys : function(data) {
-        var seed = new Buffer(data.seed);
-        var keyPair = wrapperlib.axlsign.generateKeyPair(seed);
-        return {privateKey: keyPair.private, publicKey:keyPair.public };
-      },
-               
-      // generate a unique wallet address from a given public key
-      // https://github.com/wavesplatform/Waves/wiki/Data-Structures#address
-      address : function(data) {
-        var secureHash = data => Keccak256(Blake2b256(data));//TODO  where to find them, for now assume they work on buffers
-        var version = Buffer.from([0x01]);
-        var addressScheme = Buffer.from([0x57]); // (0x57 for Mainnet , 0x54 for Testnet)
-        var publicKeyHash = secureHash(Buffer.from(data.keys.publicKey,'utf8')).slice(0,20);
-        var buffer = Buffer.concat([version,adressScheme,publicKeyHash]);
-        var checksum = secureHash(buffer);
-        var addr = Buffer.concat([buffer,checksum]).toString('utf8');
-        return addr;
-      },
+        var Waves = WavesAPI.create(WavesAPI.TESTNET_CONFIG);
 
-      transaction : function(data) {
-        var message = {
-               type: 4,
-               sender: data.source,
-               recipient: data.target,
-               amount: parseInt(data.amount),
-               fee: parseInt(data.fee),
-               attachment: 'string' //TODO what does this do??
-               };
-               
-        var signedMessage = signMessage(data.keys.privateKey, message, [random]); //TODO get a proper random number
-        return signMessage.serialize();
-      }
+        function encode(data) {
+            return '0x' + (new Function('wrapperlib', 'data', 'return function(data.func,data.' + data.vars.join(',data.') + ');'))(wrapperlib, data).toString('hex');
+        }
+
+
+        var functions = {
+
+            keys: function(data) {
+
+                var seedKey = Waves.Seed.fromExistingPhrase(data.seed);
+                //take the mnemonic (seed) and convert to publicKey ??
+                console.log(seedKey);
+                var privateKey = seedKey.keyPair.privateKey;
+                var publicKey = seedKey.keyPair.publicKey;
+
+                return {
+                    publicKey: publicKey,
+                    secretPhrase: privateKey // or privateKey ??
+                }
+
+            },
+
+            address: function(data) {
+                var seed = Waves.Seed.fromExistingPhrase(data.seed);
+                return seed.address;
+            },
+
+            transaction: function(data) {
+                var seed = Waves.Seed.fromExistingPhrase(data.seed);
+                if (data.mode != 'token') {
+                    // set the parameters
+                    var txParams = { // optional-> data: payloadData
+                        recipient: data.toAddr,
+                        // ID of a token, or WAVES
+                        assetId: 'WAVES',
+                        // The real amount is the given number divided by 10^(precision of the token)
+                        amount: parseInt(data.amount).toString(16),
+                        // The same rules for these two fields
+                        feeAssetId: 'WAVES',
+                        fee: 100000,
+                        // 140 bytes of data (it's allowed to use Uint8Array here)
+                        attachment: data.message,
+                        timestamp: Date.now()
+                    };
+                } else {
+                    // TEST: var encoded = encode({'func':'balanceOf(address):(uint256)','vars':['target'],'target':data.target});
+                    var encoded = encode({
+                        'func': 'transfer(address,uint256):(bool)',
+                        'vars': ['target', 'amount'],
+                        'target': data.target,
+                        'fee_to_pay': '100000',
+                        'amount': parseInt(data.amount).toString(16)
+                    }); // returns the encoded binary (as a Buffer) data to be
+                    // set the parameters
+                    var txParams = {
+                        //is nonce needed?
+                        nonce: '0x' + parseInt(data.unspent.nonce).toString(16), // nonce
+                        to: data.toAddr, // send payload to contract address
+                        value: '0x' + parseInt(0).toString(16), // set to zero, since we're sending tokens
+                        data: encoded // payload as encoded using the smart contract
+                    };
+                }
+                var wavesResponse = Waves.API.Node.v1.assets.transfer(txParams, seed.keyPair).then((responseData) => {
+                    return responseData;
+                });
+                // DEBUG: return encoded;
+                return wavesResponse;
+            },
+
+            // encode ABI smart contract calls
+            encode: function(data) {
+                return encode(data);
+            }
+        }
+
+        return functions;
     }
-
-    return functions;
-  }
 )();
 
 // export the functionality to a pre-prepared var
