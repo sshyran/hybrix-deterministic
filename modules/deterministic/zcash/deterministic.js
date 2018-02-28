@@ -20,8 +20,9 @@ var wrapper = (
         var bn   = wrapperlib.zcash.crypto.BN.fromBuffer(hash);
 
         var privKey = new wrapperlib.zcash.PrivateKey(bn, data.mode);
-        var wif     = String(privKey.toWIF());
-        return { WIF:wif };
+        var wif     = privKey.toWIF();
+
+        return { WIF: wif };
       },
 
       // generate a unique wallet address from a given public key
