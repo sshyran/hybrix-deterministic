@@ -72,7 +72,7 @@ if(typeof deterministic!='object' || deterministic=={}) {
   var result = deterministic.keys(input);
   tx[mode].keys = result;
   logger('SEED: '+input.seed);
-  
+
   //
   // produce a public address based on cryptographic keys
   //
@@ -80,7 +80,8 @@ if(typeof deterministic!='object' || deterministic=={}) {
   var result = deterministic.address( Object.assign(tx[mode].keys,{mode:'xel'}) );
   tx[mode].source_address = result;
   logger('PUBLIC ADDRESS: '+result);
-  logger(JSON.stringify(Object.assign(tx[mode].keys,{mode:'xel'})));
+
+  // DEBUG: logger(JSON.stringify(Object.assign(tx[mode].keys,{mode:'xel'})));
 
   //
   // produce a public address based on cryptographic keys
