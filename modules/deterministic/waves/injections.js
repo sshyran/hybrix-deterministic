@@ -1,0 +1,12 @@
+const randomBytes = crypto.randomBytes;
+if (typeof window === 'object') {
+  const wCrypto = window.crypto = window.crypto || {}
+  if (!wCrypto.getRandomValues) {
+    wCrypto.getRandomValues = function getRandomValues (arr) {
+      const bytes = randomBytes(arr.length)
+      for (var i = 0; i < bytes.length; i++) {
+        arr[i] = bytes[i]
+      }
+    }
+  }
+}

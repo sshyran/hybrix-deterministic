@@ -6,19 +6,26 @@ WHEREAMI=`pwd`
 export PATH=$WHEREAMI/../../../node/bin:"$PATH"
 NODEINST=`which node`
 
-# create a wrapperlib object for libraries that want to use globals
-../../../node_modules/browserify/bin/cmd.js -r ./wrapperlib.js -s wrapperlib > wrapperlib.browserify.js
+# copy the vanilla waves minified to wrapperlib
+cp ./waves-api.min.js ./wrapperlib.js
+
+# inject
+cat ./injections.js ./wrapperlib.js > ./wrapperlib.tmp.js; mv ./wrapperlib.tmp.js ./wrapperlib.js
+
+# string replace to standardize naming of the module to wrapperlib
+sed -i -e 's/WavesAPI/wrapperlib/g' ./wrapperlib.js
+
+#../../../node_modules/browserify/bin/cmd.js -r ./wrapperlib.js -s wrapperlib > wrapperlib.browserify.js
 
 # pack the deterministic functions
 ../../../node_modules/browserify/bin/cmd.js deterministic.js -o deterministic.browserify.js
 
 # concatenate these products and compress into DOM injectable
-cat wrapperlib.browserify.js deterministic.browserify.js > compiled.js
+cat wrapperlib.js deterministic.browserify.js > compiled.js
 ../../../tools/lzmapack.js compiled.js
 
 # clean up
 rm deterministic.browserify.js
-rm wrapperlib.browserify.js
 rm compiled.js
 mv compiled.js.lzma deterministic.js.lzma
 

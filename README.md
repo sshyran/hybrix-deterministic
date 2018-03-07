@@ -12,8 +12,10 @@ module-deterministic/modules/deterministic/$NAME/
 - compile.sh                      a script to compile the above into a single lmza file
 - deterministic.js.lmza       the lmza blob file
 
-deterministic.js   must contain three functions:
+deterministic.js   must contain three functions: `keys`, `address` and
+`transaction` :
 
+```
 var wrapper = (
   function() {
 
@@ -22,20 +24,21 @@ var wrapper = (
       keys : function(data) {
         // data = {seed: .. , ??? }
         // compute key pair, private key, or wif
-        return { WIF: wif } or {privateKey:...} or {privateKey: ..., publicKey: ...}
+        return { WIF: wif } or {privateKey:...} or {privateKey: ...,
+      publicKey: ...} // = $KEYS object
       },
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        // data = {seed: .. , keys: {...}, mode: $NAME/$MODE, ...???}
+        // data = {seed: .. , keys: $KEYS, mode: $NAME/$MODE, ...???}
         // compute addr
         return addr; // TODO a string or a buffer???
       },
 
       transaction : function(data) {
-      // data = {keys: {...}, source: , target:, acount:, fee: }
-      // compute signedMessaged
-      return signedMessaged; // the signed message serialized into a string
+        // data = {keys: $KEYS, source: , target: , account:, fee: }
+        // compute signedMessaged
+        return signedMessaged; // the signed message serialized into a string
       }
     }
 
@@ -45,3 +48,4 @@ var wrapper = (
 
 // export the functionality to a pre-prepared var
 deterministic = wrapper;
+```
