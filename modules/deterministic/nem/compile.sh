@@ -7,7 +7,7 @@ export PATH=$WHEREAMI/../../../node/bin:"$PATH"
 NODEINST=`which node`
 
 # create a wrapperlib object for libraries that want to use globals
-../../../node_modules/browserify/bin/cmd.js -r ./wrapperlib.js -s wrapperlib > wrapperlib.browserify.js
+../../../node_modules/browserify/bin/cmd.js -r ./wrapperlib.js -s wrapperlib | ../../../node_modules/uglify-js/bin/uglifyjs > wrapperlib.browserify.js
 
 # pack the deterministic functions
 ../../../node_modules/browserify/bin/cmd.js deterministic.js -o deterministic.browserify.js

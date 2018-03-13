@@ -12,6 +12,17 @@ var wrapper = (
       return float * Math.pow(10, factor);
     }
 
+    fromUnits = function(float, factor) {
+      return float / Math.pow(10, factor);
+    }
+
+    // TODO
+    minimumFee = function(numNem) {
+      var fee = Math.floor((numNem /1000000)/10000) * 0.05;
+      if (fee < 0.05) { return 0.05 } else if(fee > 1.25) {return 1.25} else {return fee};
+    }
+    
+
     getMosaicDefinition = function(namespace, mosaic) {
       // Usage examples:
       // // var namespace = "11123.kopioey";
@@ -35,14 +46,14 @@ var wrapper = (
 
       wrapperlib.nem.com.requests.namespace.mosaicDefinitions(endpoint, mosaicAttachment.mosaicId.namespaceId).then(
         function(res) {
-          console.log("Mosaics in a namespace '", mosaicAttachment.mosaicId.namespaceId, "': ", JSON.stringify(res, null, 2));
+          // DEBUG: console.log("Mosaics in a namespace '", mosaicAttachment.mosaicId.namespaceId, "': ", JSON.stringify(res, null, 2));
 
           // Look for the mosaic definition(s) we want in the request response
           var neededDefinition = wrapperlib.nem.utils.helpers.searchMosaicDefinitionArray(res.data, [mosaic]);
 
           // Get full name of mosaic to use as object key
           var fullMosaicName  = wrapperlib.nem.utils.format.mosaicIdToName(mosaicAttachment.mosaicId);
-          console.log("Full mosaic name: ", fullMosaicName);
+          // DEBUG: console.log("Full mosaic name: ", fullMosaicName);
 
           // Check if the mosaic was found
           if(undefined === neededDefinition[fullMosaicName]) return console.error("Mosaic not found !");
@@ -51,7 +62,7 @@ var wrapper = (
           mosaicDefinitionMetaDataPair[fullMosaicName] = {};
           mosaicDefinitionMetaDataPair[fullMosaicName].mosaicDefinition = neededDefinition[fullMosaicName];
 
-          console.log("Mosaic definition: ", JSON.stringify(neededDefinition[fullMosaicName], null, 2));
+          // DEBUG: console.log("Mosaic definition: ", JSON.stringify(neededDefinition[fullMosaicName], null, 2));
         },
         function(err) {
           console.error(err);
@@ -60,7 +71,7 @@ var wrapper = (
     };
 
 
-    txEntityRegular = function(network, common, transferTransaction, data) {
+    txEntityRegular = function(network, common, transferTransaction) {
       var transactionEntity = wrapperlib.nem.model.transactions.prepare("transferTransaction")(common, transferTransaction, network.id);
       return transactionEntity;
     }
@@ -69,7 +80,7 @@ var wrapper = (
       // Create variable to store our mosaic definitions, needed to calculate fees properly (already contains xem definition)
       var mosaicDefinitionMetaDataPair = wrapperlib.nem.model.objects.get("mosaicDefinitionMetaDataPair");
 
-      data.mosaics.forEach(function(mosaic) {
+      data.contract.mosaics.forEach(function(mosaic) {
         var namespace    = mosaic.definition.id.namespaceId;
         var mosaicName   = mosaic.definition.id.name;
         var divisibility = mosaic.definition.properties.reduce(function(acc, prop) {
@@ -78,20 +89,21 @@ var wrapper = (
           }
           return acc;
         }, undefined);
-        var amount = toUnits(mosaic.amount, divisibility); // decimal amount * 10^divisibility
-        console.log("namespace: ", namespace, ", mosaicName: ", mosaicName, ", divisibility: ", divisibility, ", amount: ", amount);
+        //var amount = toUnits(mosaic.amount, divisibility); // decimal amount * 10^divisibility
+        var amount = fromUnits(data.amount, divisibility);
+        // DEBUG: console.log("namespace: ", namespace, ", mosaicName: ", mosaicName, ", divisibility: ", divisibility, ", amount: ", amount);
 
         var mosaicAttachment = wrapperlib.nem.model.objects.create("mosaicAttachment")(namespace, mosaicName, amount);
         transferTransaction.mosaics.push(mosaicAttachment);
 
         // Get full name of mosaic to use as object key
         var fullMosaicName = wrapperlib.nem.utils.format.mosaicIdToName(mosaicAttachment.mosaicId);
-        console.log("fullMosaicName: ", fullMosaicName);
+        // DEBUG: console.log("fullMosaicName: ", fullMosaicName);
 
         // Set mosaic definition into mosaicDefinitionMetaDataPair
         mosaicDefinitionMetaDataPair[fullMosaicName] = {};
         mosaicDefinitionMetaDataPair[fullMosaicName].mosaicDefinition = mosaic.definition;
-        console.log("mosaic.definition: ", JSON.stringify(mosaic.definition, null, 2));
+        // DEBUG: console.log("mosaic.definition: ", JSON.stringify(mosaic.definition, null, 2));
       });
 
       // Prepare the transfer transaction object
@@ -103,22 +115,21 @@ var wrapper = (
     var functions = {
       // create deterministic public and private keys based on a seed
       keys : function(data) {
+        // NEM console junk: override console logging in this scope
+        console.time = function(){};
+        console.timeEnd = function(){};
         var passphrase = data.seed;
-        var privKey = wrapperlib.nem.crypto.helpers.derivePassSha(passphrase, 6000).priv;
-
-        return { privateKey: privKey };
+        var privateKey = wrapperlib.nem.crypto.helpers.derivePassSha(passphrase, 6000).priv;
+        return {privateKey:privateKey};
       },
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        console.log("data.mode: ", data.mode);
-
-        var privKey = data.keys.privateKey;
+        // DEBUG: console.log("data.mode: ", data.mode);
+        var privKey = data.privateKey;
         var pubKey  = wrapperlib.nem.crypto.keyPair.create(privKey).publicKey;
         var network = wrapperlib.nem.model.network.data[data.mode]; // asset encoding?
-
-        console.log("network: ", network);
-
+        // DEBUG: console.log("network: ", network);
         var addr = wrapperlib.nem.model.address.toAddress(pubKey.toString(), network.id);
 
         if (!wrapperlib.nem.model.address.isValid(addr)) {
@@ -135,6 +146,7 @@ var wrapper = (
           throw new Error("Private key doesn't correspond to the expected address " + addr);
         }
 
+        addr = addr.replace(/(.{6})/g,"$1\-");   // prettify for human readability
         return addr;
       },
 
@@ -144,18 +156,21 @@ var wrapper = (
         common.privateKey = data.keys.privateKey;
 
         var transactionEntity = undefined;
-        if (typeof data.mosaics == 'undefined' || !data.mosaics) {
-          var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, data.amount, data.message);
-          transactionEntity = txEntityRegular(network, common, transferTransaction, data);
+        if (typeof data.contract === 'undefined' || !data.contract || typeof data.contract.mosaics === 'undefined' || !data.contract.mosaics) {
+          var minfee = minimumFee(fromUnits(data.amount,data.factor));
+          var amount = fromUnits(data.amount,data.factor); // calculating fee is automatically done by nem.model.objects.create
+          var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, amount, data.message);
+          transactionEntity = txEntityRegular(network, common, transferTransaction);
+          // DEBUG: logger(JSON.stringify(transferTransaction));
         } else {
-          var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, 1, data.message);
+          var minfee = minimumFee(fromUnits(data.amount,data.factor));
+          var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, minfee, data.message);
           transactionEntity = txEntityMosaic(network, common, transferTransaction, data);
         }
-        console.log("transactionEntity: ", JSON.stringify(transactionEntity, null, 2));
-        // Note:
-        // Amounts are in the smallest unit possible in a prepared transaction object:
+        
+        // DEBUG: console.log("transactionEntity: ", JSON.stringify(transactionEntity, null, 2));
+        // Note: amounts are in the smallest unit possible in a prepared transaction object
         // 1000000 = 1 XEM
-
 
         // initialise keypair object based on private key
         var kp = wrapperlib.nem.crypto.keyPair.create(common.privateKey);
@@ -169,7 +184,7 @@ var wrapper = (
           'data': wrapperlib.nem.utils.convert.ua2hex(serialized),
           'signature': signature.toString()
         };
-        return result;
+        return JSON.stringify(result);
       }
 
     }
