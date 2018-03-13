@@ -1,18 +1,12 @@
 // (C) 2017 Internet of Coins / Metasync / Joachim de Koning
-// hybridd module - ethereum/deterministic.js
-// Deterministic encryption wrapper for NXT
+// hybridd module - waves/deterministic.js
+// Deterministic encryption wrapper for Waves
 
 
-//console.log(JSON.stringify(wrapperlib));
 var wrapper = (
   function() {
 
-    var Waves = wrapperlib.create(wrapperlib.TESTNET_CONFIG);
-
-    function encode(data) {
-      return '0x' + (new Function('wrapperlib', 'data', 'return function(data.func,data.' + data.vars.join(',data.') + ');'))(wrapperlib, data).toString('hex');
-    }
-
+    var Waves = wrapperlib.create(wrapperlib.MAINNET_CONFIG);
 
     var functions = {
 
@@ -24,7 +18,7 @@ var wrapper = (
         return data.address;
       },
 
-      transaction: function(data) {
+      transaction: function(data,callback) {
 
         if (data.mode != 'token') {
           // set the parameters
@@ -59,20 +53,11 @@ var wrapper = (
             to: data.toAddr, // send payload to contract address
             value: '0x' + parseInt(0).toString(16), // set to zero, since we're sending tokens
             data: encoded // payload as encoded using the smart contract
-          };*/
+            };*/
         }
-        Waves.API.Node.v1.assets.transfer(txParams, data.keys.keyPair).then((responseData) => {
-          console.log("A"+responseData);
+        Waves.API.Node.v1.assets.transfer(txParams, data.keys.keyPair).then((responseData) => {}).catch(function (error) {
+          callback(error.data); // Since we've hacked the fetch command it will error, but we don't need the result, we need the request
         });
-      //  setInterval(function(){
-
-//        console.log("q:"+JSON.stringify(fetch.q))},1000);
-        return "appeltaart "; //JSON.stringify(fetch.result.body)
-      },
-
-      // encode ABI smart contract calls
-      encode: function(data) {
-        return encode(data);
       }
     }
 

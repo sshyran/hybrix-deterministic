@@ -8,7 +8,7 @@
 var wrapper = (
   function() {
 
-    var functions = {         
+    var functions = {
       // create deterministic public and private keys based on a seed
       keys : function(data) {
         return { dummy:'dummy' };
@@ -19,9 +19,9 @@ var wrapper = (
         return '_dummyaddress_';
       },
 
-      transaction : function(data) {
-        return '_dummytransaction_';
-      },
+      transaction : function(data, callback) {
+        callback('_dummytransaction_');
+      }
     }
 
     return functions;
