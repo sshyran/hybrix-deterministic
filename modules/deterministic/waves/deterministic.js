@@ -6,6 +6,7 @@
 var wrapper = (
   function() {
 
+
     var Waves = wrapperlib.create(wrapperlib.MAINNET_CONFIG);
 
     var functions = {
@@ -56,6 +57,9 @@ var wrapper = (
         Waves.API.Node.v1.assets.transfer(txParams, data.keys.keyPair).then((responseData) => {}).catch(function (error) {
           callback(error.data); // Since we've hacked the fetch command it will error, but we don't need the result, we need the request
         });
+
+
+
 
       }
     }

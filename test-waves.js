@@ -4,8 +4,7 @@
 
 fs = require('fs');
 nacl = require('./lib/crypto/nacl');
-crypto = require('crypto');                   // this supersedes browserify crypto library when code is run in virtual DOM
-fetch = require('./modules/deterministic/waves/fetch');                   // this supersedes browserify crypto library when code is run in virtual DOM
+crypto = require('crypto');                   // this supersedes browserify crypto library when code is run in virtual DOM                   // this supersedes browserify crypto library when code is run in virtual DOM
 LZString = require('./lib/crypto/lz-string');
 Decimal = require('./lib/crypto/decimal-light'); Decimal.set({ precision: 64 });  // high precision for nonces
 //UrlBase64 = require('./crypto/urlbase64');
@@ -118,7 +117,7 @@ function activate(code) {
     dom.window.nacl = nacl; // inject NACL into virtual DOM
     dom.window.crypto = crypto; // inject nodeJS crypto to supersede crypto-browserify
     dom.window.logger = logger; // inject the logger function into virtual DOM
-    dom.window.fetch = fetch; // inject the logger function into virtual DOM
+//    dom.window.fetch = deterministic.fetch; // inject the logger function into virtual DOM
     dom.eval('var deterministic = (function(){})(); '+code+';'); // init deterministic code
     return dom.window.deterministic;
   } else {
