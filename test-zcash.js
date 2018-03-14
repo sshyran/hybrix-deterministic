@@ -39,7 +39,11 @@ toInt = function(input,factor) {
 // first we read from the compiled package and activate the code
 //
 
+<<<<<<< HEAD:test-zcash.js
 var mode = 'zcash.livenet';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
+=======
+var mode = 'nem.mainnet';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
+>>>>>>> nem_xem:test.js
 
 var submode = mode.split('.')[1];
 dcode = String(fs.readFileSync('./modules/deterministic/'+mode.split('.')[0]+'/deterministic.js.lzma'))
@@ -91,6 +95,112 @@ var tx = {
                   ]
     },
     'factor': 8                                              // amount of decimals, i.e.: 10^x
+<<<<<<< HEAD:test-zcash.js
+=======
+  },
+  'ethereum.token': {
+    'seed':'correct horse battery staple',                  // seed string for deterministic wallet
+    'keys':null,                                            // cryptographic keys (will be generated)
+    'source_address':null,                                  // where to transact from (will be generated)
+    'target_address':'0x8Bbf8f56ed5C694beF9F0f6D74365D663517E67a',  // where to transact to
+    'contract':'0x2f4baef93489b09b5e4b923795361a65a26f55e5',  // smart contract address
+    'amount':0.1,                                           // amount to send
+    'fee':0.00075,                                          // fee for the miners or the system
+    'unspent':{                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
+      'nonce':'0x00', // Ethereum needs a nonce, so we in that case add it here into 'unspent requirements' #BETTERSUGGESTION ?
+    },
+    'factor':8,                                             // amount of decimals, i.e.: 10^x
+  },
+  // 'nem.testnet': {
+  //   'seed':'correct horse battery staple',                  // seed string for deterministic wallet
+  //   'keys':null,                                            // cryptographic keys (will be generated)
+  //   'source_address':null,                                  // where to transact from (will be generated)
+  //   'target_address':'TD367M-ZTCOJP-N3XBDG-EOKHO4-HFZDQB-B25X5I-54Z2',  // where to transact to
+  //   'amount':0.1,                                           // amount to send
+  //   'fee':0.00075,                                          // fee for the miners or the system
+  //   'factor':1,                                             // amount of decimals, i.e.: 10^x (6, but nem-sdk is doing this conversion for us)
+  // },
+  'nem.mainnet': {
+    'seed':'correct horse battery staple',                  // seed string for deterministic wallet
+    'keys':null,                                            // cryptographic keys (will be generated)
+    'source_address':null,                                  // where to transact from (will be generated)
+    'target_address':'NDFS3A-SGSXT4-XYDK7C-SPMGOR-GVNDNQ-ZUYQZH-HLIJ',
+    //'target_address':'TD367M-ZTCOJP-N3XBDG-EOKHO4-HFZDQB-B25X5I-54Z2',  // where to transact to
+    'amount':0.1,                                           // amount to send, for xem transfer mode, ignored in mosaic mode
+    'fee':0.00075,                                          // fee for the miners or the system
+    'factor':1,                                             // amount of decimals, i.e.: 10^x (6, but nem-sdk is doing this conversion for us)
+    'contract': {
+      'mosaics': [                                            // regular xem transfer if undefined
+        { 'amount': 1.35,
+          'definition': {
+            "creator": "cf07d5d757cbb0df22a8e9ee931034afc86bec9fafe3487f1ecdc2d584e3a6bd",
+            "description": "WunderWaffel",
+            "id": {
+              "namespaceId": "namespacex",
+              "name": "wunderwaffel"
+            },
+            "properties": [
+              {
+                "name": "divisibility",
+                "value": "3"
+              },
+              {
+                "name": "initialSupply",
+                "value": "1000"
+              },
+              {
+                "name": "supplyMutable",
+                "value": "true"
+              },
+              {
+                "name": "transferable",
+                "value": "true"
+              }
+            ],
+            "levy": {}
+          }
+        }/* ,
+        { 'amount': 1,
+          'definition': {
+            "creator": "cf07d5d757cbb0df22a8e9ee931034afc86bec9fafe3487f1ecdc2d584e3a6bd",
+            "description": "Tesla Rodster",
+            "id": {
+              "namespaceId": "namespacex.boosters",
+              "name": "teslarodster"
+            },
+            "properties": [
+              {
+                "name": "divisibility",
+                "value": "0"
+              },
+              {
+                "name": "initialSupply",
+                "value": "100"
+              },
+              {
+                "name": "supplyMutable",
+                "value": "true"
+              },
+              {
+                "name": "transferable",
+                "value": "true"
+              }
+            ],
+            "levy": {
+              "fee": 5,
+              "recipient": "TD367MZTCOJPN3XBDGEOKHO4HFZDQBB25X5I54Z2",
+              "type": 1,
+              "mosaicId": {
+                "namespaceId": "nem",
+                "name": "xem"
+              }
+            }
+          }
+        }
+        */
+      ]
+    }
+>>>>>>> nem_xem:test.js
   }
 }
 
@@ -102,10 +212,17 @@ if(typeof deterministic!='object' || deterministic=={}) {
   // generate cryptographic keys based on a seed string
   //
   input = { seed: tx[mode].seed, mode: submode }
+  logger('SEED: ' + input.seed);
+
   var result = deterministic.keys(input);
+  logger('KEYS: ' + JSON.stringify(result, null, 2));
+
   tx[mode].keys = result;
+<<<<<<< HEAD:test-zcash.js
   logger('SEED: '+input.seed);
   logger(JSON.stringify(result));
+=======
+>>>>>>> nem_xem:test.js
 
   //
   // produce a public address based on cryptographic keys
@@ -132,10 +249,11 @@ if(typeof deterministic!='object' || deterministic=={}) {
             keys:     tx[mode].keys,
             seed:     tx[mode].seed,
             unspent:  tx[mode].unspent,
-            mode:     submode
+            mode:     submode,
+            mosaics:  tx[mode].mosaics  // nem-specific
           }
   var result = deterministic.transaction(input);
-  logger('SIGNED TRANSACTION: '+result);
+  logger('SIGNED TRANSACTION: ' + JSON.stringify(result, null, 2));
 
 }
 
