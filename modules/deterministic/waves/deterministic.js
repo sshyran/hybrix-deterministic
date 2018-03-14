@@ -2,22 +2,24 @@
 // hybridd module - waves/deterministic.js
 // Deterministic encryption wrapper for Waves
 
+function uglyClone(obj){return JSON.parse(JSON.stringify(obj));}
+
 
 var wrapper = (
   function() {
-
 
     var Waves = wrapperlib.create(wrapperlib.MAINNET_CONFIG);
 
     var functions = {
 
       keys: function(data) {
-        return Waves.Seed.fromExistingPhrase(data.seed);
+        return uglyClone(Waves.Seed.fromExistingPhrase(data.seed));
       },
 
       address: function(data) {
-        return data.address;
+        return uglyClone(data.address);
       },
+
 
       transaction: function(data,callback) {
         var txParams;
@@ -54,15 +56,16 @@ var wrapper = (
           };
         }
 
-        Waves.API.Node.v1.assets.transfer(txParams, data.keys.keyPair).then((responseData) => {}).catch(function (error) {
-          callback(error.data); // Since we've hacked the fetch command it will error, but we don't need the result, we need the request
+        Waves.API.Node.v1.assets.transfer(txParams, data.keys.keyPair).then((responseData) => { }).then(function (error) {}).catch(function (error) {
+
+          // error.data.body contains the stringified transaction content
+          callback(error.data.body); // Since we've hacked the fetch command it will error, but we don't need the result, we need the request
         });
-
-
-
 
       }
     }
+
+
 
     return functions;
   }

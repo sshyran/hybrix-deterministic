@@ -20,8 +20,7 @@ altFetch = function(url, opts){
     resolve({json:function(response){
 
       return new Promise((resolve, reject) => {
-        var signature =  JSON.parse(opts.body).signature;
-        resolve(signature);
+        resolve(opts);
       });
     }});});
 };
