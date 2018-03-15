@@ -80,31 +80,37 @@ var wrapper = (
       // Create variable to store our mosaic definitions, needed to calculate fees properly (already contains xem definition)
       var mosaicDefinitionMetaDataPair = wrapperlib.nem.model.objects.get("mosaicDefinitionMetaDataPair");
 
-      data.contract.mosaics.forEach(function(mosaic) {
-        var namespace    = mosaic.definition.id.namespaceId;
-        var mosaicName   = mosaic.definition.id.name;
-        var divisibility = mosaic.definition.properties.reduce(function(acc, prop) {
-          if (prop.name == "divisibility") {
-            return prop.value;
-          }
-          return acc;
-        }, undefined);
-        //var amount = toUnits(mosaic.amount, divisibility); // decimal amount * 10^divisibility
-        var amount = fromUnits(data.amount, divisibility);
-        // DEBUG: console.log("namespace: ", namespace, ", mosaicName: ", mosaicName, ", divisibility: ", divisibility, ", amount: ", amount);
+      //data.unspent.forEach(function(mosaic) {
+      //});
+      
+      var namespace    = data.unspent.id.namespaceId;
+      var mosaicName   = data.unspent.id.name;
+      /*
+      var divisibility = data.unspent.properties.reduce(function(acc, prop) {
+        if (prop.name === "divisibility") {
+          return prop.value;
+        }
+        return acc;
+      }, undefined);
+      */
+      
+      var amount = data.amount;
+      //var amount = fromUnits(data.amount, data.factor);
+      //var amount = toUnits(mosaic.amount, divisibility); // decimal amount * 10^divisibility
+      // DEBUG: console.log("namespace: ", namespace, ", mosaicName: ", mosaicName, ", divisibility: ", divisibility, ", amount: ", amount);
 
-        var mosaicAttachment = wrapperlib.nem.model.objects.create("mosaicAttachment")(namespace, mosaicName, amount);
-        transferTransaction.mosaics.push(mosaicAttachment);
+      var mosaicAttachment = wrapperlib.nem.model.objects.create("mosaicAttachment")(namespace, mosaicName, amount);
 
-        // Get full name of mosaic to use as object key
-        var fullMosaicName = wrapperlib.nem.utils.format.mosaicIdToName(mosaicAttachment.mosaicId);
-        // DEBUG: console.log("fullMosaicName: ", fullMosaicName);
+      transferTransaction.mosaics.push(mosaicAttachment);
 
-        // Set mosaic definition into mosaicDefinitionMetaDataPair
-        mosaicDefinitionMetaDataPair[fullMosaicName] = {};
-        mosaicDefinitionMetaDataPair[fullMosaicName].mosaicDefinition = mosaic.definition;
-        // DEBUG: console.log("mosaic.definition: ", JSON.stringify(mosaic.definition, null, 2));
-      });
+      // Get full name of mosaic to use as object key
+      var fullMosaicName = wrapperlib.nem.utils.format.mosaicIdToName(mosaicAttachment.mosaicId);
+      // DEBUG: console.log("fullMosaicName: ", fullMosaicName);
+
+      // Set mosaic definition into mosaicDefinitionMetaDataPair
+      mosaicDefinitionMetaDataPair[fullMosaicName] = {};
+      mosaicDefinitionMetaDataPair[fullMosaicName].mosaicDefinition = data.unspent;
+      // DEBUG: console.log("mosaic.definition: ", JSON.stringify(data.unspent, null, 2));
 
       // Prepare the transfer transaction object
       var transactionEntity = wrapperlib.nem.model.transactions.prepare("mosaicTransferTransaction")(common, transferTransaction, mosaicDefinitionMetaDataPair, network.id);
@@ -156,15 +162,15 @@ var wrapper = (
         common.privateKey = data.keys.privateKey;
 
         var transactionEntity = undefined;
-        if (typeof data.contract === 'undefined' || !data.contract || typeof data.contract.mosaics === 'undefined' || !data.contract.mosaics) {
+        if (typeof data.contract === 'undefined' || !data.contract) {
           var minfee = minimumFee(fromUnits(data.amount,data.factor));
           var amount = fromUnits(data.amount,data.factor); // calculating fee is automatically done by nem.model.objects.create
-          var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, amount, data.message);
+          var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, amount, '');
           transactionEntity = txEntityRegular(network, common, transferTransaction);
           // DEBUG: logger(JSON.stringify(transferTransaction));
         } else {
           var minfee = minimumFee(fromUnits(data.amount,data.factor));
-          var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, minfee, data.message);
+          var transferTransaction = wrapperlib.nem.model.objects.create("transferTransaction")(data.target, minfee, data.unspent);
           transactionEntity = txEntityMosaic(network, common, transferTransaction, data);
         }
         
