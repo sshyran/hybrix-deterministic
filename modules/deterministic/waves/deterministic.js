@@ -8,6 +8,7 @@ function uglyClone(obj){return JSON.parse(JSON.stringify(obj));}
 var wrapper = (
   function() {
 
+
     var Waves = wrapperlib.create(wrapperlib.MAINNET_CONFIG);
 
     var functions = {
@@ -57,9 +58,8 @@ var wrapper = (
         }
 
         Waves.API.Node.v1.assets.transfer(txParams, data.keys.keyPair).then((responseData) => { }).then(function (error) {}).catch(function (error) {
-
-          // error.data.body contains the stringified transaction content
-          callback(error.data.body); // Since we've hacked the fetch command it will error, but we don't need the result, we need the request
+          var transactionId = (typeof error.data.body === 'string')?error.data.body:JSON.stringify(error.data.body);
+          callback(transactionId); // Since we've hacked the fetch command it will error, but we don't need the result, we need the request
         });
 
       }
