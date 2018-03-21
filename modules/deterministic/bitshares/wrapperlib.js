@@ -23,5 +23,6 @@ var bitsharesjs = {
   bitshares : require('bitsharesjs')
 }
 
+//bitsharesjs.Apis = require('bitsharesjs-ws').Apis;
 
 module.exports = bitsharesjs;

@@ -5,22 +5,31 @@
 var wrapper = (
 	function() {
 
+    function toBtsPublic(prefix,publicKey) {
+      var pub_buf = publicKey.toBuffer();
+      var checksum = hash.ripemd160(pub_buf);
+      var addy = Buffer.concat([pub_buf,checksum.slice(0,4)]);
+      return prefix+base58.encode(addy);
+    }
+  
 		var functions = {
           
 			// create deterministic public and private keys based on a seed
 			keys : function(data) {        
-        var privateKey = wrapperlib.bitshares.PrivateKey.fromSeed( wrapperlib.bitshares.key.normalize_brainKey(data.seed) );
+        var privateKeyObj = wrapperlib.bitshares.PrivateKey.fromSeed( wrapperlib.bitshares.key.normalize_brainKey(data.seed) );
         // console.log("\nPrivate key:", privateKey.toWif());
-        return {privateKey:privateKey};
+        var privateKey = privateKeyObj.toWif();
+        var publicKey = privateKeyObj.toPublicKey().toString();
+        return {privateKeyObj:privateKeyObj,privateKey:privateKey,publicKey:publicKey};
 			},
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        return data.privateKey.toPublicKey().toString();
+        return 'IoC-'+data.publicKey;
       },
 
       // create and sign a transaction
-			transaction : function(data) {
+			transaction : function(data,callback) {
         
         let tr = new wrapperlib.bitshares.TransactionBuilder();
 
@@ -42,12 +51,13 @@ var wrapper = (
 
           tr.add_type_operation( "transfer", {
               fee: {
-                  amount: "0033",
+                  amount: 33,
                   asset_id: "1.3.0"   // this ID is for the BTS main asset
               },
-              from: data.source,
-              to: data.target,
-              amount: { amount: "1", asset_id: "1.3.0" }
+              from: "1.2.155481",
+              to: "1.2.155481",       // TEST: internet-of-coins
+              amount: { amount: 1, asset_id: "1.3.0" }
+              //,memo: memo_object
           });
 
 /*          
@@ -63,13 +73,16 @@ var wrapper = (
               //,memo: memo_object
           } );
 
-/*
-          tr.set_required_fees().then(() => {
-              tr.add_signer(data.keys.privateKey, data.keys.privateKey.toPublicKey().toString());
-              console.log("serialized transaction:", tr.serialize());
-              // don't broadcast here! -> tr.broadcast();
-          } );  */
+*/
+          FIXIT = null;
+          //tr.set_required_fees().then(() => {
+            tr.add_signer(data.keys.privateKeyObj, data.keys.publicKey);
+            // don't broadcast here! -> tr.broadcast();
+            var rawtxstring = JSON.stringify(tr.serialize());
+            callback(rawtxstring+' '+data.keys.publicKey);
+          //} );
 
+          
         } else {
         }
         

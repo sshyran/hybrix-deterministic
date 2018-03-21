@@ -101,8 +101,10 @@ if(typeof deterministic!='object' || deterministic=={}) {
             seed:tx[mode].seed,
             unspent:tx[mode].unspent
           }
-  var result = deterministic.transaction(input);
-  logger('SIGNED TRANSACTION: '+result);
+  var result = deterministic.transaction(input,
+  function(result) {
+    logger('SIGNED TRANSACTION: '+result);
+  });
 
 }
 
