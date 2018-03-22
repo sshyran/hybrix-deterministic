@@ -15,16 +15,22 @@ var wrapper = (
     var functions = {         
       // create deterministic public and private keys based on a seed
       keys : function(data) {
+        // return deterministic transaction data
+        var network = 'bitcoin';
+        if(data.mode === 'counterparty') {
+          network = 'bitcoin';
+        } else { network = data.mode; }
+
         var hash = wrapperlib.crypto.sha256(data.seed);
         var privk = BigInteger.fromBuffer(hash);
         var pubk  = null;
 
-        if (data.mode === 'bitcoin') {
+        if (network === 'bitcoin' || network === 'counterparty') {
           var keyPair = new wrapperlib.ECPair(privk);       // backwards compatibility for BTC
         } else {
           var keyPair = new wrapperlib.ECPair(privk, pubk, {
                           compressed: false,
-                          network: wrapperlib.networks[data.mode]
+                          network: wrapperlib.networks[network]
                         });
         }
         var wif = keyPair.toWIF();
@@ -33,22 +39,42 @@ var wrapper = (
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        var keyPair = wrapperlib.ECPair.fromWIF(data.keys.WIF,wrapperlib.networks[data.mode])
+        // return deterministic transaction data
+        var network = 'bitcoin';
+        if(data.mode === 'counterparty') {
+          network = 'bitcoin';
+        } else { network = data.mode; }
+
+        var keyPair = wrapperlib.ECPair.fromWIF(data.WIF,wrapperlib.networks[network])
         return keyPair.getAddress();
       },
 
       transaction : function(data) {
         // return deterministic transaction data
-        var keyPair = wrapperlib.ECPair.fromWIF(data.keys.WIF,wrapperlib.networks[data.mode]);
-        var tx = new wrapperlib.TransactionBuilder(wrapperlib.networks[data.mode]);
+        var network = 'bitcoin';
+        if(data.mode === 'counterparty') {
+          network = 'bitcoin';
+        } else { network = data.mode; }
+        
+        var keyPair = wrapperlib.ECPair.fromWIF(data.keys.WIF,wrapperlib.networks[network]);
+        var tx = new wrapperlib.TransactionBuilder(wrapperlib.networks[network]);
 
         // add inputs
         for(var i in data.unspent.unspents) {
           tx.addInput(data.unspent.unspents[i].txid,parseInt(data.unspent.unspents[i].txn));
         }
 
+        // add an op_return message
+        if (data.mode === 'counterparty') {
+          var payloadBuffer = Buffer.from(data.unspent.payload, 'hex');
+          var payloadScript = wrapperlib.script.nullData.output.encode(payloadBuffer);
+          tx.addOutput(payloadScript, 0);    // or , 1000);
+        }
+
         // add outputs
         tx.addOutput(data.target,parseInt(data.amount));
+
+        // send back change
         var outchange=parseInt(data.unspent.change); // fee is already being deducted when calculating unspents
         if(outchange>0) { tx.addOutput(data.source,outchange); }
 
@@ -56,14 +82,9 @@ var wrapper = (
         for(var i in data.unspent.unspents) {
           tx.sign(parseInt(i),keyPair);
         }
-
+        
         return tx.build().toHex();
 
-        // Other options for later:
-        // Adding a message: https://bitcoin.stackexchange.com/questions/30834/create-op-return-tx-with-bitcoinjs-lib
-        // Calculate Transaction ID
-        //var txid = wrapperlib.bufferutils.reverse(result.getHash()).toString('hex')
-        //return txid;
       }
     }
 
