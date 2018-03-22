@@ -23,13 +23,13 @@ export class ObjectPart extends BasePart<IObjectPart> {
         });
     }
 
-    public process(data: any): Promise<any> {
-        return super.process(data).then((value) => {
+    public process(data: any, rootList: Array<any>): Promise<any> {
+        return super.process(data, rootList).then((value) => {
             if (value && isObject(value)) {
                 const promises = [];
                 const result = Object.create(null);
                 Object.keys(this._childHash).forEach((name) => {
-                    const promise = this._childHash[name].process(data).then((itemValue) => {
+                    const promise = this._childHash[name].process(data, rootList).then((itemValue) => {
                         result[name] = itemValue;
                     });
                     promises.push(promise);

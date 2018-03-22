@@ -54,7 +54,7 @@ var wrapper = (
                   amount: 33,
                   asset_id: "1.3.0"   // this ID is for the BTS main asset
               },
-              from: "1.2.155481",
+              from: "1.2.15",
               to: "1.2.155481",       // TEST: internet-of-coins
               amount: { amount: 1, asset_id: "1.3.0" }
               //,memo: memo_object
@@ -79,7 +79,7 @@ var wrapper = (
             tr.add_signer(data.keys.privateKeyObj, data.keys.publicKey);
             // don't broadcast here! -> tr.broadcast();
             var rawtxstring = JSON.stringify(tr.serialize());
-            callback(rawtxstring+' '+data.keys.publicKey);
+            callback(rawtxstring);
           //} );
 
           
