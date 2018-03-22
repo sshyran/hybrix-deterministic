@@ -324,14 +324,14 @@ CWBitcore.signRawTransaction = function(unsignedHex, cwPrivateKey, disableIsFull
   checkArgType(cwPrivateKey, "object");
   checkArgType(cb, "function");
 
-  try {
+//  try {
     var tx = bitcore.Transaction(unsignedHex);
 
     var keyMap = CWBitcore.genKeyMap([cwPrivateKey]);
     var keyChain = [];
 
-    async.forEachOf(
-      tx.inputs,
+     tx.inputs.forEach(
+
       function(input, idx, cb) {
         (function(cb) {
           var inputObj;
@@ -488,12 +488,13 @@ CWBitcore.signRawTransaction = function(unsignedHex, cwPrivateKey, disableIsFull
         });
       }
     );
-  } catch (err) {
+//  } catch (err) {
     // async.nextTick to avoid parent trycatch
-    async.nextTick(function() {
-      cb(err);
-    });
-  }
+//    async.nextTick(function() {
+  //    cb(err);
+    //});
+   // console.log("error");
+ // }
 };
 
 CWBitcore.extractMultiSigAddressesFromScript = function(script) {

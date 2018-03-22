@@ -311,14 +311,12 @@ function isdatacorrect(data_chunk, asset, asset_total) {
 }
 
 
-function sendXCP(add_from, add_to, asset, asset_total, btc_total, msig_total, transfee, mnemonic) {
+function sendXCP(add_from, add_to, asset, asset_total, btc_total, msig_total, transfee, mnemonic, uxto) {
 
     //var mnemonic = $("#newpassphrase").html();
 
     var privkey = getprivkey(add_from, mnemonic);
 
-    var source_html = "https://"+INSIGHT_SERVER+"/api/addr/"+add_from+"/utxo";
-    //var source_html = "https://chain.localbitcoins.com/api/addr/"+add_from+"/utxo";
     var total_utxo = new Array();
 
   uxto.forEach(function( data ) {

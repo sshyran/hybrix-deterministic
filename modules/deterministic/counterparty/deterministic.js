@@ -66,11 +66,13 @@ var wrapper = (
       // create and sign a transaction
       transaction : function(data,callback) {
         var txParams = {};
-        var unsignedHex ; //TODO counterparty_api('create_send', {'source': source, 'destination': destination, 'asset': asset, 'quantity': quantity, 'pubkey': pubkey})
+        var unsignedHex ="appeltaart" ; //TODO counterparty_api('create_send', {'source': source, 'destination': destination, 'asset': asset, 'quantity': quantity, 'pubkey': pubkey})
 
-        CWBitcore.signRawTransaction2(unsignedHex, data.cwk, function(signedHex) {
-          callback(signedHex);
-        })
+        sendXCP(add_from, add_to, asset, asset_total, btc_total, msig_total, transfee, mnemonic, uxto)
+   //     console.log(JSON.stringify(data.keys.cwk))
+     //   wrapperlib.CWBitcore.signRawTransaction(unsignedHex, data.keys.cwk, function(signedHex) {
+       //   callback(signedHex);
+       // })
       }
 
     }

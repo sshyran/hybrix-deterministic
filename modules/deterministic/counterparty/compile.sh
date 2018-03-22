@@ -15,7 +15,7 @@ NODEINST=`which node`
 ../../../node_modules/browserify/bin/cmd.js deterministic.js -o deterministic.browserify.js
 
 # concatenate these products and compress into DOM injectable
-cat wrapperlib.browserify.js deterministic.browserify.js > compiled.js
+cat lib/transactions.js wrapperlib.browserify.js deterministic.browserify.js > compiled.js
 ../../../tools/lzmapack.js compiled.js
 
 # clean up
