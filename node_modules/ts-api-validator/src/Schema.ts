@@ -13,7 +13,7 @@ export class Schema {
     }
 
     public parse(data: any): Promise<any> {
-        return this._children.process(data);
+        return this._children.process(data, []);
     }
 
 }
