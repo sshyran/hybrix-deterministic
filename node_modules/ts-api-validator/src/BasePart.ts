@@ -14,6 +14,7 @@ export abstract class BasePart<T extends IPartialOptions<any>> {
         if (this.options.isEmpty) {
             this.isEmpty = this.options.isEmpty;
         }
+
         if (this.options.isValid) {
             this.isValid = this.options.isValid;
         }
@@ -23,9 +24,9 @@ export abstract class BasePart<T extends IPartialOptions<any>> {
         }
     }
 
-    public process(data: any): Promise<any> {
+    public process(data: any, roots: Array<any>): Promise<any> {
         const path = this.getPath();
-        const result = this.getValue(this.getDataByPath(data, path));
+        const result = this.getValue(this.getDataByPath(data, path), roots);
 
         return BasePart.toPromise(result).then((value) => {
             const isEmpty = this.isEmpty(value);
@@ -76,13 +77,13 @@ export abstract class BasePart<T extends IPartialOptions<any>> {
         }
     }
 
-    protected abstract getValue(data: any): any
+    protected abstract getValue(data: any, roots?: Array<any>): any
 
     private static isPromise(some: any): boolean {
         return some && some.then && typeof some.then === 'function';
     }
 
-    private static toPromise<T>(some: T|Promise<T>): Promise<T> {
+    private static toPromise<T>(some: T | Promise<T>): Promise<T> {
         return BasePart.isPromise(some) ? some as Promise<T> : Promise.resolve(some as T);
     }
 

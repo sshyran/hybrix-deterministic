@@ -14,10 +14,10 @@ export class ArrayPart extends BasePart<IArrayPart> {
         this._child = new Component(this.options.content);
     }
 
-    public process(data: any): Promise<any> {
-        return super.process(data).then((value) => {
+    public process(data: any, rootList: Array<any>): Promise<any> {
+        return super.process(data, rootList).then((value) => {
             if (value && isArray(value)) {
-                return Promise.all(value.map((item) => this._child.process(item)));
+                return Promise.all(value.map((item) => this._child.process(item, rootList.concat(data))));
             } else {
                 return value;
             }
