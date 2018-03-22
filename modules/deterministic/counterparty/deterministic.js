@@ -1,98 +1,70 @@
 // (C) 2017 Internet of Coins / Joachim de Koning
 // hybridd module - bitshares/deterministic.js
-// Deterministic encryption wrapper for Bitshares
+// Deterministic encryption wrapper for Counterparty
+
+
+// Reference: https://counterparty.io/docs/api/#signing-transactions-before-broadcasting
 
 var wrapper = (
-	function() {
+  function() {
 
-    function toBtsPublic(prefix,publicKey) {
-      var pub_buf = publicKey.toBuffer();
-      var checksum = hash.ripemd160(pub_buf);
-      var addy = Buffer.concat([pub_buf,checksum.slice(0,4)]);
-      return prefix+base58.encode(addy);
+    /*
+
+<html>
+    <script src="https://raw.githubusercontent.com/bitpay/bitcore-lib/f031e1ddfbf0064ef503a28aada86c4fbf9a414c/bitcore-lib.min.js"></script>
+    <script src="https://raw.githubusercontent.com/CounterpartyXCP/counterwallet/master/src/js/util.bitcore.js"></script>
+    <script src="https://raw.githubusercontent.com/CounterpartyXCP/counterwallet/master/src/js/external/mnemonic.js"></script>
+    <script>
+    counterparty_api = function(method, params) {
+        // call Counterparty API method via your prefered method
     }
-  
-		var functions = {
-          
-			// create deterministic public and private keys based on a seed
-			keys : function(data) {        
-        var privateKeyObj = wrapperlib.bitshares.PrivateKey.fromSeed( wrapperlib.bitshares.key.normalize_brainKey(data.seed) );
-        // console.log("\nPrivate key:", privateKey.toWif());
-        var privateKey = privateKeyObj.toWif();
-        var publicKey = privateKeyObj.toPublicKey().toString();
-        return {privateKeyObj:privateKeyObj,privateKey:privateKey,publicKey:publicKey};
-			},
+
+    bitcoin_api = function(method, params) {
+        // call Bitcoin Core API method via your prefered method
+    }
+
+    // generate a passphrase
+    var m = new Mnemonic(128); //128 bits of entropy (12 word passphrase)
+    var words = m.toWords();
+    var passphrase = words.join(' ')
+
+    // generate private key, public key and address from the passphrase
+    wallet = new CWHierarchicalKey(passphrase);
+    var cwk = wallet.getAddressKey(i); // i the number of the address
+    var source = key.getAddress();
+    var pubkey = cwk.getPub()
+
+    // generate unsigned transaction
+    unsigned_hex = counterparty_api('create_send', {'source': source, 'destination': destination, 'asset': asset, 'quantity': quantity, 'pubkey': pubkey})
+
+    CWBitcore.signRawTransaction2(self.unsignedTx(), cwk, function(signedHex) {
+        bitcoin_api('sendrawtransaction', signedHex)
+    })
+    </script>
+</html>
+*/
+    var functions = {
+
+      // create deterministic public and private keys based on a seed
+      keys : function(data) {
+        console.log(data.seed);
+        return "appeltaart";
+      },
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        return 'IoC-'+data.publicKey;
+        return "cheesecake";
       },
 
       // create and sign a transaction
-			transaction : function(data,callback) {
-        
-        let tr = new wrapperlib.bitshares.TransactionBuilder();
+      transaction : function(data,callback) {
 
-        if (data.mode != 'token') {
+      },
 
-    /* EXAMPLE:
-         var transfer = new wrapperlib.bitshares.Serializer(
-          "transfer", {
-              fee: {
-                  amount: "0.0033",
-                  asset_id: "1.3.0"   // this ID is for the BTS main asset
-              },
-              from: data.source,
-              to: data.target,
-              amount: { amount: "1", asset_id: "1.3.0" }
-          });
-          console.log(transfer);
-    */
+    }
 
-          tr.add_type_operation( "transfer", {
-              fee: {
-                  amount: 33,
-                  asset_id: "1.3.0"   // this ID is for the BTS main asset
-              },
-              from: "1.2.155481",
-              to: "1.2.155481",       // TEST: internet-of-coins
-              amount: { amount: 1, asset_id: "1.3.0" }
-              //,memo: memo_object
-          });
-
-/*          
-          tr.add_type_operation( "transfer", {
-              fee: {
-                  amount: data.fee,
-                  asset_id: "1.3.0"   // this ID is for the BTS main asset
-              },
-              from: data.source,
-              to: data.target,
-              amount: { amount: 1, asset_id: "1.3.0" }
-              //amount: { amount: parseInt(data.amount), asset_id: data.contract }
-              //,memo: memo_object
-          } );
-
-*/
-          FIXIT = null;
-          //tr.set_required_fees().then(() => {
-            tr.add_signer(data.keys.privateKeyObj, data.keys.publicKey);
-            // don't broadcast here! -> tr.broadcast();
-            var rawtxstring = JSON.stringify(tr.serialize());
-            callback(rawtxstring+' '+data.keys.publicKey);
-          //} );
-
-          
-        } else {
-        }
-        
-        return '###';
-			},
-
-		}
-
-		return functions;
-	}
+    return functions;
+  }
 )();
 
 // export functionality to a pre-prepared var
