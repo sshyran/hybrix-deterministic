@@ -8,6 +8,7 @@
 var wrapper = (
   function() {
 
+
     /*
 
 <html>
@@ -42,24 +43,35 @@ var wrapper = (
     })
     </script>
 </html>
+
+
+
 */
     var functions = {
 
       // create deterministic public and private keys based on a seed
       keys : function(data) {
-        console.log(data.seed);
-        return "appeltaart";
+        var wallet = new wrapperlib.CWHierarchicalKey(data.seed+" "+data.seed+" "+data.seed+" "+data.seed); //repeated due to insufficient entropy
+        var cwk = wallet.getAddressKey(0); // i the number of the address
+        var source = cwk.getAddress();
+        var pubkey = cwk.getPub()
+        return {source:source,pubkey:pubkey, cwk:cwk};
       },
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        return "cheesecake";
+        return data.source;
       },
 
       // create and sign a transaction
       transaction : function(data,callback) {
+        var txParams = {};
+        var unsignedHex ; //TODO counterparty_api('create_send', {'source': source, 'destination': destination, 'asset': asset, 'quantity': quantity, 'pubkey': pubkey})
 
-      },
+        CWBitcore.signRawTransaction2(unsignedHex, data.cwk, function(signedHex) {
+          callback(signedHex);
+        })
+      }
 
     }
 

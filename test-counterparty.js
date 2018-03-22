@@ -13,7 +13,7 @@ Decimal = require('./lib/crypto/decimal-light'); Decimal.set({ precision: 64 });
 hex2dec = require('./lib/crypto/hex2dec');
 
   jsdom = require('jsdom');
-/*
+
 //
 // first some most often used global functions
 //
@@ -50,7 +50,7 @@ var deterministic = activate( LZString.decompressFromEncodedURIComponent(dcode) 
 var input = {}
 
 var tx = {
-      'waves': {
+      'counterparty': {
         'seed':'correct horse battery staple',                  // seed string for deterministic wallet
         'keys':null,                                            // cryptographic keys (will be generated)
         'source_address':null,                                  // where to transact from (will be generated)
@@ -60,7 +60,7 @@ var tx = {
         'fee':1,                                                // fee for the miners or the system
         'unspent':{                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
                   },
-        'factor':8,                                             // amount of decimals, i.e.: 10^x
+        'factor':8                                            // amount of decimals, i.e.: 10^x
       }
     }
 
@@ -127,4 +127,3 @@ function activate(code) {
     return function(){};
   }
 }
-*/
