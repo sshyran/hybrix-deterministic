@@ -42,7 +42,7 @@ toInt = function(input,factor) {
 // first we read from the compiled package and activate the code
 //
 
-var mode = 'counterparty';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
+var mode = 'bitcoinjslib.counterparty';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
 dcode = String(fs.readFileSync('./modules/deterministic/'+mode.split('.')[0]+'/deterministic.js.lzma'))
 //require(LZString.decompressFromEncodedURIComponent(dcode));
 var deterministic = activate( LZString.decompressFromEncodedURIComponent(dcode) );
@@ -50,16 +50,19 @@ var deterministic = activate( LZString.decompressFromEncodedURIComponent(dcode) 
 var input = {}
 
 var tx = {
-      'counterparty': {
-        'seed':'correct horse battery staple with-some-entropy-73fe04e5a7a16dbe16492a8773036db1646d87e22337b1c64aae0afab788b626',                  // seed string for deterministic wallet
+      'bitcoinjslib.counterparty': {
+        'seed':'correct horse battery staple',                  // seed string for deterministic wallet
         'keys':null,                                            // cryptographic keys (will be generated)
         'source_address':null,                                  // where to transact from (will be generated)
-        'target_address':'3PLBy8VDPFFyWiGSwSuQeiyJFZxqGkNDznp', // where to transact to
+        'target_address':'1ATDudWEEZmB2TKcEehZwUX2i3wBxQrSDK', // where to transact to
         'contract':'',                                          // TODO? -> smart contract address
-        'amount':0.1,                                           // amount to send
-        'fee':0.001,                                                // fee for the miners or the system
+        'amount':0.005,                                           // amount to send
+        'fee':0.001,                                            // fee for the miners or the system
         'unspent':                                              // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
-            {"unspents":[{"amount":"0.00007800","txid":"aa3121aadee3ae9412aaf3c23d1368deaa27083eecc2ddc848cd75d9503d1a9a","txn":0},{"amount":"0.73990000","txid":"fc7acd529e590002ebca9c7430cab4fa42d33b61f404a40f548e754b72d33962","txn":36}],"change":"0.729978"},
+            {
+              "payload":"434e54525052545900000000000000000000000100038d7ea4c68000", //  (0.1 XCP)
+              "unspents":[{"amount":"0.00007800","txid":"aa3121aadee3ae9412aaf3c23d1368deaa27083eecc2ddc848cd75d9503d1a9a","txn":0},{"amount":"0.73990000","txid":"fc7acd529e590002ebca9c7430cab4fa42d33b61f404a40f548e754b72d33962","txn":36}],"change":"0.1"
+            },
         'factor':8                                            // amount of decimals, i.e.: 10^x
       }
     }
@@ -91,6 +94,15 @@ if(typeof deterministic!='object' || deterministic=={}) {
   //
   // create a signed transaction
   //
+
+  // prepare unspent change
+  tx[mode].unspent.change = toInt(tx[mode].unspent.change,tx[mode].factor);
+
+  // amend fee to account for payload bytes (Counterparty)
+  tx[mode].fee = tx[mode].fee + (0.0000025*tx[mode].unspent.payload.length);
+  logger('FEE AFTER PAYLOAD: '+tx[mode].fee+' BTC');
+  
+  // put it all together
   input = {
             mode:mode.split('.')[1],
             source:tx[mode].source_address,
@@ -105,9 +117,13 @@ if(typeof deterministic!='object' || deterministic=={}) {
   }
 
   var onTransaction = function(result){
+    logger('SIGNED TRANSACTION (CALLBACK): '+result);
+  }
+
+  result = deterministic.transaction(input,onTransaction);
+  if(result) {
     logger('SIGNED TRANSACTION: '+result);
   }
-  deterministic.transaction(input,onTransaction);
 
 }
 
