@@ -51,7 +51,7 @@ var wrapper = (
 
       // create deterministic public and private keys based on a seed
       keys : function(data) {
-        var wallet = new wrapperlib.CWHierarchicalKey(data.seed+" "+data.seed+" "+data.seed+" "+data.seed); //repeated due to insufficient entropy
+        var wallet = new wrapperlib.CWHierarchicalKey(data.seed); //repeated due to insufficient entropy
         var cwk = wallet.getAddressKey(0); // i the number of the address
         var source = cwk.getAddress();
         var pubkey = cwk.getPub()
