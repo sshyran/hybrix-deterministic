@@ -69,11 +69,13 @@ var wrapper = (
           var payloadBuffer = Buffer.from(data.unspent.payload, 'hex');
           var payloadScript = wrapperlib.script.nullData.output.encode(payloadBuffer);
           tx.addOutput(payloadScript, 0);    // or , 1000);
+          // in case of Counterparty, only add spend fee, instead of amount
+          tx.addOutput(data.target,parseInt(data.fee));          
+        } else {
+          // add spend amount output
+          tx.addOutput(data.target,parseInt(data.amount));
         }
-
-        // add outputs
-        tx.addOutput(data.target,parseInt(data.amount));
-
+        
         // send back change
         var outchange=parseInt(data.unspent.change); // fee is already being deducted when calculating unspents
         if(outchange>0) { tx.addOutput(data.source,outchange); }
