@@ -11,8 +11,8 @@ var wrapper = (
     var ecurve = require('ecurve');
     var BigInteger = require('bigi');
     // DISABLED INSIDE wrapper FUNCTION: var wrapperlib = require('bitcoinjs-lib');
-    
-    var functions = {         
+
+    var functions = {
       // create deterministic public and private keys based on a seed
       keys : function(data) {
         // return deterministic transaction data
@@ -55,7 +55,7 @@ var wrapper = (
         if(data.mode === 'counterparty') {
           network = 'bitcoin';
         } else { network = data.mode; }
-        
+
         var keyPair = wrapperlib.ECPair.fromWIF(data.keys.WIF,wrapperlib.networks[network]);
         var tx = new wrapperlib.TransactionBuilder(wrapperlib.networks[network]);
 
@@ -66,16 +66,21 @@ var wrapper = (
 
         // add an op_return message
         if (data.mode === 'counterparty') {
-          var payloadBuffer = Buffer.from(data.unspent.payload, 'hex');
+
+          var symbol = data.symbol;
+          var asset_name = symbol.indexOf('.')!==-1?symbol.split('.')[1]:symbol
+          var payload = create_xcp_send_data_opreturn(asset_name,data.amount-data.fee);
+          var payloadBuffer = Buffer.from(payload, 'hex');
           var payloadScript = wrapperlib.script.nullData.output.encode(payloadBuffer);
+
           tx.addOutput(payloadScript, 0);    // or , 1000);
           // in case of Counterparty, only add spend fee, instead of amount
-          tx.addOutput(data.target,parseInt(data.fee));          
+          tx.addOutput(data.target,parseInt(data.fee));
         } else {
           // add spend amount output
           tx.addOutput(data.target,parseInt(data.amount));
         }
-        
+
         // send back change
         var outchange=parseInt(data.unspent.change); // fee is already being deducted when calculating unspents
         if(outchange>0) { tx.addOutput(data.source,outchange); }
@@ -84,7 +89,7 @@ var wrapper = (
         for(var i in data.unspent.unspents) {
           tx.sign(parseInt(i),keyPair);
         }
-        
+
         return tx.build().toHex();
 
       }
