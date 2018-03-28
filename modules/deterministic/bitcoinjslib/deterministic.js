@@ -17,7 +17,7 @@ var wrapper = (
       keys : function(data) {
         // return deterministic transaction data
         var network = 'bitcoin';
-        if(data.mode === 'counterparty') {
+        if(data.mode === 'bitcoincash' || data.mode === 'counterparty') {
           network = 'bitcoin';
         } else { network = data.mode; }
 
@@ -25,7 +25,7 @@ var wrapper = (
         var privk = BigInteger.fromBuffer(hash);
         var pubk  = null;
 
-        if (network === 'bitcoin' || network === 'counterparty') {
+        if (network === 'bitcoin') {
           var keyPair = new wrapperlib.ECPair(privk);       // backwards compatibility for BTC
         } else {
           var keyPair = new wrapperlib.ECPair(privk, pubk, {
@@ -54,7 +54,13 @@ var wrapper = (
         var network = 'bitcoin';
         if(data.mode === 'counterparty') {
           network = 'bitcoin';
-        } else { network = data.mode; }
+        } else {
+          if(data.mode === 'bitcoincash') {
+            network = 'bitcoin';
+          } else {
+            network = data.mode;
+          }
+        }
         
         var keyPair = wrapperlib.ECPair.fromWIF(data.keys.WIF,wrapperlib.networks[network]);
         var tx = new wrapperlib.TransactionBuilder(wrapperlib.networks[network]);
@@ -74,6 +80,11 @@ var wrapper = (
         } else {
           // add spend amount output
           tx.addOutput(data.target,parseInt(data.amount));
+          /* TODO: add support for Bitcoin Cash
+           *if(data.mode === 'bitcoincash') {
+            tx.enableBitcoinCash(true);
+            tx.setVersion(2);
+          }*/
         }
         
         // send back change
