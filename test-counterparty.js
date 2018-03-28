@@ -52,6 +52,7 @@ var input = {}
 var tx = {
       'bitcoinjslib.counterparty': {
         'seed':'correct horse battery staple',                  // seed string for deterministic wallet
+        'symbol': "xcp",
         'keys':null,                                            // cryptographic keys (will be generated)
         'source_address':null,                                  // where to transact from (will be generated)
         'target_address':'1ATDudWEEZmB2TKcEehZwUX2i3wBxQrSDK', // where to transact to
@@ -101,7 +102,7 @@ if(typeof deterministic!='object' || deterministic=={}) {
   // amend fee to account for payload bytes (Counterparty)
   tx[mode].fee = tx[mode].fee + (0.0000025*tx[mode].unspent.payload.length);
   logger('FEE AFTER PAYLOAD: '+tx[mode].fee+' BTC');
-  
+
   // put it all together
   input = {
             mode:mode.split('.')[1],

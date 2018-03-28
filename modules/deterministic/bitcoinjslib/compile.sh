@@ -8,7 +8,7 @@ NODEINST=`which node`
 
 ../../../node_modules/browserify/bin/cmd.js deterministic.js -o deterministic.browserify.js
 
-cat wrapperlib.browserify.js deterministic.browserify.js > compiled.js
+cat counterparty.lib.js wrapperlib.browserify.js deterministic.browserify.js > compiled.js
 
 ../../../tools/lzmapack.js compiled.js
 rm deterministic.browserify.js
