@@ -5,13 +5,6 @@
 var wrapper = (
   function() {
 
-    function toBtsPublic(prefix,publicKey) {
-      var pub_buf = publicKey.toBuffer();
-      var checksum = hash.ripemd160(pub_buf);
-      var addy = Buffer.concat([pub_buf,checksum.slice(0,4)]);
-      return prefix+base58.encode(addy);
-    }
-
     var functions = {
 
       // create deterministic public and private keys based on a seed
@@ -25,20 +18,23 @@ var wrapper = (
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        return 'IoC-'+data.publicKey;
+        // here we make a shorter alias for the account system and the user
+        return 'IoC'+data.publicKey.substr(20);
       },
 
       // create and sign a transaction
       transaction : function(data,callback) {
         // data.unspent = {"id":3,"jsonrpc":"2.0","result":[["1.2.155481","1.2.155481"]]}} //  internet-of-coins
+        if(typeof data.unspent!=='undefined' && typeof data.unspent[0]!=='undefined' && typeof data.unspent[0][0]!=='undefined') {
+          var source = data.unspent.source;
+          var target = data.unspent.target;
 
-        var fromAddress = data.unspent.result[0][0];
+          let tr = new wrapperlib.bitshares.TransactionBuilder();
 
-
-        let tr = new wrapperlib.bitshares.TransactionBuilder();
-
-        if (data.mode != 'token') {
-
+          if (data.mode !== 'token') {
+            assetID = '1.3.0';
+          }
+        
           /* EXAMPLE:
              var transfer = new wrapperlib.bitshares.Serializer(
              "transfer", {
@@ -55,12 +51,12 @@ var wrapper = (
 
           tr.add_type_operation( "transfer", {
             fee: {
-              amount: 33,
-              asset_id: "1.3.0"   // this ID is for the BTS main asset
+              amount: String(data.fee),
+              asset_id: '1.3.0'   // this ID is for the BTS main asset
             },
-            from: "1.2.15",
-            to: "1.2.155481",       // TEST: internet-of-coins
-            amount: { amount: 1, asset_id: "1.3.0" }
+            from: source,
+            to: target,           // TEST: internet-of-coins
+            amount: { amount: 1, asset_id: assetID }
             //,memo: memo_object
           });
 
@@ -86,11 +82,11 @@ var wrapper = (
           callback(rawtxstring);
           //} );
 
-
         } else {
+          // unspent needs to contain from address
+          return null;
         }
-
-        return '###';
+        
       },
 
     }

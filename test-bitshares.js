@@ -55,9 +55,9 @@ var tx = {
         'target_address':'GPH7kSwY8WcqCiN7sTaLuaMAiavCr7W1AZADxRx5M3P8VoDRCsdKM', // or internet-of-coins                   // where to transact to
         'contract':'',                                          // TODO? -> smart contract address
         'amount':0.1,                                           // amount to send
-        'fee':0.0033,                                                // fee for the miners or the system
-        'unspent':{                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
-                  },
+        'fee':0.0033,                                           // fee for the miners or the system
+        'unspent':                                              // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
+                  {"source":"1.2.155481", "target":"1.2.155481"},
         'factor':8,                                             // amount of decimals, i.e.: 10^x
       }
     }

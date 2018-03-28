@@ -20,7 +20,8 @@ if (typeof window === 'object') {
 
 // inclusion of necessary requires
 var bitsharesjs = {
-  bitshares : require('bitsharesjs')
+  bitshares : require('bitsharesjs'),
+  base58 : require('bs58')
 }
 
 //bitsharesjs.Apis = require('bitsharesjs-ws').Apis;
