@@ -2,6 +2,16 @@
 // hybridd module - bitshares/deterministic.js
 // Deterministic encryption wrapper for Bitshares
 
+/*
+
+create account: mammamia123
+WalletActions.js:86 new active pubkey BTS7ppPRoomSiVWoUV7F7Bg72oXB3wkPUpiyK5Tp1GqZN9HDhaoGo
+WalletActions.js:87 new owner pubkey BTS7bdLsDoqfM6mbnNZk8G7ejhCgh9XLgrEwWPVt6uw6e5exKxYhp
+WalletActions.js:108 >>>> Host: https://faucet.bitshares.eu/onboarding
+WalletActions.js:110 >>>> Request: {"method":"post","mode":"cors","headers":{"Accept":"application/json","Content-type":"application/json"},"body":"{\"account\":{\"name\":\"mammamia123\",\"owner_key\":\"BTS7bdLsDoqfM6mbnNZk8G7ejhCgh9XLgrEwWPVt6uw6e5exKxYhp\",\"active_key\":\"BTS7ppPRoomSiVWoUV7F7Bg72oXB3wkPUpiyK5Tp1GqZN9HDhaoGo\",\"memo_key\":\"BTS7ppPRoomSiVWoUV7F7Bg72oXB3wkPUpiyK5Tp1GqZN9HDhaoGo\",\"refcode\":null,\"referrer\":null}}"}
+
+*/
+
 var wrapper = (
   function() {
 
@@ -18,8 +28,7 @@ var wrapper = (
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        // here we make a shorter alias for the account system and the user
-        return 'IoC'+data.publicKey.substr(20);
+        return 'IOC'+data.publicKey.substr(3); //replace GPH with IOC (later to be replaced with BTS
       },
 
       // create and sign a transaction
@@ -34,7 +43,7 @@ var wrapper = (
           if (data.mode !== 'token') {
             assetID = '1.3.0';
           }
-        
+
           /* EXAMPLE:
              var transfer = new wrapperlib.bitshares.Serializer(
              "transfer", {
@@ -86,7 +95,7 @@ var wrapper = (
           // unspent needs to contain from address
           return null;
         }
-        
+
       },
 
     }
