@@ -42,8 +42,16 @@ var wrapper = (
         // return deterministic transaction data
         var network = 'bitcoin';
         if(data.mode === 'counterparty') {
+          return '[UNDER MAINTENANCE]';
           network = 'bitcoin';
-        } else { network = data.mode; }
+        } else {
+          if(data.mode === 'bitcoincash') {
+            return '[UNDER MAINTENANCE]';
+            network = 'bitcoin';
+          } else {
+            network = data.mode;
+          }
+        }
 
         var keyPair = wrapperlib.ECPair.fromWIF(data.WIF,wrapperlib.networks[network])
         return keyPair.getAddress();
