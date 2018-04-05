@@ -19,7 +19,8 @@ var wrapper = (
       // generate a unique wallet address from a given public key
       address : function(data) {
         // here we make a shorter alias for the account system and the user
-        return 'IoC'+data.publicKey.substr(20);
+        return data.publicKey;
+        //return 'IoC'+data.publicKey.substr(20);
       },
 
       // create and sign a transaction
