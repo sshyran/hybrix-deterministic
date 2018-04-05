@@ -36,7 +36,22 @@ var wrapper = (
       },
 
       transaction : function(data) {
-        // data = {keys: $KEYS, source: , target: , account:, fee: }
+      /* data = {
+      keys: $KEYS,
+      symbol:,
+      source: ,
+      target: ,
+      account:,
+      fee:,
+      factor:,
+      contract:,
+      unspent:,
+      target,
+      ammount
+      }
+      */
+
+
         // compute signedMessaged
         return signedMessaged; // the signed message serialized into a string
       }
