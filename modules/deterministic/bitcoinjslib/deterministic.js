@@ -17,9 +17,15 @@ var wrapper = (
       keys : function(data) {
         // return deterministic transaction data
         var network = 'bitcoin';
-        if(data.mode === 'bitcoincash' || data.mode === 'counterparty') {
+        if(
+            data.mode === 'counterparty' ||
+            data.mode === 'bitcoincash'  ||
+            data.mode ==='omni'
+          ) {
           network = 'bitcoin';
-        } else { network = data.mode; }
+        } else {
+          network = data.mode;
+        }
 
         var hash = wrapperlib.crypto.sha256(data.seed);
         var privk = BigInteger.fromBuffer(hash);
@@ -41,16 +47,15 @@ var wrapper = (
       address : function(data) {
         // return deterministic transaction data
         var network = 'bitcoin';
-        if(data.mode === 'counterparty') {
+        if(
+            data.mode === 'counterparty' ||
+            data.mode === 'bitcoincash'  ||
+            data.mode ==='omni'
+          ) {
           return '[UNDER MAINTENANCE]';
           network = 'bitcoin';
         } else {
-          if(data.mode === 'bitcoincash') {
-            return '[UNDER MAINTENANCE]';
-            network = 'bitcoin';
-          } else {
-            network = data.mode;
-          }
+          network = data.mode;
         }
 
         var keyPair = wrapperlib.ECPair.fromWIF(data.WIF,wrapperlib.networks[network])
@@ -60,14 +65,15 @@ var wrapper = (
       transaction : function(data) {
         // return deterministic transaction data
         var network = 'bitcoin';
-        if(data.mode === 'counterparty') {
+        if(
+            data.mode === 'counterparty' ||
+            data.mode === 'bitcoincash'  ||
+            data.mode ==='omni'
+          ) {
+          return '[UNDER MAINTENANCE]';
           network = 'bitcoin';
         } else {
-          if(data.mode === 'bitcoincash') {
-            network = 'bitcoin';
-          } else {
-            network = data.mode;
-          }
+          network = data.mode;
         }
         var keyPair = wrapperlib.ECPair.fromWIF(data.keys.WIF,wrapperlib.networks[network]);
         var tx = new wrapperlib.TransactionBuilder(wrapperlib.networks[network]);
