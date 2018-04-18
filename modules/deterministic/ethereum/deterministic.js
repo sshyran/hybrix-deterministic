@@ -42,8 +42,8 @@ var wrapper = (
           var txParams = {                                               // optional-> data: payloadData
             nonce: parseLargeIntToHex(data.unspent.nonce),  // nonce
             gasPrice: parseLargeIntToHex(data.fee/21000),   // we use toString(16) here to specify HEX radix
-            gasLimit: parseLargeIntToHex(75000),            //  but don't use it elsewhere
-            to: data.target,                                             // send it to ...
+            gasLimit: parseLargeIntToHex(21000),            //  but don't use it elsewhere
+            to: data.target,                                // send it to ...
             value: parseLargeIntToHex(data.amount)          // the amount to send
           };
         } else {
