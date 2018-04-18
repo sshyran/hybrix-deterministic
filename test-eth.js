@@ -8,7 +8,6 @@ crypto = require('crypto');                   // this supersedes browserify cryp
 LZString = require('./lib/crypto/lz-string');
 Decimal = require('./lib/crypto/decimal-light'); Decimal.set({ precision: 64 });  // high precision for nonces
 //UrlBase64 = require('./crypto/urlbase64');
-hex2dec = require('./lib/crypto/hex2dec');
 jsdom = require('jsdom');
 
 //
@@ -27,13 +26,15 @@ fromInt = function(input,factor) {
   return x.times((f>1?'0.'+new Array(f).join('0'):'')+'1');
 }
 
+Number.prototype.toFixedSpecial = function(n) {
+};
+
 // easy conversion to Decimal.js integer
 toInt = function(input,factor) {
   f = Number(factor);
   x = new Decimal(String(input));
   return x.times('1'+(f>1?new Array(f+1).join('0'):''));
 }
-
 
 //
 // first we read from the compiled package and activate the code
@@ -53,13 +54,12 @@ var tx = {
         'source_address':null,                                  // where to transact from (will be generated)
         'target_address':'0x8Bbf8f56ed5C694beF9F0f6D74365D663517E67a',  // where to transact to
         'contract':'0x2f4baef93489b09b5e4b923795361a65a26f55e5',  // smart contract address
-        'amount':0.1,                                           // amount to send
+        'amount':101012.81006747,                                           // amount to send
         'fee':0.00075,                                          // fee for the miners or the system
         'unspent':{                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
-                    'unspents':[{"amount":"1.00","txid":"eee76ed5dae07eb798dd309ccbf1b08bad4e0e8fee806d28fe08b9cbed67ed95","txn":0}], // Bitcoin
-                    'nonce':'0x00', // Ethereum needs a nonce, so we in that case add it here into 'unspent requirements' #BETTERSUGGESTION ?
+                    'nonce':'16', // Ethereum needs a nonce, so we in that case add it here into 'unspent requirements' #BETTERSUGGESTION ?
                   },
-        'factor':8,                                             // amount of decimals, i.e.: 10^x
+        'factor':18,                                            // amount of decimals, i.e.: 10^x
       }
     }
 
@@ -74,7 +74,7 @@ if(typeof deterministic!='object' || deterministic=={}) {
   var result = deterministic.keys(input);
   tx[mode].keys = result;
   logger('SEED: '+input.seed);
-  
+
   //
   // produce a public address based on cryptographic keys
   //
@@ -102,6 +102,9 @@ if(typeof deterministic!='object' || deterministic=={}) {
             seed:tx[mode].seed,
             unspent:tx[mode].unspent
           }
+
+  logger('TRANSACTION INPUT: '+JSON.stringify(input));
+
   var result = deterministic.transaction(input);
   logger('SIGNED TRANSACTION: '+result);
 

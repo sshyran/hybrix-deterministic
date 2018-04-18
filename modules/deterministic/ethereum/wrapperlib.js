@@ -2,6 +2,8 @@
 // wrapperlib to include libraries for incorporation into the virtual DOM
 //
 
+Decimal = require('../../../lib/crypto/decimal-light'); Decimal.set({ precision: 64 });
+
 // shim for randomBytes to avoid require('crypto') incompatibilities
 // solves bug: "There was an error collecting entropy from the browser
 const randomBytes = crypto.randomBytes;
@@ -21,7 +23,8 @@ if (typeof window === 'object') {
 var ethereumjs = {
   ethUtil : require('ethereumjs-util'),
   ethTx   : require('ethereumjs-tx'),
-  ethABI  : require('ethereumjs-abi')
+  ethABI  : require('ethereumjs-abi'),
+  hex2dec : require('../../../lib/crypto/hex2dec')
 }
 
 module.exports = ethereumjs;
