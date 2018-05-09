@@ -7,15 +7,9 @@
 
 var wrapper = (
   function() {
-    
     var base58 = require('bs58');
     var ecurve = require('ecurve');
     var BigInteger = require('bigi');
-    // DISABLED INSIDE wrapper FUNCTION: var wrapperlib = require('bitcoinjs-lib');
-
-    toSatoshis = function(float, factor) {
-      return float * Math.pow(10, factor);
-    }
 
     var functions = {
       // create deterministic public and private keys based on a seed
@@ -74,7 +68,7 @@ var wrapper = (
         var network = 'bitcoin';
         if(
             data.mode === 'bitcoincash'  ||
-            data.mode ==='omni'
+            data.mode === 'omni'
           ) {
           return '[UNDER MAINTENANCE]';
         } else if(
@@ -84,52 +78,68 @@ var wrapper = (
         } else {
           network = data.mode;
         }
-
+        
         var keyPair = wrapperlib.ECPair.fromWIF(data.keys.WIF,wrapperlib.networks[network]);
-        var tx = new wrapperlib.TransactionBuilder(wrapperlib.networks[network]);
-
-        // add an op_return message
+        
+        
         if (data.mode === 'counterparty') {
-          var CounterJS = require('./CounterJS');          
-          const MIN_REQUIRED = 5430;
-          const MAX_OP_RETURN = 80;
 
-          // prepare raw transaction inputs
-          var inamount=0;
+          var tx = new wrapperlib.TransactionBuilder(wrapperlib.networks[network]);
+
+          // add inputs
           for(var i in data.unspent.unspents) {
-            var input = data.unspent.unspents[i];
-            var hash = Buffer.from(input.txid.match(/.{2}/g).reverse().join(''), 'hex');
-            tx.addInput(hash, input.txn);
-            inamount+=toSatoshis(input.amount,data.factor);
+            tx.addInput(data.unspent.unspents[i].txid,parseInt(data.unspent.unspents[i].txn));
           }
-          if(data.inamount < MIN_REQUIRED) throw new Error('Insufficient funds');
 
-          // in case of Counterparty, add destination output
+          // in case of Counterparty, add destination
+          /* EXPENSIVE TO TRY THIS OUT!!!
           if(data.target) {
             if(typeof data.target === 'string') {
               var dest = {
                 address: data.target,
-                value: MIN_REQUIRED,
+                value: 0,               // we send zero just to specify target
               };
             }
             tx.addOutput(wrapperlib.address.toOutputScript(dest.address, wrapperlib.networks[network]), dest.value);
           }
-
-          // create and add message
-          var scripthex = CounterJS.Message.createSend(
-            CounterJS.util.assetNameToId(data.contract),
+          */
+          var scripthex = wrapperlib.counterjs.Message.createSend(
+            wrapperlib.counterjs.util.assetNameToId(data.contract),
             parseInt(data.amount)
           );
-          var encrypted = scripthex.toEncrypted(data.unspent.unspents[0].txid, true);
+
+          var encrypted = scripthex.toEncrypted(data.unspent.unspents[0].txid, 0);
+          var MAX_OP_RETURN=80;
           for(var bytesWrote=0; bytesWrote<encrypted.length; bytesWrote+=MAX_OP_RETURN) {
             tx.addOutput(wrapperlib.script.nullData.output.encode(encrypted.slice(bytesWrote, bytesWrote+MAX_OP_RETURN)), 0);
+          }          
+
+          // DOESN'T WORK: var scripthex = wrapperlib.counterparty.createSendScriptHex(data.contract,data.amount,data.unspent.unspents[0].txid);
+          //if(typeof data.unspent.unsignedtx==='string') {
+          //var payloadBuffer = Buffer.from(scripthex, 'hex');
+          //var payloadScript = wrapperlib.script.nullData.output.encode(payloadBuffer);
+          //tx.addOutput(payloadScript,0);
+          
+          // send back change
+          var outchange=parseInt(data.unspent.change-5430);         // fee is already being deducted when calculating unspents
+          if(outchange>0) { tx.addOutput(data.source,outchange); }
+
+          // sign inputs
+          for(var i in data.unspent.unspents) {
+            tx.sign(parseInt(i),keyPair);
           }
 
-          // send back change
-          var outchange=parseInt(data.unspent.change)-MIN_REQUIRED;   // fee is already being deducted when calculating unspents
-          tx.addOutput(wrapperlib.address.toOutputScript(data.source, wrapperlib.networks[network]), outchange);
+          // DEBUG: return 'contract: '+data.contract+' amnt:'+data.amount+'  '+scripthex;
+          return tx.build().toHex();
+
+          /*
+          } else {
+            throw 'Error: Missing unsignedtx input data!'
+          }*/
 
         } else {
+
+          var tx = new wrapperlib.TransactionBuilder(wrapperlib.networks[network]);
 
           // add inputs
           for(var i in data.unspent.unspents) {
@@ -138,6 +148,7 @@ var wrapper = (
 
           // add spend amount output
           tx.addOutput(data.target,parseInt(data.amount));
+
           /* TODO: add support for Bitcoin Cash
            *if(data.mode === 'bitcoincash') {
             tx.enableBitcoinCash(true);
@@ -145,18 +156,17 @@ var wrapper = (
           }*/
 
           // send back change
-          var outchange=parseInt(data.unspent.change);   // fee is already being deducted when calculating unspents
+          var outchange=parseInt(data.unspent.change); // fee is already being deducted when calculating unspents
           if(outchange>0) { tx.addOutput(data.source,outchange); }
 
+          // sign inputs
+          for(var i in data.unspent.unspents) {
+            tx.sign(parseInt(i),keyPair);
+          }
+
+          return tx.build().toHex();
+
         }
-
-
-        // sign inputs
-        for(var i in data.unspent.unspents) {
-          tx.sign(parseInt(i),keyPair);
-        }
-
-        return tx.build().toHex();
 
       }
     }
