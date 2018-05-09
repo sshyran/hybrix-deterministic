@@ -6,6 +6,10 @@
 
 var wrapper = (
   function() {
+
+    toSatoshis = function(float, factor) {
+      return float * Math.pow(10, factor);
+    }
     
     var functions = {
       // create deterministic public and private keys based on a seed
@@ -42,22 +46,21 @@ var wrapper = (
         //console.log(privKey.toAddress(NETWORK).toString());
         
         if(typeof data.unspent.unsignedtx==='string') {
-
-          // raw transaction
-          NETWORK = data.mode;
-          if (wrapperlib.CWbitcore.checkTransactionDest(data.unspent.unsignedtx, [data.source], [data.target])) {
-            wrapperlib.CWbitcore.signRawTransaction(data.unspent.unsignedtx, privKey, true, function(err, signedHex) {
-              console.log(signedHex);
-              if(!err) {
-                callback(signedHex);
-              } else {
-                throw new Error(err);
-              }
-            });
-          } else {
-            throw new Error("Failed to validate transaction destination");
-          }
           
+          // parse the hex transaction to bitcore
+          tx = new wrapperlib.bitcore.Transaction(data.unspent.unsignedtx)
+            .from(data.unspent.unspents.map(function(utxo){
+                      return { txId:        utxo.txid,
+                               outputIndex: utxo.txn,
+                               address:     data.source,
+                               script:      utxo.script,
+                               satoshis:    parseInt(toSatoshis(utxo.amount,data.factor))
+                             };
+                    }))
+            .sign(privKey)
+
+          return tx.serialize();
+
         } else {
           
           // normal Bitcoin transaction

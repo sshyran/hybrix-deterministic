@@ -215,7 +215,6 @@ var CWbitcore = (function() {
               var multiSigInfo;
               var addresses = [];
 
-      console.log(' CASE '+script.classify());
               switch (script.classify()) {
                 case wrapperlib.bitcore.Script.types.PUBKEY_OUT:
                   inputObj = input.toObject();
@@ -231,6 +230,7 @@ var CWbitcore = (function() {
 
                 case wrapperlib.bitcore.Script.types.PUBKEYHASH_OUT:
                   inputObj = input.toObject();
+      console.log(' InputObj '+JSON.stringify(inputObj));
                   inputObj.output = wrapperlib.bitcore.Transaction.Output({
                     script: input._scriptBuffer.toString('hex'),
                     satoshis: 0 // we don't know this value, setting 0 because otherwise it's going to cry about not being an INT
@@ -238,7 +238,7 @@ var CWbitcore = (function() {
                   tx.inputs[idx] = new wrapperlib.bitcore.Transaction.Input.PublicKeyHash(inputObj);
 
                   addresses = [script.toAddress(NETWORK).toString()];
-      console.log(' CONTINUE...');
+      console.log(' CONTINUE... '+addresses);
 
                   return cb(null, addresses);
 
