@@ -10,13 +10,19 @@ var wrapper = (
     //
     // EXAMPLES:
     //            encode({ 'func':'balanceOf(address):(uint256)', 'vars':['target'], 'target':data.target });
-    //            encode({ 'func':'transfer(address,uint256):(uint256)', 'vars':['target','amount'], 'target':data.target,'amount':'0x'+parseInt(data.amount).toString(16) });
+    //            encode({ 'func':'transfer(address,uint256):(uint256)', 'vars':['target','amount'], 'target':data.target,'amount':parseLargeIntToHex(data.amount).toString('hex') });
     function encode(data) {
       return '0x'+( new Function( 'wrapperlib','data', 'return wrapperlib.ethABI.simpleEncode(data.func,data.'+data.vars.join(',data.')+');' ) )(wrapperlib,data).toString('hex');
     }
 
+    function parseLargeIntToHex(input) {
+      var result = wrapperlib.hex2dec.toHex( new Decimal(String(input)).toInteger().toFixed(64).replace(/\.?0+$/,"") );
+      return result !== null ? result : '0x0';
+      // DEPRECATED: return new Decimal(String(input)).toInteger().toFixed(64).replace(/\.?0+$/,"");
+    }
+    
 		var functions = {
-          
+
 			// create deterministic public and private keys based on a seed
 			keys : function(data) {
         var privateKey = wrapperlib.ethUtil.sha256(data.seed);
@@ -33,26 +39,50 @@ var wrapper = (
 			transaction : function(data) {
         if (data.mode != 'token') {
           // Base ETH mode
-          var txParams = {                                          // optional-> data: payloadData
-            nonce: '0x'+parseInt(data.unspent.nonce).toString(16),  // nonce
-            gasPrice: '0x'+parseInt(data.fee/21000).toString(16),   // we use toString(16) here to specify HEX radix
-            gasLimit: '0x'+parseInt(21000).toString(16),            //  but don't use it elsewhere
-            to: data.target,                                        // send it to ...
-            value: '0x'+parseInt(data.amount).toString(16)          // the amount to send
+          var txParams = {                                               // optional-> data: payloadData
+            nonce: parseLargeIntToHex(data.unspent.nonce),  // nonce
+            gasPrice: parseLargeIntToHex(data.fee/21000),   // we use toString(16) here to specify HEX radix
+            gasLimit: parseLargeIntToHex(21000),            //  but don't use it elsewhere
+            to: data.target,                                // send it to ...
+            value: parseLargeIntToHex(data.amount)          // the amount to send
           };
         } else {
           // ERC20-compatible token mode
-          var encoded = encode({ 'func':'transfer(address,uint256):(bool)','vars':['target','amount'],'target':data.target,'amount':'0x'+parseInt(data.amount).toString(16) }); // returns the encoded binary (as a Buffer) data to be sent
+          var encoded = encode({ 'func':'transfer(address,uint256):(bool)','vars':['target','amount'],'target':data.target,'amount':parseLargeIntToHex(data.amount) }); // returns the encoded binary (as a Buffer) data to be sent
+
           var txParams = {
-            nonce: '0x'+parseInt(data.unspent.nonce).toString(16),          // nonce
-            gasPrice: '0x'+parseInt(data.fee/(21000*2.465)).toString(16),   // we use toString(16) here to specify HEX radix
-            gasLimit: '0x'+parseInt(51765).toString(16),                    //  but don't use it elsewhere
-            to: data.contract,                                              // send payload to contract address
-            value: '0x'+parseInt(0).toString(16),                           // set to zero, since we're sending tokens
-            data: encoded                                                   // payload as encoded using the smart contract
+            nonce: parseLargeIntToHex(data.unspent.nonce),          // nonce
+            gasPrice: parseLargeIntToHex((data.fee/21000)*2.465),   // we use toString(16) here to specify HEX radix
+            gasLimit: parseLargeIntToHex(150000),                   //  but don't use it elsewhere
+            to: data.contract,                                      // send payload to contract address
+            value: '0x0',                                           // set to zero, since we're sending tokens
+            data: encoded                                           // payload as encoded using the smart contract
           };
+
+          /* DEBUG
+          var txParamsC = {
+            amount: data.amount,
+            nonce: data.unspent.nonce,          // nonce
+            gasPrice: new Decimal((data.fee/21000)*2.465).toInteger(),   // we use toString(16) here to specify HEX radix
+            gasLimit: 150000,                   //  but don't use it elsewhere
+            to: data.contract,                                      // send payload to contract address
+            value: '0',                                           // set to zero, since we're sending tokens
+            data: encoded                                           // payload as encoded using the smart contract
+          };
+
+          var txParams = {
+            amount: parseLargeIntToHex(data.amount),
+            nonce: parseLargeIntToHex(data.unspent.nonce),          // nonce
+            gasPrice: parseLargeIntToHex((data.fee/21000)*2.465),   // we use toString(16) here to specify HEX radix
+            gasLimit: parseLargeIntToHex(150000),                   //  but don't use it elsewhere
+            to: data.contract,                                      // send payload to contract address
+            value: '0x0',                                           // set to zero, since we're sending tokens
+            data: encoded                                           // payload as encoded using the smart contract
+          };
+          */
+
         }
-        
+
         // Transaction is created
         var tx = new wrapperlib.ethTx(txParams);
 
@@ -60,6 +90,7 @@ var wrapper = (
         tx.sign(data.keys.privateKey);
         var serializedTx = tx.serialize();
         var rawTx = '0x' + serializedTx.toString('hex');
+        // DEBUG:         return "\n"+JSON.stringify(txParams)+"\n"+JSON.stringify(txParamsB)+"\n"+JSON.stringify(txParamsC);
 				return rawTx;
 			},
 
