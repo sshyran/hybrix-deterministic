@@ -53,12 +53,12 @@ var wrapper = (
         // return deterministic transaction data
         var network = 'bitcoin';
         if(
-            data.mode === 'bitcoincash'  ||
-            data.mode ==='omni'
+            data.mode === 'bitcoincash'
           ) {
           return '[UNDER MAINTENANCE]';
         } else if(
-            data.mode === 'counterparty'
+            data.mode === 'counterparty' ||
+            data.mode ==='omni'
           ) {
           network = 'bitcoin';
         } else {
@@ -73,12 +73,12 @@ var wrapper = (
         // return deterministic transaction data
         var network = 'bitcoin';
         if(
-            data.mode === 'bitcoincash'  ||
-            data.mode ==='omni'
+            data.mode === 'bitcoincash'
           ) {
           return '[UNDER MAINTENANCE]';
         } else if(
-            data.mode === 'counterparty'
+            data.mode === 'counterparty' ||
+            data.mode ==='omni'
           ) {
           network = 'bitcoin';
         } else {
@@ -88,10 +88,17 @@ var wrapper = (
         var keyPair = wrapperlib.ECPair.fromWIF(data.keys.WIF,wrapperlib.networks[network]);
         var tx = new wrapperlib.TransactionBuilder(wrapperlib.networks[network]);
 
-        // add an op_return message
-        if (data.mode === 'counterparty') {
-          var CounterJS = require('./CounterJS');          
-          const MIN_REQUIRED = 5430;
+        // for Counterparty or Omni, add OP_RETURN message
+        if (data.mode === 'counterparty' || data.mode === 'omni') {
+          
+          if(data.mode === 'counterparty') {
+            var CounterJS = require('./CounterJS');          
+          }
+          if(data.mode === 'omni') {
+            var omniSend = require('./omni-simple-send');
+          }
+          
+          const MIN_REQUIRED = 546;
           const MAX_OP_RETURN = 80;
 
           // prepare raw transaction inputs
@@ -104,25 +111,35 @@ var wrapper = (
           }
           if(data.inamount < MIN_REQUIRED) throw new Error('Insufficient funds');
 
-          // in case of Counterparty, add destination output
+          // in case of Counterparty or Omni, add destination output
           if(data.target) {
             if(typeof data.target === 'string') {
               var dest = {
                 address: data.target,
-                value: MIN_REQUIRED,
+                value: MIN_REQUIRED
               };
             }
             tx.addOutput(wrapperlib.address.toOutputScript(dest.address, wrapperlib.networks[network]), dest.value);
           }
 
           // create and add message
-          var scripthex = CounterJS.Message.createSend(
-            CounterJS.util.assetNameToId(data.contract),
-            parseInt(data.amount)
-          );
-          var encrypted = scripthex.toEncrypted(data.unspent.unspents[0].txid, true);
-          for(var bytesWrote=0; bytesWrote<encrypted.length; bytesWrote+=MAX_OP_RETURN) {
-            tx.addOutput(wrapperlib.script.nullData.output.encode(encrypted.slice(bytesWrote, bytesWrote+MAX_OP_RETURN)), 0);
+          if(data.mode === 'counterparty') {
+            // create Send
+            var scripthex = CounterJS.Message.createSend(
+              CounterJS.util.assetNameToId(data.contract),
+              parseInt(data.amount)
+            );
+            // encrypt/encode
+            var encoded = scripthex.toEncrypted(data.unspent.unspents[0].txid, true);
+          }
+          if(data.mode === 'omni') {
+            // create encoded Send
+            var encoded = omniSend(parseInt(data.contract), parseInt(data.amount));
+          }
+
+          // add OP_RETURN
+          for(var bytesWrote=0; bytesWrote<encoded.length; bytesWrote+=MAX_OP_RETURN) {
+            tx.addOutput(wrapperlib.script.nullData.output.encode(encoded.slice(bytesWrote, bytesWrote+MAX_OP_RETURN)), 0);
           }
 
           // send back change
@@ -138,11 +155,6 @@ var wrapper = (
 
           // add spend amount output
           tx.addOutput(data.target,parseInt(data.amount));
-          /* TODO: add support for Bitcoin Cash
-           *if(data.mode === 'bitcoincash') {
-            tx.enableBitcoinCash(true);
-            tx.setVersion(2);
-          }*/
 
           // send back change
           var outchange=parseInt(data.unspent.change);   // fee is already being deducted when calculating unspents
