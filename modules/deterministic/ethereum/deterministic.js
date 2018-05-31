@@ -48,7 +48,7 @@ var wrapper = (
           };
         } else {
           // ERC20-compatible token mode
-          var encoded = encode({ 'func':'transfer(address,uint256):(bool)','vars':['target','amount'],'target':data.target,'amount':parseLargeIntToHex(data.amount) }); // returns the encoded binary (as a Buffer) data to be sent
+          var encoded = encode({ 'func':'transfer(address,uint256):(bool)','vars':['target','amount'],'target':data.target,'amount':parseLargeIntToHex( data.amount ) }); // returns the encoded binary (as a Buffer) data to be sent
 
           var txParams = {
             nonce: parseLargeIntToHex(data.unspent.nonce),          // nonce

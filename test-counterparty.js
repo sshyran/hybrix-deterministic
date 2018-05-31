@@ -60,7 +60,7 @@ var tx = {
         'fee':"0.00002",                                          // fee for the miners or the system
         'unspent':                                              // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
             {
-              "unspents":[{"script":"76a914b31e2e79c5bdf335cc7be3e22c948d5c5f3ba0ff88ac","amount":"0.00033920","txid":"fd6a4dcc29ad5cbd2d3ccddea2788ef80828c3b28cea6b20bf603782ebbc05c2","txn":1}],"change":"0.0003042",
+              "unspents":[{"script":"76a914b31e2e79c5bdf335cc7be3e22c948d5c5f3ba0ff88ac","amount":"0.00033920","txid":"fd6a4dcc29ad5cbd2d3ccddea2788ef80828c3b28cea6b20bf603782ebbc05c2","txn":1}],"change":"0.0001255",
               "unsignedtx":"0100000001c205bceb823760bf206bea8cb2c32808f88e78a2decd3c2dbd5cad29cc4d6afd010000001976a914b31e2e79c5bdf335cc7be3e22c948d5c5f3ba0ff88acffffffff020000000000000000306a2e3ffaa8ac4c1f16f65f8f2ff3f75f66453d620485b2ddbbedf9e933254d7c0b576d8124f621ddaa49987972f87c95d4760000000000001976a914b31e2e79c5bdf335cc7be3e22c948d5c5f3ba0ff88ac00000000"
             },
         'factor':8,                                             // amount of decimals, i.e.: 10^x
