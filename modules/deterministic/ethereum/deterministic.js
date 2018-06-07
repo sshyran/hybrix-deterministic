@@ -3,7 +3,7 @@
 // Deterministic encryption wrapper for Ethereum
 
 var wrapper = (
-	function() {
+  function() {
 
     // encode ABI smart contract calls
     // call it by explicitly specifying the variables you want to pass along
@@ -20,14 +20,14 @@ var wrapper = (
       return result !== null ? result : '0x0';
       // DEPRECATED: return new Decimal(String(input)).toInteger().toFixed(64).replace(/\.?0+$/,"");
     }
-    
-		var functions = {
 
-			// create deterministic public and private keys based on a seed
-			keys : function(data) {
+    var functions = {
+
+      // create deterministic public and private keys based on a seed
+      keys : function(data) {
         var privateKey = wrapperlib.ethUtil.sha256(data.seed);
         return {privateKey:privateKey};
-			},
+      },
 
       // generate a unique wallet address from a given public key
       address : function(data) {
@@ -36,7 +36,7 @@ var wrapper = (
       },
 
       // create and sign a transaction
-			transaction : function(data) {
+      transaction : function(data) {
         if (data.mode != 'token') {
           // Base ETH mode
           var txParams = {                                               // optional-> data: payloadData
@@ -47,40 +47,18 @@ var wrapper = (
             value: parseLargeIntToHex(data.amount)          // the amount to send
           };
         } else {
+          var tokenfeeMultiply = 16;   // [!] must be same as the value in back-end module
           // ERC20-compatible token mode
           var encoded = encode({ 'func':'transfer(address,uint256):(bool)','vars':['target','amount'],'target':data.target,'amount':parseLargeIntToHex( data.amount ) }); // returns the encoded binary (as a Buffer) data to be sent
-
           var txParams = {
             nonce: parseLargeIntToHex(data.unspent.nonce),          // nonce
-            gasPrice: parseLargeIntToHex((data.fee/21000)*2.465),   // we use toString(16) here to specify HEX radix
-            gasLimit: parseLargeIntToHex(150000),                   //  but don't use it elsewhere
+            gasPrice: parseLargeIntToHex((data.fee/(21000*tokenfeeMultiply))*2),    // must be 2x normal tx!
+            gasLimit: parseLargeIntToHex((21000*tokenfeeMultiply)/2),               // should not exceed 300000 !
             to: data.contract,                                      // send payload to contract address
             value: '0x0',                                           // set to zero, since we're sending tokens
             data: encoded                                           // payload as encoded using the smart contract
           };
-
-          /* DEBUG
-          var txParamsC = {
-            amount: data.amount,
-            nonce: data.unspent.nonce,          // nonce
-            gasPrice: new Decimal((data.fee/21000)*2.465).toInteger(),   // we use toString(16) here to specify HEX radix
-            gasLimit: 150000,                   //  but don't use it elsewhere
-            to: data.contract,                                      // send payload to contract address
-            value: '0',                                           // set to zero, since we're sending tokens
-            data: encoded                                           // payload as encoded using the smart contract
-          };
-
-          var txParams = {
-            amount: parseLargeIntToHex(data.amount),
-            nonce: parseLargeIntToHex(data.unspent.nonce),          // nonce
-            gasPrice: parseLargeIntToHex((data.fee/21000)*2.465),   // we use toString(16) here to specify HEX radix
-            gasLimit: parseLargeIntToHex(150000),                   //  but don't use it elsewhere
-            to: data.contract,                                      // send payload to contract address
-            value: '0x0',                                           // set to zero, since we're sending tokens
-            data: encoded                                           // payload as encoded using the smart contract
-          };
-          */
-
+          // DEBUG: console.log(JSON.stringify(txParams));
         }
 
         // Transaction is created
@@ -91,13 +69,13 @@ var wrapper = (
         var serializedTx = tx.serialize();
         var rawTx = '0x' + serializedTx.toString('hex');
         // DEBUG:         return "\n"+JSON.stringify(txParams)+"\n"+JSON.stringify(txParamsB)+"\n"+JSON.stringify(txParamsC);
-				return rawTx;
-			},
+        return rawTx;
+      },
 
       // encode ABI smart contract calls
       encode : function(data) { return encode(data); }
 
-		}
+    }
 
 		return functions;
 	}
