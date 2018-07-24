@@ -5,7 +5,7 @@
 // [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
 //
 
-var wrapperlib = require('./ark-js');
+var wrapperlib = require('./ark-js/index');
 
 
 var wrapper = (
@@ -20,7 +20,7 @@ var wrapper = (
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        return wrapperlib.crypto.getAddress(data.keys.publicKey);
+        return wrapperlib.crypto.getAddress(data.publicKey);
       },
 
       transaction : function(data) {
