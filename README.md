@@ -13,7 +13,8 @@ module-deterministic/modules/deterministic/$NAME/
 - deterministic.js.lmza       the lmza blob file
 
 deterministic.js   must contain three functions: `keys`, `address` and
-`transaction` :
+`transaction`.
+It can optionally contain a `validate` and `generate` function.
 
 ```
 var wrapper = (
@@ -33,9 +34,13 @@ var wrapper = (
         // data = {seed: .. , keys: $KEYS, mode: $NAME/$MODE, ...???}
         // compute addr
         return addr; // TODO a string or a buffer???
-      },
+        },
 
-      transaction : function(data) {
+      validate : function(address,callback){}
+
+      generate : function(data,callback){}
+
+      transaction : function(data,callback) {
       /* data = {
       keys: $KEYS,
       symbol:,

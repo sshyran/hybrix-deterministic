@@ -3,8 +3,11 @@
   "name": "modules-deterministic",
   "description": "deterministic cryptography module",
   "version": "1",
-  "main": "./modules/deterministic", 
+  "main": "./modules/deterministic",
   "engines": {
     "node": "*"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.1.0"
   }
 }

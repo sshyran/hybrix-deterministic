@@ -5,6 +5,7 @@
 // [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
 //
 
+var wrapperlib = require('./wrapperlib')
 var wrapper = (
   function() {
 
@@ -44,17 +45,17 @@ var wrapper = (
         var recipientAddr = wrapperlib.zcash.Address(data.target, data.mode);
         var changeAddr    = wrapperlib.zcash.Address(data.source, data.mode);
 
-	/* DEBUG
-	data.unspent.unspents.map(function(utxo){
+        /* DEBUG
+        data.unspent.unspents.map(function(utxo){
                   logger(JSON.stringify(
-			{ txId:        utxo.txid,
+                        { txId:        utxo.txid,
                            outputIndex: utxo.txn,
                            address:     utxo.address,
                            script:      utxo.script,
                            satoshis:    parseInt(toSatoshis(utxo.amount,data.factor))
                          } ));
                 });
-	*/
+        */
 
         var tx = new wrapperlib.zcash.Transaction()
           .from(data.unspent.unspents.map(function(utxo){

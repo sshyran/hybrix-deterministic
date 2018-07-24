@@ -8,33 +8,20 @@ NODEINST=`which node`
 
 # copy the vanilla waves minified to wrapperlib
 cp ./waves-api.min.js ./wrapperlib.js
-#cp ./waves-api.js ./wrapperlib.js
-
-# inject
-cat ./injections.js ./wrapperlib.js > ./wrapperlib.tmp.js; mv ./wrapperlib.tmp.js ./wrapperlib.js
-
-
 # string replace to standardize naming of the module to wrapperlib
 sed -i -e 's/WavesAPI/wrapperlib/g' ./wrapperlib.js
 # replace the default fetch with an alternative fetch
 sed -i -e 's|window.fetch.bind(window)|altFetch.bind(window)|g' ./wrapperlib.js
 
+# TODO inject??
 
-#../../../node_modules/browserify/bin/cmd.js -r ./wrapperlib.js -s wrapperlib > wrapperlib.browserify.js
-
-# pack the deterministic functions
-../../../node_modules/browserify/bin/cmd.js wrapperlib.js -o wrapperlib.browserify.js --im  -s wrapperlib
-../../../node_modules/browserify/bin/cmd.js deterministic.js -o deterministic.browserify.js
-
-# concatenate these products and compress into DOM injectable
-cat wrapperlib.browserify.js deterministic.browserify.js > compiled.js
-../../../tools/lzmapack.js compiled.js
+../../../node_modules/webpack/bin/webpack.js --config webpack.config.js
+../../../tools/lzmapack.js bundle.js
+mv bundle.js.lzma deterministic.js.lzma
 
 # clean up
-rm wrapperlib.browserify.js
-rm deterministic.browserify.js
-rm compiled.js
-mv compiled.js.lzma deterministic.js.lzma
+rm bundle.js
+rm wrapperlib.js
 
 # restore path
 PATH=$OLDPATH
