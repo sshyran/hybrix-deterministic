@@ -13,6 +13,8 @@ WalletActions.js:110 >>>> Request: {"method":"post","mode":"cors","headers":{"Ac
 
 */
 
+var wrapperlib = require('./wrapperlib');
+
 var WebSocket = require('ws');
 
 //TODO move to node

@@ -2,8 +2,10 @@
 // hybridd module - ethereum/deterministic.js
 // Deterministic encryption wrapper for Ethereum
 
+var wrapperlib = require('./wrapperlib');
+
 var wrapper = (
-	function() {
+        function() {
 
     // encode ABI smart contract calls
     // call it by explicitly specifying the variables you want to pass along
@@ -20,14 +22,14 @@ var wrapper = (
       return result !== null ? result : '0x0';
       // DEPRECATED: return new Decimal(String(input)).toInteger().toFixed(64).replace(/\.?0+$/,"");
     }
-    
-		var functions = {
 
-			// create deterministic public and private keys based on a seed
-			keys : function(data) {
+                var functions = {
+
+                        // create deterministic public and private keys based on a seed
+                        keys : function(data) {
         var privateKey = wrapperlib.ethUtil.sha256(data.seed);
         return {privateKey:privateKey};
-			},
+                        },
 
       // generate a unique wallet address from a given public key
       address : function(data) {
@@ -36,7 +38,7 @@ var wrapper = (
       },
 
       // create and sign a transaction
-			transaction : function(data) {
+                        transaction : function(data) {
         if (data.mode != 'token') {
           // Base ETH mode
           var txParams = {                                               // optional-> data: payloadData
@@ -91,16 +93,16 @@ var wrapper = (
         var serializedTx = tx.serialize();
         var rawTx = '0x' + serializedTx.toString('hex');
         // DEBUG:         return "\n"+JSON.stringify(txParams)+"\n"+JSON.stringify(txParamsB)+"\n"+JSON.stringify(txParamsC);
-				return rawTx;
-			},
+                                return rawTx;
+                        },
 
       // encode ABI smart contract calls
       encode : function(data) { return encode(data); }
 
-		}
+                }
 
-		return functions;
-	}
+                return functions;
+        }
 )();
 
 // export functionality to a pre-prepared var

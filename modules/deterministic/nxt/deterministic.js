@@ -2,6 +2,8 @@
 // hybridd module - ethereum/deterministic.js
 // Deterministic encryption wrapper for NXT
 
+var wrapperlib = require('./wrapperlib');
+
 var wrapper = (
     function() {
 

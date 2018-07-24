@@ -4,10 +4,11 @@
 //
 // [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
 //
+var wrapperlib = require('./wrapperlib');
 
 var wrapper = (
   function() {
-    
+
     var base58 = require('bs58');
     var ecurve = require('ecurve');
     var BigInteger = require('bigi');
@@ -90,14 +91,14 @@ var wrapper = (
 
         // for Counterparty or Omni, add OP_RETURN message
         if (data.mode === 'counterparty' || data.mode === 'omni') {
-          
+
           if(data.mode === 'counterparty') {
-            var CounterJS = require('./CounterJS');          
+            var CounterJS = require('./CounterJS');
           }
           if(data.mode === 'omni') {
             var omniSend = require('./omni-simple-send');
           }
-          
+
           const MIN_REQUIRED = 546;
           const MAX_OP_RETURN = 80;
 

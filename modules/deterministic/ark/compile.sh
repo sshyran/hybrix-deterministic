@@ -4,17 +4,16 @@ WHEREAMI=`pwd`
 export PATH=$WHEREAMI/../../../node/bin:"$PATH"
 NODEINST=`which node`
 
-../../../node_modules/browserify/bin/cmd.js -r ./ark-js -s wrapperlib | ../../../node_modules/uglify-js/bin/uglifyjs > wrapperlib.browserify.js
 
-../../../node_modules/browserify/bin/cmd.js deterministic.js -o deterministic.browserify.js
+#cp ./ark-js ./wrapperlib.js
 
-cat wrapperlib.browserify.js deterministic.browserify.js > compiled.js
+#../../../node_modules/webpack/bin/webpack.js --config webpack.config.js
+#../../../tools/lzmapack.js bundle.js
+#mv bundle.js.lzma deterministic.js.lzma
 
-../../../tools/lzmapack.js compiled.js
-rm deterministic.browserify.js
-rm wrapperlib.browserify.js
-rm compiled.js
-mv compiled.js.lzma deterministic.js.lzma
+# clean up
+#rm bundle.js
+#rm wrapperlib.js
 
+# restore path
 PATH=$OLDPATH
-

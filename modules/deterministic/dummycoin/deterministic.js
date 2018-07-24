@@ -4,6 +4,7 @@
 //
 // [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
 //
+var wrapperlib = require('./wrapperlib');
 
 var wrapper = (
   function() {
@@ -11,16 +12,16 @@ var wrapper = (
     var functions = {
       // create deterministic public and private keys based on a seed
       keys : function(data) {
-        return { dummy:'dummy' };
+        return wrapperlib.keys(data);
       },
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        return '_dummyaddress_';
+        return wrapperlib.address(data);
       },
 
       transaction : function(data, callback) {
-        callback('_dummytransaction_');
+        return wrapperlib.transaction(data,callback);
       }
     }
 
