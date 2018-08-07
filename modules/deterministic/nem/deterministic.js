@@ -8,6 +8,9 @@
 // IMPORTANT: There's a lot to fix in this wrapper.
 //            It should be safe to use, but was written with much haste.
 
+var wrapperlib = require('./wrapperlib');
+
+
 var wrapper = (
   function() {
 
@@ -25,7 +28,7 @@ var wrapper = (
       if (fee < 0.05) { fee=0.05 } else if(fee > 1.25) {fee=1.25};
       return fee * Math.pow(10, factor);
     }
-    
+
 
     getMosaicDefinition = function(namespace, mosaic) {
       // Usage examples:
@@ -81,16 +84,16 @@ var wrapper = (
     }
 
     txEntityMosaic = function(network, common, transferTransaction, data) {
-      
+
       var namespace    = data.unspent.id.namespaceId;
       var mosaicName   = data.unspent.id.name;
       var amount = parseInt(data.amount);
       var fee = parseInt(minimumFee(data.amount,data.factor));
 
       var mosaicAttachment = wrapperlib.nem.model.objects.create("mosaicAttachment")(namespace, mosaicName, amount);
-      
+
       transferTransaction.mosaics.push(mosaicAttachment);
-      
+
       // Create variable to store our mosaic definitions, needed to calculate fees properly (already contains xem definition)
       var mosaicDefinitionMetaDataPair = wrapperlib.nem.model.objects.get("mosaicDefinitionMetaDataPair");
       // Get full name of mosaic to use as object key
@@ -109,7 +112,7 @@ var wrapper = (
         }
         return acc;
       }, undefined);
-      
+
       //var amount = toUnits(mosaic.amount, divisibility); // decimal amount * 10^divisibility
       // DEBUG: console.log("namespace: ", namespace, ", mosaicName: ", mosaicName, ", divisibility: ", divisibility, ", amount: ", amount);
 
@@ -179,7 +182,7 @@ var wrapper = (
           transactionEntity = txEntityMosaic(network, common, transferTransaction, data);
           // DEBUG: return '## '+amount+' # '+JSON.stringify(transferTransaction)+'                                                                                                                                '+'### '+ JSON.stringify(transactionEntity);
         }
-        
+
         // DEBUG: console.log("transactionEntity: ", JSON.stringify(transactionEntity, null, 2));
         // Note: amounts are in the smallest unit possible in a prepared transaction object
         // 1000000 = 1 XEM
@@ -192,7 +195,7 @@ var wrapper = (
         var signature = kp.sign(serialized);
 
         // build result object
-        var result = { 
+        var result = {
           'data': wrapperlib.nem.utils.convert.ua2hex(serialized),
           'signature': signature.toString()
         };

@@ -2,6 +2,8 @@
 // hybridd module - ethereum/deterministic.js
 // Deterministic encryption wrapper for Ethereum
 
+var wrapperlib = require('./wrapperlib');
+
 var wrapper = (
   function() {
 
@@ -77,8 +79,8 @@ var wrapper = (
 
     }
 
-		return functions;
-	}
+                return functions;
+  }
 )();
 
 // export functionality to a pre-prepared var
