@@ -8,7 +8,6 @@ NODEINST=`which node`
 
 # define undefined globals explicitly
 sh ../../../pack/define.sh bundle.js > bundle.noundefs.js
-#cp bundle.js bundle.noundefs.js
 # lmza compression
 ../../../tools/lzmapack.js bundle.noundefs.js
 mv bundle.noundefs.js.lzma deterministic.js.lzma

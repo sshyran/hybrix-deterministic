@@ -76,6 +76,7 @@ var wrapper = (
       encode : function(data) { return encode(data); }
 
     }
+    return functions;
   }
 )();
 
