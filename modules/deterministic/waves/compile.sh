@@ -16,12 +16,14 @@ sed -i -e 's|window.fetch.bind(window)|altFetch.bind(window)|g' ./wrapperlib.js
 # TODO inject??
 
 ../../../node_modules/webpack/bin/webpack.js --config webpack.config.js
-../../../tools/lzmapack.js bundle.js
-mv bundle.js.lzma deterministic.js.lzma
+
+sh ../../../pack/define.sh bundle.js > bundle.noundefs.js
+
+../../../tools/lzmapack.js bundle.noundefs.js
+mv bundle.noundefs.js.lzma deterministic.js.lzma
 
 # clean up
 rm bundle.js
-rm wrapperlib.js
+rm bundle.noundefs.js
 
-# restore path
 PATH=$OLDPATH

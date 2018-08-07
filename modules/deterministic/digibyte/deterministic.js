@@ -95,10 +95,9 @@ var wrapper = (
         return tx.serialize();
       }
     }
-
     return functions;
   }
 )();
 
 // export the functionality to a pre-prepared var
-deterministic = wrapper;
+window.deterministic = wrapper;

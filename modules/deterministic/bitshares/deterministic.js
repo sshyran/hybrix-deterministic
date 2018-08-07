@@ -10,7 +10,6 @@ WalletActions.js:87 new owner pubkey BTS7bdLsDoqfM6mbnNZk8G7ejhCgh9XLgrEwWPVt6uw
 WalletActions.js:108 >>>> Host: https://faucet.bitshares.eu/onboarding
 WalletActions.js:110 >>>> Request: {"method":"post","mode":"cors","headers":{"Accept":"application/json","Content-type":"application/json"},"body":"{\"account\":{\"name\":\"mammamia123\",\"owner_key\":\"BTS7bdLsDoqfM6mbnNZk8G7ejhCgh9XLgrEwWPVt6uw6e5exKxYhp\",\"active_key\":\"BTS7ppPRoomSiVWoUV7F7Bg72oXB3wkPUpiyK5Tp1GqZN9HDhaoGo\",\"memo_key\":\"BTS7ppPRoomSiVWoUV7F7Bg72oXB3wkPUpiyK5Tp1GqZN9HDhaoGo\",\"refcode\":null,\"referrer\":null}}"}
 
-
 */
 
 var wrapperlib = require('./wrapperlib');
@@ -273,4 +272,4 @@ Error Data: {"id":2,"jsonrpc":"2.0","result":null}
 )();
 
 // export functionality to a pre-prepared var
-deterministic = wrapper;
+window.deterministic = wrapper;

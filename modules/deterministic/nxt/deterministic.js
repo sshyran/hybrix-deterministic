@@ -8,7 +8,6 @@ var wrapper = (
     function() {
 
         var functions = {
-
             // create deterministic public and private keys based on a seed
             keys: function(data) {
                 var publicKey = wrapperlib.secretPhraseToPublicKey(data.seed);
@@ -18,7 +17,6 @@ var wrapper = (
                     secretPhrase: data.seed
                 };
             },
-
             // generate a unique wallet address from a given public key
             address: function(data) {
                 var address = wrapperlib.publicKeyToAccountId(data.publicKey);
@@ -49,13 +47,11 @@ var wrapper = (
                 } else {
                   return null;
                 }
-            },
-
+            }
         }
-
         return functions;
     }
 )();
 
 // export the functionality to a pre-prepared var
-deterministic = wrapper;
+window.deterministic = wrapper;
