@@ -80,4 +80,4 @@ var wrapper = (
 )();
 
 // export the functionality to a pre-prepared var
-deterministic = wrapper;
+window.deterministic = wrapper;

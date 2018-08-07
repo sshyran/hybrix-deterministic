@@ -41,12 +41,10 @@ var wrapper = (
         return JSON.stringify( wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), data.seed) );  // example: lisk.transaction.createTransaction("1859190791819301L", amount, "passphrase", "secondPassphrase");
         // for more information see: https://github.com/corsaro1/lisk_broadcast
       }
-
     }
-
     return functions;
   }
 )();
 
 // export the functionality to a pre-prepared var
-deterministic = wrapper;
+window.deterministic = wrapper;

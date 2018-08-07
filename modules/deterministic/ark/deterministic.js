@@ -7,7 +7,6 @@
 
 var wrapperlib = require('./ark-js/index');
 
-
 var wrapper = (
   function() {
 
@@ -30,10 +29,9 @@ var wrapper = (
       }
 
     }
-
     return functions;
   }
 )();
 
 // export the functionality to a pre-prepared var
-deterministic = wrapper;
+window.deterministic = wrapper;

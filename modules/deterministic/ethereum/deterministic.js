@@ -60,9 +60,7 @@ var wrapper = (
             value: '0x0',                                           // set to zero, since we're sending tokens
             data: encoded                                           // payload as encoded using the smart contract
           };
-          // DEBUG: console.log(JSON.stringify(txParams));
         }
-
         // Transaction is created
         var tx = new wrapperlib.ethTx(txParams);
 
@@ -72,16 +70,14 @@ var wrapper = (
         var rawTx = '0x' + serializedTx.toString('hex');
         // DEBUG:         return "\n"+JSON.stringify(txParams)+"\n"+JSON.stringify(txParamsB)+"\n"+JSON.stringify(txParamsC);
         return rawTx;
-      },
 
+      },
       // encode ABI smart contract calls
       encode : function(data) { return encode(data); }
 
     }
-
-                return functions;
   }
 )();
 
 // export functionality to a pre-prepared var
-deterministic = wrapper;
+window.deterministic = wrapper;
