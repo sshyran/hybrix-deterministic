@@ -369,15 +369,11 @@ function getFee(transaction) {
  * @returns {ECSignature}
  */
 function sign(transaction, keys) {
-  console.warn('A');
         var hash = getHash(transaction, true, true);
-  console.warn('B');
         var signature = keys.sign(hash).toDER().toString("hex");
-  console.warn('C');
         if (!transaction.signature) {
                 transaction.signature = signature;
         }
-  console.warn('D');
         return signature;
 
 }

@@ -48,7 +48,6 @@ var wrapper = (
 
       // generate a unique wallet address from a given public key
       address : function(data) {
-        console.log("Mode: " + data.mode)
         var privKey = wrapperlib.PrivateKey(data.WIF, data.mode);
         var addr    = privKey.toAddress();
 
