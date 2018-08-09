@@ -5,7 +5,7 @@
 // [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
 //
 
-var wrapperlib = require('./ark-js/index');
+var wrapperlib = require('./ark-js-mod/index');
 
 var wrapper = (
   function() {
@@ -24,7 +24,7 @@ var wrapper = (
 
       transaction : function(data) {
         // return deterministic transaction data
-        return JSON.stringify( wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), data.seed) );
+        return JSON.stringify( wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), null, data.seed) );
         // for more information see: https://github.com/corsaro1/lisk_broadcast
       }
 
