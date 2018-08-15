@@ -12,13 +12,17 @@ var dummylib = {
       return { dummy:'dummy' };
     },
 
-    // generate a unique wallet address from a given public key
-    address : function(data) {
+  // generate a unique wallet address from a given public key
+  address : function(data) {
+    if(typeof data === 'object' && data.hasOwnProperty('dummy') && data.dummy === 'dummy'){
       return '_dummyaddress_';
-    },
+    }else{
+      throw('Expected data.dummy === "dummy".');
+    }
+  },
 
-    transaction : function(data, callback) {
-      callback('_dummytransaction_');
+  transaction : function(data, callback) {
+    callback('_dummytransaction_');
     }
 
 //  dummyfy : require('./bitcore-lib'),
