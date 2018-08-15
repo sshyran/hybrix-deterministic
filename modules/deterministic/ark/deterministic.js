@@ -9,7 +9,6 @@ var wrapperlib = require('./ark-js-mod/index');
 
 var wrapper = (
   function() {
-
     var functions = {
       // create deterministic public and private keys based on a seed
       keys : function(data) {

@@ -15,7 +15,7 @@ var wrapper = (
     var BigInteger = require('bigi');
     // DISABLED INSIDE wrapper FUNCTION: var wrapperlib = require('bitcoinjs-lib');
 
-    toSatoshis = function(float, factor) {
+    window.toSatoshis = function(float, factor) {
       return float * Math.pow(10, factor);
     }
 

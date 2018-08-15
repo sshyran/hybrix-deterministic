@@ -13,7 +13,7 @@ Decimal = require('../../../lib/crypto/decimal-light'); Decimal.set({ precision:
 // solves bug: "There was an error collecting entropy from the browser
 const randomBytes = crypto.randomBytes;
 if (typeof window === 'object') {
-  const wCrypto = window.crypto = window.crypto || {}
+  const wCrypto = window.crypto || {}
   if (!wCrypto.getRandomValues) {
     wCrypto.getRandomValues = function getRandomValues (arr) {
       const bytes = randomBytes(arr.length)

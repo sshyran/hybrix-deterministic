@@ -6,7 +6,6 @@ var wrapperlib = require('./wrapperlib');
 
 var wrapper = (
   function() {
-
     // encode ABI smart contract calls
     // call it by explicitly specifying the variables you want to pass along
     //
