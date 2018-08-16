@@ -17,6 +17,6 @@ mv bundle.noundefs.js.lzma deterministic.js.lzma
 
 # clean up
 rm bundle.js
-#rm bundle.noundefs.js
+rm bundle.noundefs.js
 
 PATH=$OLDPATH
