@@ -11,7 +11,13 @@ for D in *; do
       echo "[.] Checking ${D}..."
 	    cd ${D}
 
-      NEWEST_FILE="$(find . -type f -print0 | xargs -0 stat -f '%m %N' | sort -rn | head -1 | cut -f2- -d' ')";
+
+      if uname | grep -q "Darwin"; then
+        NEWEST_FILE="$(find . -type f -print0 | xargs -0 stat -f '%m %N' | sort -rn | head -1 | cut -f2- -d' ')";
+      else
+        NEWEST_FILE="$(find . -type f -print0 | xargs -0 stat -c '%m %Y' | sort -rn | head -1 | cut -f2- -d' ')";
+      fi
+
       #Check if compilation is required
       if [ "$NEWEST_FILE" -nt "deterministic.js.lzma" ]; then
           echo "[.] Needs compiling"
