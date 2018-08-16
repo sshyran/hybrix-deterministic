@@ -4,9 +4,10 @@
 
 function uglyClone(obj){return JSON.parse(JSON.stringify(obj));}
 
+// Why this? When I rm it, stuff still works... Why update window object.
 const randomBytes = crypto.randomBytes;
 if (typeof window === 'object') {
-  const wCrypto = window.crypto = window.crypto || {};
+  const wCrypto = window.crypto || {};
   if (!wCrypto.getRandomValues) {
     wCrypto.getRandomValues = function getRandomValues (arr) {
       const bytes = randomBytes(arr.length);
@@ -17,9 +18,7 @@ if (typeof window === 'object') {
   }
 }
 
-
-altFetch = function(url, opts){
-
+window.altFetch = function(url, opts){
   // we don't return anything usefull, just let it burn. We've got we came for and we'll capture the request with a catch
   return new Promise((resolve, reject) => {
 
@@ -34,10 +33,8 @@ altFetch = function(url, opts){
 
 var wrapperlib = require('./wrapperlib');
 
-
 var wrapper = (
   function() {
-
 
     var Waves = wrapperlib.create(wrapperlib.MAINNET_CONFIG);
 

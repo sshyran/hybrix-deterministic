@@ -11,7 +11,7 @@ cp ./waves-api.min.js ./wrapperlib.js
 # string replace to standardize naming of the module to wrapperlib
 sed -i -e 's/WavesAPI/wrapperlib/g' ./wrapperlib.js
 # replace the default fetch with an alternative fetch
-sed -i -e 's|window.fetch.bind(window)|altFetch.bind(window)|g' ./wrapperlib.js
+sed -i -e 's|window.fetch.bind(window)|window.altFetch|g' ./wrapperlib.js
 
 # TODO inject??
 

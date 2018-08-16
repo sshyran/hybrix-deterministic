@@ -15,7 +15,7 @@ naclFactory.instantiate(function (nacl) {
 });
 */
 
-naclInstance = nacl;
+window.naclInstance = window.nacl;
 
 lisk = {
 	crypto : require('./lib/transactions/crypto.js'),

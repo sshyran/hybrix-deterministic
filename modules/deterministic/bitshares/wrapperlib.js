@@ -7,7 +7,7 @@
 
 const randomBytes = crypto.randomBytes;
 if (typeof window === 'object') {
-  const wCrypto = window.crypto = window.crypto || {}
+  const wCrypto = window.crypto || {}
   if (!wCrypto.getRandomValues) {
     wCrypto.getRandomValues = function getRandomValues (arr) {
       const bytes = randomBytes(arr.length)
