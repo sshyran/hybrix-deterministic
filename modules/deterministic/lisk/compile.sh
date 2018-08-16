@@ -8,6 +8,8 @@ NODEINST=`which node`
 
 # define undefined globals explicitly
 sh ../../../pack/define.sh bundle.js > bundle.noundefs.js
+# replace global naclInstance with window.naclInstance
+sed -i -e 's|\ naclInstance|window.naclInstance|g' ./lisk-js/lib/transactions/crypto.js
 
 # lmza compression
 ../../../tools/lzmapack.js bundle.noundefs.js

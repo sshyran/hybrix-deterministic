@@ -1,3 +1,4 @@
 
 *.lzma
 node
+**/.tern-port
