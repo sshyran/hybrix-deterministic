@@ -9,13 +9,13 @@ cd "`cd $( dirname $BASH_SOURCE[0] ) && pwd`"
 for D in *; do
     if [ -d "${D}" ]; then
       echo "[.] Checking ${D}..."
-	    cd ${D}
+            cd ${D}
 
 
       if uname | grep -q "Darwin"; then
         NEWEST_FILE="$(find . -type f -print0 | xargs -0 stat -f '%m %N' | sort -rn | head -1 | cut -f2- -d' ')";
       else
-        NEWEST_FILE="$(find . -type f -print0 | xargs -0 stat -c '%m %Y' | sort -rn | head -1 | cut -f2- -d' ')";
+        NEWEST_FILE="$(find . -printf '%p\n' | sort -r | head -n1)";
       fi
 
       #Check if compilation is required
@@ -40,7 +40,7 @@ for D in *; do
           echo "[.] Skip migrating"
         fi
       fi
-	    cd ..
+            cd ..
     fi
 done
 cd "${HERE}"
