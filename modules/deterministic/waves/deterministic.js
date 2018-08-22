@@ -18,27 +18,27 @@ if (typeof window === 'object') {
   }
 }
 
+// this to prevent waves api from connecting with waves server, we only want the signed tx, not the pushing of the signed tx.
 window.altFetch = function(url, opts){
-  // we don't return anything usefull, just let it burn. We've got we came for and we'll capture the request with a catch
+  console.log('url',url,opts);
   return new Promise((resolve, reject) => {
     if(resolve){
       resolve({
-        json : (response) => {
-          return new Promise((resolve, reject) => {
-            if(resolve){
-              resolve(opts);
+        json : (response) => { // we don't return anything usefull with the response, just let it burn. We've got we came for and we'll capture the request with a catch
+          return new Promise((resolve2, reject2) => {
+            if(resolve2){
+              resolve2(opts);
             }else{
-              reject("Waves: promise rejected.");
+              reject2({data:{body:"Waves: promise rejected."}});
             }
           });
         }
       });
     }else{
-      reject("Waves: promise rejected.");
+      reject({data:{body:"Waves: promise rejected."}});
     }
   });
 };
-
 
 var wrapperlib = require('./wrapperlib');
 
