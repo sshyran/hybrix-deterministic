@@ -21,13 +21,22 @@ if (typeof window === 'object') {
 window.altFetch = function(url, opts){
   // we don't return anything usefull, just let it burn. We've got we came for and we'll capture the request with a catch
   return new Promise((resolve, reject) => {
-
-    resolve({json:function(response){
-
-      return new Promise((resolve, reject) => {
-        resolve(opts);
+    if(resolve){
+      resolve({
+        json : (response) => {
+          return new Promise((resolve, reject) => {
+            if(resolve){
+              resolve(opts);
+            }else{
+              reject("Waves: promise rejected.");
+            }
+          });
+        }
       });
-    }});});
+    }else{
+      reject("Waves: promise rejected.");
+    }
+  });
 };
 
 
