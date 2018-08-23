@@ -1,4 +1,5 @@
 'use strict'
+var Buffer = require('safe-buffer').Buffer
 
 // Number.MAX_SAFE_INTEGER
 var MAX_SAFE_INTEGER = 9007199254740991
@@ -10,7 +11,7 @@ function checkUInt53 (n) {
 function encode (number, buffer, offset) {
   checkUInt53(number)
 
-  if (!buffer) buffer = new Buffer(encodingLength(number))
+  if (!buffer) buffer = Buffer.allocUnsafe(encodingLength(number))
   if (!Buffer.isBuffer(buffer)) throw new TypeError('buffer must be a Buffer instance')
   if (!offset) offset = 0
 
