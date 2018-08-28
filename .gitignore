@@ -2,3 +2,4 @@
 *.lzma
 node
 **/.tern-port
+modules/deterministic/node_modules/.cache/*
