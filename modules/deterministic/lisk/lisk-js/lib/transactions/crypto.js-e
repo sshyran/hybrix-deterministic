@@ -501,7 +501,6 @@ function verifySecondSignature (transaction, publicKey) {
  */
 
 function getKeys (secret) {
-  console.log(">>>>> ",Object.keys(window));
         var hash = crypto.createHash('sha256').update(secret, 'utf8').digest();
         // This does not work within Webpack bundle. Need to prepend 'window.'
         var keypair = window.nacl.crypto_sign_keypair_from_seed(hash);
