@@ -40,13 +40,23 @@ toInt = function(input,factor) {
 // first we read from the compiled package and activate the code
 //
 
-dcode = String(fs.readFileSync('./modules/deterministic/ethereum_idex/deterministic.js.lzma'))
+dcode = String(fs.readFileSync('./modules/deterministic/dex_idex/deterministic.js.lzma'))
 //require(LZString.decompressFromEncodedURIComponent(dcode));
 var deterministic = activate( LZString.decompressFromEncodedURIComponent(dcode) );
 
 // 000000000000000000
 
-var input = { tokenAddress: "0xa3d58c4e56fedcae3a7c43a725aee9a71f0ece4e" // address of ETH_MET aka metronome
+// ./hybridd /asset/eth.kin/details
+var kin_token = {"symbol":"eth.kin"
+                  ,"name":"Kin"
+                  ,"mode":"ethereum.token"
+                  ,"fee":"0.000207060000000000"
+                  ,"contract":"0x818Fc6C2Ec5986bc6E2CBf00939d90556aB12ce5"
+                  ,"factor":"18"
+                  ,"keygen-base":"eth"
+                  ,"fee-symbol":"eth"};
+
+var input = { token: kin_token
             , amountToken: "25000000000000000000" // 25 MET
             , amountETH:    "1000000000000000000" // 1 ETH
             , isBuyOrder: false
@@ -86,7 +96,7 @@ if(typeof deterministic!='object' || deterministic=={}) {
 
   //logger('TRANSACTION INPUT: '+JSON.stringify(input));
   
-  var orderType = 'withdrawal';
+  var orderType = 'order';
   var pushToAPI = false
   if(orderType == 'order')
   {
