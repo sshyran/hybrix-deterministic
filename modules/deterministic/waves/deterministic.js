@@ -20,7 +20,6 @@ if (typeof window === 'object') {
 
 // this to prevent waves api from connecting with waves server, we only want the signed tx, not the pushing of the signed tx.
 window.altFetch = function(url, opts){
-  console.log('url',url,opts);
   return new Promise((resolve, reject) => {
     if(resolve){
       resolve({
