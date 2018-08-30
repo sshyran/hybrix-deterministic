@@ -35,7 +35,6 @@ var wrapper = (
     function createOrderHash(tokenBuy, amountBuy, tokenSell, amountSell, nonce, address) {
       idexContractAddress = "0x2a0c0dbecc7e4d658f48e01e3fa353f44050c208";
       expires = 1 // expires parameter, is unused by the API but still required to be passed in the call (due to backwards compatibility issues at idex)
-      console.log(nonce)
       return wrapperlib.web3utils.soliditySha3({
           t: 'address',
           v: idexContractAddress
@@ -158,7 +157,6 @@ var wrapper = (
         
         const orderHash = createOrderHash(tokenBuy, amountBuy, tokenSell, amountSell, data.nonceOfOrder, address)
         
-        console.log(nonce)
         const raw = wrapperlib.web3utils.soliditySha3({
           t: 'bytes',
           v: orderHash
