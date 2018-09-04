@@ -13,11 +13,13 @@ sed -i -e 's/WavesAPI/wrapperlib/g' ./wrapperlib.js
 # replace the default fetch with an alternative fetch
 sed -i -e 's|window.fetch.bind(window)|window.altFetch|g' ./wrapperlib.js
 
-# TODO inject??
-
 ../../../node_modules/webpack/bin/webpack.js --config webpack.config.js
 
 sh ../../../pack/define.sh bundle.js > bundle.noundefs.js
+
+# Some obscure javascript that is doomed to throw errors, resulting in unhandled promises. So we overwrite it.
+# var t="string"==typeof e.data.body?e.data.body:JSON.stringify(e.data.body);r(t)
+sed -i -e 's|var t="string"==typeof e\.data\.body?e\.data\.body:JSON\.stringify(e\.data\.body);r(t)|r(true)|g' ./bundle.noundefs.js
 
 ../../../tools/lzmapack.js bundle.noundefs.js
 mv bundle.noundefs.js.lzma deterministic.js.lzma
