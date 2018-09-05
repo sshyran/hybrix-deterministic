@@ -6,35 +6,22 @@ var wrapperlib = require('./wrapperlib');
 
 var wrapper = (
 	function() {
-    ETHAddress = "0x0000000000000000000000000000000000000000"
-    ETHfactor = 18
-    // encode ABI smart contract calls
-    // call it by explicitly specifying the variables you want to pass along
-    //
-    // EXAMPLES:https://aanbod.sshxl.nl/reacties/mijn-reacties
-    //            encode({ 'func':'balanceOf(address):(uint256)', 'vars':['target'], 'target':data.target });
-    //            encode({ 'func':'transfer(address,uint256):(uint256)', 'vars':['target','amount'], 'target':data.target,'amount':parseLargeIntToHex(data.amount).toString('hex') });
-    function encode(data) {
-      return '0x'+( new Function( 'wrapperlib','data', 'return wrapperlib.ethABI.simpleEncode(data.func,data.'+data.vars.join(',data.')+');' ) )(wrapperlib,data).toString('hex');
-    }
-
-    function parseLargeIntToHex(input) {
-      var result = wrapperlib.hex2dec.toHex( new Decimal(String(input)).toInteger().toFixed(64).replace(/\.?0+$/,"") );
-      return result !== null ? result : '0x0';
-      // DEPRECATED: return new Decimal(String(input)).toInteger().toFixed(64).replace(/\.?0+$/,"");
-    }
+    var ETHAddress = "0x0000000000000000000000000000000000000000"
+    var ETHfactor = 18
     
+    // Helper function (turns an amount from whole token/ETH to atomic units, both input and output amounts are strings).
     function toSatoshi(amount, factor) {
       amount = new Decimal(amount);
-      toSatoshiFactor = new Decimal(10);
-      toSatoshiFactor = toSatoshiFactor.pow(factor)
+      var toSatoshiFactor = new Decimal(10);
+      var toSatoshiFactor = toSatoshiFactor.pow(factor)
       amount = amount.mul(toSatoshiFactor)
       return amount.toString();
     }
     
+    // Helper function (to send an order and to cancel an order requires hashing the same arguments in exactly the same way, delegating that task to a helper-function ensures consistency).
     function createOrderHash(tokenBuy, amountBuy, tokenSell, amountSell, nonce, address) {
-      idexContractAddress = "0x2a0c0dbecc7e4d658f48e01e3fa353f44050c208";
-      expires = 1 // expires parameter, is unused by the API but still required to be passed in the call (due to backwards compatibility issues at idex)
+      var idexContractAddress = "0x2a0c0dbecc7e4d658f48e01e3fa353f44050c208";
+      var expires = 1 // expires parameter, is unused by the API but still required to be passed in the call (due to backwards compatibility issues at idex)
       return wrapperlib.web3utils.soliditySha3({
           t: 'address',
           v: idexContractAddress
@@ -65,43 +52,52 @@ var wrapper = (
     
 		var functions = {
 
-			// create deterministic public and private keys based on a seed
+			// create deterministic public and private keys based on a seed. This function was copied from the ethereum deterministic module.
 			keys : function(data) {
         var privateKey = wrapperlib.ethUtil.sha256(data.seed);
         return {privateKey:privateKey};
 			},
 
-      // generate a unique wallet address from a given public key
+      // generate a unique wallet address from a given public key. This function was copied from the ethereum deterministic module.
       address : function(data) {
         var publicKey = wrapperlib.ethUtil.privateToPublic(data.privateKey);
         return '0x'+wrapperlib.ethUtil.publicToAddress(publicKey).toString('hex');
       },
 
-      makeSignedIdexOrder : function(data) {  // data = { token, amountToken, amountETH, isBuyOrder, nonce, address, privateKey }
-        contractAddress = "0x2a0c0dbecc7e4d658f48e01e3fa353f44050c208"  // https://api.idex.market/returnContractAddress
-        tokenAddress = data.token.contract
-        tokenFactor = data.token.factor
-        amountToken = data.amountToken
-        amountETH = data.amountETH
+      /* data = {amountETH    // The amount of ETH that will bought/sold in the order. This is a string that corresponds to the amount of whole ETH, i.e. '2.5' corresponds to selling/buying 2.5 ETH.
+       *       , amountToken  // The amount of the token that will be bought/sold in the order. This is a string that corresponds to the amount of whole token, i.e. '2.5' corresponds to selling/buying 2.5 token.
+       *       , isBuyOrder   // Boolean value (not a string). 'true' means the order is a buy order (buying token using ETH), 'false' means that the order is a sell order (selling token for ETH).
+       *       , token        // The result of /asset/TOKEN/details  e.g. /asset/eth.kin/details. This needs to be the token of the order you are trying to cancel.
+       *       , nonce        // The latest nonce for a new transaction as a regular integer. Available here: /engine/idex/getNextNonce/ADDRESS (fill in the address)
+       *       , address      // The address where the ETH/tokenes need to go back to.
+       *       , privateKey   // The private key that belongs to the address (only used for signing the output)
+       *       }
+       */
+      makeSignedIdexOrder : function(data) { 
+        var contractAddress = "0x2a0c0dbecc7e4d658f48e01e3fa353f44050c208"  // https://api.idex.market/returnContractAddress
+        var tokenAddress = data.token.contract
+        var tokenFactor = data.token.factor
+        var amountToken = data.amountToken
+        var amountETH = data.amountETH
         
-        amountToken = toSatoshi(amountToken, tokenFactor);
-        amountETH = toSatoshi(amountETH, ETHfactor);
+        var amountToken = toSatoshi(amountToken, tokenFactor);
+        var amountETH = toSatoshi(amountETH, ETHfactor);
         
         if( data.isBuyOrder ) {
-          tokenBuy   = tokenAddress
-          amountBuy  = amountToken
-          tokenSell  = ETHAddress
-          amountSell = amountETH
+          var tokenBuy   = tokenAddress
+          var amountBuy  = amountToken
+          var tokenSell  = ETHAddress
+          var amountSell = amountETH
         } else {
-          tokenBuy   = ETHAddress
-          amountBuy  = amountETH
-          tokenSell  = tokenAddress
-          amountSell = amountToken
+          var tokenBuy   = ETHAddress
+          var amountBuy  = amountETH
+          var tokenSell  = tokenAddress
+          var amountSell = amountToken
         }
         
-        nonce = data.nonce
-        address = data.address
-        privateKey = data.privateKey.privateKey.toString('hex')
+        var nonce = data.nonce
+        var address = data.address
+        var privateKey = data.privateKey.privateKey.toString('hex')
         
         const privateKeyBuffer  = Buffer.from(privateKey, 'hex');
         
@@ -128,29 +124,39 @@ var wrapper = (
                 }
       },
       
-      cancelSignedIdexOrder : function(data) {  // data = { amountETH, amountToken, isBuyOrder, token, nonceOfOrder, nonce, address, privateKey }
-        nonce = data.nonce
-        address = data.address
-        privateKey = data.privateKey.privateKey.toString('hex')
-        tokenAddress = data.token.contract
-        tokenFactor = data.token.factor
+      /* data = {amount       // The amount of ETH that was offered to be bought/sold in the order you are trying to cancel. This is a string that corresponds to the amount of whole ETH, i.e. '2.5' corresponds to selling/buying 2.5 ETH.
+       *       , amountToken  // The amount of the token that was offered to be bought/sold in the order you are trying to cancel. This is a string that corresponds to the amount of whole token, i.e. '2.5' corresponds to selling/buying 2.5 token.
+       *       , isBuyOrder   // Boolean value (not a string). 'true' means the order you are trying to cancel was a buy order, 'false' means that the order you are trying to cancel was a sell order.
+       *       , token        // The result of /asset/TOKEN/details  e.g. /asset/eth.kin/details. This needs to be the token of the order you are trying to cancel.
+       *       , nonceOfOrder // The nonce of the transaction you are trying to cancel, as a regular integer
+       *       , nonce        // The latest nonce for a new transaction as a regular integer. Available here: /engine/idex/getNextNonce/ADDRESS (fill in the address)
+       *       , address      // The address where the ETH/tokenes need to go back to.
+       *       , privateKey   // The private key that belongs to the address (only used for signing the output)
+       *       }
+       */
+      cancelSignedIdexOrder : function(data) {  
+        var nonce = data.nonce
+        var address = data.address
+        var privateKey = data.privateKey.privateKey.toString('hex')
+        var tokenAddress = data.token.contract
+        var tokenFactor = data.token.factor
         
-        amountToken = data.amountToken
-        amountETH = data.amountETH
+        var amountToken = data.amountToken
+        var amountETH = data.amountETH
         
-        amountToken = toSatoshi(amountToken, tokenFactor);
-        amountETH = toSatoshi(amountETH, ETHfactor);
+        var amountToken = toSatoshi(amountToken, tokenFactor);
+        var amountETH = toSatoshi(amountETH, ETHfactor);
         
         if( data.isBuyOrder ) {
-          tokenBuy   = tokenAddress
-          amountBuy  = amountToken
-          tokenSell  = ETHAddress
-          amountSell = amountETH
+          var tokenBuy   = tokenAddress
+          var amountBuy  = amountToken
+          var tokenSell  = ETHAddress
+          var amountSell = amountETH
         } else {
-          tokenBuy   = ETHAddress
-          amountBuy  = amountETH
-          tokenSell  = tokenAddress
-          amountSell = amountToken
+          var tokenBuy   = ETHAddress
+          var amountBuy  = amountETH
+          var tokenSell  = tokenAddress
+          var amountSell = amountToken
         }
         
         const privateKeyBuffer  = Buffer.from(privateKey, 'hex');
@@ -181,14 +187,21 @@ var wrapper = (
                 "s": s
                 }
       },
-
-      SignedIdexWithdrawal : function(data) {  // data = { token, amount, nonce, address, privateKey }
-        contractAddress = "0x2a0c0dbecc7e4d658f48e01e3fa353f44050c208"  // https://api.idex.market/returnContractAddress
-        token = data.token.contract
-        amount = toSatoshi(data.amount, data.token.factor);
-        nonce = data.nonce
-        address = data.address
-        privateKey = data.privateKey.privateKey.toString('hex')
+      
+      /* data = { token       // The result of /asset/TOKEN/details  e.g. /asset/eth.kin/details
+       *        , amount      // String in whole token or ETH, e.g. 2.5 ETH is the string '2.5'
+       *        , nonce       // The latest nonce for a new transaction as a regular integer. Available here: /engine/idex/getNextNonce/ADDRESS (fill in the address)
+       *        , address     // The address where the ETH/tokenes need to go back to.
+       *        , privateKey  // The private key that belongs to the address (only used for signing the output)
+       *        }
+       */
+      SignedIdexWithdrawal : function(data) {  
+        var contractAddress = "0x2a0c0dbecc7e4d658f48e01e3fa353f44050c208"  // https://api.idex.market/returnContractAddress
+        var token = data.token.contract
+        var amount = toSatoshi(data.amount, data.token.factor);
+        var nonce = data.nonce
+        var address = data.address
+        var privateKey = data.privateKey.privateKey.toString('hex')
         
         const privateKeyBuffer  = Buffer.from(privateKey, 'hex');
         const raw = wrapperlib.web3utils.soliditySha3({
@@ -223,10 +236,7 @@ var wrapper = (
                 "r": r,
                 "s": s
                 }
-      },
-      // encode ABI smart contract calls
-      encode : function(data) { return encode(data); }
-
+      }
 		}
 
 		return functions;
