@@ -1,5 +1,4 @@
-
-*.lzma
+common
 node
 **/.tern-port
-modules/deterministic/node_modules/.cache/*
+node_modules/.cache/*
