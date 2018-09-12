@@ -40,7 +40,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build" : "sh scripts/npm/build.sh"
+    "build": "sh scripts/npm/build.sh"
   },
   "repository": {
     "type": "git",

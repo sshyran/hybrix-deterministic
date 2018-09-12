@@ -3,13 +3,13 @@ HERE="`pwd`";
 
 echo " [!] Build module-deterministics."
 
-# $IOC/$HYBRIDD/scripts/npm  => $IOC
-IOC="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )/../../../"
-HYBRIDD="$IOC/hybridd"
-MODULE_DETERMINISTIC="$IOC/module-deterministic"
-NODEJS="$IOC/nodejs-v8-lts"
-COMMON="$IOC/ioc-tools"
-WEB_WALLET="$IOC/web-wallet"
+# $HYBRIDD/$NODE/scripts/npm  => $HYBRIDD
+HYBRIDD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )/../../../"
+NODE="$HYBRIDD/node"
+DETERMINISTIC="$HYBRIDD/deterministic"
+NODEJS="$HYBRIDD/nodejs-v8-lts"
+COMMON="$HYBRIDD/common"
+WEB_WALLET="$HYBRIDD/web-wallet"
 
 if [ $(uname) == "Darwin" ]; then
     SYSTEM="darwin-x64"
@@ -23,35 +23,35 @@ else
 fi
 
 # NODE
-if [ ! -e "$MODULE_DETERMINISTIC/node" ];then
+if [ ! -e "$DETERMINISTIC/node" ];then
 
-    echo " [!] module-deterministic/node not found."
+    echo " [!] deterministic/node not found."
 
     if [ ! -e "$NODEJS" ];then
-        cd "$IOC"
+        cd "$HYBRIDD"
         echo " [i] Clone node js runtimes files"
         git clone https://github.com/internetofcoins/nodejs-v8-lts.git
     fi
     echo " [i] Link NODEJS files"
-    ln -sf "$NODEJS/$SYSTEM" "$MODULE_DETERMINISTIC/node"
+    ln -sf "$NODEJS/$SYSTEM" "$DETERMINISTIC/node"
 fi
 
 # COMMON
-if [ ! -e "$MODULE_DETERMINISTIC/common" ];then
+if [ ! -e "$DETERMINISTIC/common" ];then
 
-    echo " [!] module-deterministic/common not found."
+    echo " [!] deterministic/common not found."
 
     if [ ! -e "$COMMON" ];then
-        cd "$IOC"
+        cd "$HYBRIDD"
         echo " [i] Clone common files"
-        git clone https://www.gitlab.com/iochq/ioc-tools.git
+        git clone https://www.gitlab.com/iochq/hybridd/common.git
     fi
     echo " [i] Link common files"
-    ln -sf "$COMMON" "$MODULE_DETERMINISTIC/common"
+    ln -sf "$COMMON" "$DETERMINISTIC/common"
 
 fi
 
-cd "$MODULE_DETERMINISTIC/modules"
+cd "$DETERMINISTIC/modules"
 
 for D in *; do
     if [ -d "${D}" ]; then
@@ -74,11 +74,11 @@ for D in *; do
             echo "[.] Skip compiling"
         fi
         echo "[.] Migrating"
-        mkdir -p "$HYBRIDD/modules/deterministic/$D"
-        cp deterministic.js.lzma "$HYBRIDD/modules/deterministic/$D/deterministic.js.lzma"
+        mkdir -p "$NODE/modules/deterministic/$D"
+        cp deterministic.js.lzma "$NODE/modules/deterministic/$D/deterministic.js.lzma"
 
         cd ..
     fi
 done
 cd "${HERE}"
-echo "[.] module-deterministics: All done."
+echo "[.] deterministics: All done."
