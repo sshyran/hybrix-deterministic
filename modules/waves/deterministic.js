@@ -55,8 +55,6 @@ var wrapper = (
       address: function(data) {
         return uglyClone(data.address);
       },
-
-
       transaction: function(data,callback) {
         var txParams;
 
@@ -91,11 +89,18 @@ var wrapper = (
             timestamp: Date.now()
           };
         }
+        var fThen1 = (x) => {};
+        var fThen2 = (x) => {};
+        var fCatch = (x) => {
+          var body = JSON.parse(x.data.body)
+          callback(body.signature);
+        }
 
-        Waves.API.Node.v1.assets.transfer(txParams, data.keys.keyPair).then((responseData) => { }).then(function (error) {}).catch(function (error) {
-          var transactionId = (typeof error.data.body === 'string')?error.data.body:JSON.stringify(error.data.body);
-          callback(transactionId); // Since we've hacked the fetch command it will error, but we don't need the result, we need the request
-        });
+/*
+[Log] catch
+WavesRequestError: Server request to 'https://nodes.wavesnodes.com/assets/broadcast/transfer' has failed: { "method": "POST", "headers": { "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" }, "body": "{\"senderPublicKey\":\"3jMsaNAfTUJcYZm8Bv9JqgpBEg7YRE7v8zu29VUxZNkF\",\"assetId\":\"\",\"feeAssetId\":\"\",\"timestamp\":1536764828876,\"amount\":100000,\"fee\":1000000,\"recipient\":\"address:3PBUkL5rphESXxq1yJzW2erVzTTKAXXeCUo\",\"attachment\":\"\",\"signature\":\"4QCZpeyv3TAJQqmYJDgXgy3bLtmivv8VkMi2zoirC51zcaB9XewWw5a67E1rVAGS9CzE1AaoU5YTy3oCu1V8U172\"}" }
+*/
+        Waves.API.Node.v1.assets.transfer(txParams, data.keys.keyPair).then(fThen1).then(fThen2).catch(fCatch);
 
       }
     }
