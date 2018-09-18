@@ -92,7 +92,7 @@ var wrapper = (
         var fThen1 = (x) => {};
         var fThen2 = (x) => {};
         var fCatch = (x) => {
-          var body = JSON.parse(x.data.body)
+          var body = JSON.parse(x.data.body);
           callback(body.signature);
         }
 
