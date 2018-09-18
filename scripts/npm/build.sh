@@ -4,7 +4,9 @@ HERE="`pwd`";
 echo " [!] Build module-deterministics."
 
 # $HYBRIDD/$NODE/scripts/npm  => $HYBRIDD
-HYBRIDD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )/../../../"
+SCRIPTDIR="`dirname \"$0\"`"
+HYBRIDD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
+
 NODE="$HYBRIDD/node"
 DETERMINISTIC="$HYBRIDD/deterministic"
 NODEJS="$HYBRIDD/nodejs-v8-lts"

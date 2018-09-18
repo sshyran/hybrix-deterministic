@@ -19,18 +19,18 @@ var wrapper = (
       return float * Math.pow(10, factor);
     }*/
 
-    fromUnits = function(float, factor) {
+    var fromUnits = function(float, factor) {
       return float / Math.pow(10, factor);
     }
 
-    minimumFee = function(numNem, factor) {
+    var minimumFee = function(numNem, factor) {
       var fee = Math.floor( fromUnits(numNem,factor) /10000) * 0.05;
       if (fee < 0.05) { fee=0.05 } else if(fee > 1.25) {fee=1.25};
       return fee * Math.pow(10, factor);
     }
 
 
-    getMosaicDefinition = function(namespace, mosaic) {
+    var getMosaicDefinition = function(namespace, mosaic) {
       // Usage examples:
       // // var namespace = "11123.kopioey";
       // // var mosaic = "kopioeycoin";
@@ -63,7 +63,10 @@ var wrapper = (
           // DEBUG: console.log("Full mosaic name: ", fullMosaicName);
 
           // Check if the mosaic was found
-          if(undefined === neededDefinition[fullMosaicName]) return console.error("Mosaic not found !");
+          if(undefined === neededDefinition[fullMosaicName]){
+            console.error("Mosaic not found !");
+            return;
+          }
 
           // Set mosaic definition into mosaicDefinitionMetaDataPair
           mosaicDefinitionMetaDataPair[fullMosaicName] = {};
@@ -78,12 +81,12 @@ var wrapper = (
     };
 
 
-    txEntityRegular = function(network, common, transferTransaction) {
+    var txEntityRegular = function(network, common, transferTransaction) {
       var transactionEntity = wrapperlib.nem.model.transactions.prepare("transferTransaction")(common, transferTransaction, network.id);
       return transactionEntity;
     }
 
-    txEntityMosaic = function(network, common, transferTransaction, data) {
+    var txEntityMosaic = function(network, common, transferTransaction, data) {
 
       var namespace    = data.unspent.id.namespaceId;
       var mosaicName   = data.unspent.id.name;
