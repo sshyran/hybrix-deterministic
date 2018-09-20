@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "dependencies": {
+    "base-58": "^0.0.1",
     "bigi": "^1.4.2",
     "bip66": "^1.1.5",
     "bitcoin-ops": "^1.4.1",
@@ -35,6 +36,7 @@
     "webpack-cli": "^3.1.0",
     "wif": "^2.0.6",
     "window": "^4.2.5",
+    "ws": "^6.0.0",
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {},

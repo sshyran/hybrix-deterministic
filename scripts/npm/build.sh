@@ -1,6 +1,7 @@
 #!/bin/sh
 HERE="`pwd`";
 
+
 echo " [!] Build module-deterministics."
 
 # $HYBRIDD/$NODE/scripts/npm  => $HYBRIDD
@@ -12,6 +13,9 @@ DETERMINISTIC="$HYBRIDD/deterministic"
 NODEJS="$HYBRIDD/nodejs-v8-lts"
 COMMON="$HYBRIDD/common"
 WEB_WALLET="$HYBRIDD/web-wallet"
+
+OLDPATH="$PATH"
+export PATH=$DETERMINISTIC/node/bin:"$PATH"
 
 if [ "`uname`" = "Darwin" ]; then
     SYSTEM="darwin-x64"
@@ -61,14 +65,14 @@ for D in *; do
         cd ${D}
 
 
-        if [ "$SYSTEM" == "darwin-x64" ]; then
+        if [ "$SYSTEM" = "darwin-x64" ]; then
             NEWEST_FILE="$(find . -type f -print0 | xargs -0 stat -f '%m %N' | sort -rn | head -1 | cut -f2- -d' ')";
         else
             NEWEST_FILE="$(find . -printf '%p\n' | sort -r | head -n1)";
         fi
 
         #Check if compilation is required
-        if [ "$NEWEST_FILE" -nt "deterministic.js.lzma" ]; then
+        if [ ! -e "deterministic.js.lzma" ] || [ "$NEWEST_FILE" -nt "deterministic.js.lzma" ]; then
             echo "[.] Needs compiling"
             ./compile.sh
             echo "[.] Compiling completed"
@@ -84,3 +88,4 @@ for D in *; do
 done
 cd "${HERE}"
 echo "[.] deterministics: All done."
+export PATH="$OLDPATH"

@@ -2,7 +2,8 @@
 
 WHEREAMI=`pwd`
 
-DEGLOBALIFY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+SCRIPTDIR="`dirname \"$0\"`"
+DEGLOBALIFY="`cd \"$SCRIPTDIR\" && pwd`"
 
 eslint -f compact -c "$DEGLOBALIFY/.eslintrc.json" "$1" > "$1.eslint.txt"
 grep -n "no-undef" "$1.eslint.txt" > "$1.no-undef1.txt"
