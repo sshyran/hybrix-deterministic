@@ -1,6 +1,7 @@
 #!/bin/sh
 HERE="`pwd`";
 
+
 echo " [!] Build module-deterministics."
 
 # $HYBRIDD/$NODE/scripts/npm  => $HYBRIDD
@@ -12,6 +13,9 @@ DETERMINISTIC="$HYBRIDD/deterministic"
 NODEJS="$HYBRIDD/nodejs-v8-lts"
 COMMON="$HYBRIDD/common"
 WEB_WALLET="$HYBRIDD/web-wallet"
+
+OLDPATH="$PATH"
+export PATH=$DETERMINISTIC/node/bin:"$PATH"
 
 if [ "`uname`" = "Darwin" ]; then
     SYSTEM="darwin-x64"
@@ -84,3 +88,4 @@ for D in *; do
 done
 cd "${HERE}"
 echo "[.] deterministics: All done."
+export PATH="$OLDPATH"

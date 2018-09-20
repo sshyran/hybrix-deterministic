@@ -3,6 +3,7 @@ OLDPATH=$PATH
 WHEREAMI=`pwd`
 export PATH=$WHEREAMI/../../../node/bin:"$PATH"
 NODEINST=`which node`
+echo $NODEINST
 
 ../../node_modules/webpack/bin/webpack.js --config webpack.config.js
 

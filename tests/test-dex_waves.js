@@ -37,75 +37,64 @@ toInt = function(input,factor) {
 
 //
 // first we read from the compiled package and activate the code
-//
+// 
 
-var mode = 'waves';  // other modes: bitcoinjslib.bitcoin, ethereum, lisk
-dcode = String(fs.readFileSync('./../modules/'+mode.split('.')[0]+'/deterministic.js.lzma'))
+dcode = String(fs.readFileSync('./../modules/dex_waves/deterministic.js.lzma'))
 //require(LZString.decompressFromEncodedURIComponent(dcode));
 var deterministic = activate( LZString.decompressFromEncodedURIComponent(dcode) );
 
-var input = {}
+var wallet_privatekey = '2fLjLognsYGDJbjYtbUCJLgBrcJL8cofddDw3mtEgBhd'
+var wallet_publickey = 'DLjqDo5Fhrwe19RXdz2BwLfuLipffqk6queL6VwyH7hi'
+var wallet_address = '3P9goYuUuu3wQ2etAes6RyiF1bJL9ZEhpRa'
+var matcher_public_key = '7kPFrHDiGw1rCm7LPszuECwWYL3dMf6iMifLRDJQZMzy'
+var binaryRandomSeed = "5a779b423782d4d04f06c8b996239e93f340188a05a5e132e0ec9b2cdde00a570c5d2aaee8d5d15dd66ec4e2557ecf17b7c8402fdfba936ee028e3fc54be8a42"
+var waves_coin_details = {
+                            "fee":"0.00100000",
+                            "factor":"8"
+                            ,"contract":""
+                            ,"symbol":"waves"
+                            ,"name":"Waves"
+                            ,"mode":"waves"
+                            ,"unified-symbols":"undefined"
+                            ,"fee-symbol":"waves"
+                            ,"keygen-base":"waves"
+                            ,"generated":"never"
+                          }
+                          
+var usd_token_details = {
+                          "fee":"0.00100000",
+                          "factor":"2",
+                          "contract":"Ft8X1v1LTa1ABafufpaCWyVj8KkaxUWE6xBhW6sNFJck",
+                          "symbol":"waves.usd","name":"USD Token Stablecoin (Waves)",
+                          "mode":"waves.token",
+                          "unified-symbols":"undefined",
+                          "fee-symbol":"waves",
+                          "keygen-base":"waves",
+                          "generated":"never"
+                        }
 
-var tx = {
-      'waves': {
-        'seed':'correct horse battery staple',                  // seed string for deterministic wallet
-        'keys':null,                                            // cryptographic keys (will be generated)
-        'source_address':null,                                  // where to transact from (will be generated)
-        'target_address':'3PLBy8VDPFFyWiGSwSuQeiyJFZxqGkNDznp', // where to transact to
-        'contract':'',                                          // TODO? -> smart contract address
-        'amount':0.1,                                           // amount to send
-        'fee':1,                                                // fee for the miners or the system
-        'unspent':{                                             // Bitcoin derived cryptocurrencies need unspents to be able to generate transactions
-                  },
-        'factor':8,                                             // amount of decimals, i.e.: 10^x
-      }
-    }
+var input = {
+              spendAmount: "0.004",
+              receiveAmount: "0.01", 
+              spendAsset: waves_coin_details, 
+              receiveAsset: usd_token_details, 
+              matcherFee: 300000,  //default from python python implementation
+              maxLifetime: 3600,  //3600 = 1 hour 
+              hexRandomSeed: binaryRandomSeed, 
+              matcherPublicKey: matcher_public_key, 
+              publickey: wallet_publickey, 
+              privKey: wallet_privatekey
+            }
 
 if(typeof deterministic!='object' || deterministic=={}) {
   logger('Error: Cannot load deterministic wrapper!');
 } else {
 
-  //
-  // generate cryptographic keys based on a seed string
-  //
-  input = { seed: tx[mode].seed }
-  var result = deterministic.keys(input);
-  tx[mode].keys = result;
-  logger('SEED: '+input.seed);
+  console.dir(input, {depth:null});
 
-  //
-  // produce a public address based on cryptographic keys
-  //
-  var result = deterministic.address(tx[mode].keys);
-  tx[mode].source_address = result;
-  logger('PUBLIC ADDRESS: '+result);
+  signedOrder = deterministic.makeSignedWavesOrder(input);
 
-  //
-  // produce a public address based on cryptographic keys
-  //
-  logger('CONTRACT ADDRESS: '+tx[mode].contract);
-
-  //
-  // create a signed transaction
-  //
-  input = {
-            mode:mode.split('.')[1],
-            source:tx[mode].source_address,
-            target:tx[mode].target_address,
-            amount:toInt(tx[mode].amount,tx[mode].factor),
-            fee:toInt(tx[mode].fee,tx[mode].factor),
-            factor:tx[mode].factor,
-            contract:tx[mode].contract,
-            keys:tx[mode].keys,
-            seed:tx[mode].seed,
-            unspent:tx[mode].unspent
-  }
-
-  var onTransaction = function(result){
-    logger('SIGNED TRANSACTION: '+result);
-  }
-  deterministic.transaction(input,onTransaction);
-
+  logger(signedOrder)
 }
 
 // activate (deterministic) code from a string
