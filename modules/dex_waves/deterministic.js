@@ -18,7 +18,6 @@ if (typeof window === 'object') {
   }
 }
 
-
 var wrapperlib = require('./wrapperlib');
 
 var wrapper = (
@@ -28,7 +27,7 @@ var wrapper = (
         return ('0' + (byte & 0xFF).toString(16)).slice(-2);
       }).join('')
     }
-    
+
     function toSatoshi(amount, factor) {
       amount = new Decimal(amount);
       var toSatoshiFactor = new Decimal(10);
@@ -42,13 +41,13 @@ var wrapper = (
       var asset2Decimal = new Decimal(asset2Amount)
       var factorAsDecimal = new Decimal(10)
       factorAsDecimal = factorAsDecimal.pow(asset2Factor)
-      
+
       return parseInt(asset2Decimal.mul(factorAsDecimal).div(asset1Decimal).toString())
     }
-    
+
     function sortAssets(spendAssetId, receiveAssetId) {
       var orderedAssetPair = {}
-      
+
       if (spendAssetId.length < receiveAssetId.length) {
         orderedAssetPair.asset1 = spendAssetId;
         orderedAssetPair.asset2 = receiveAssetId;
@@ -58,7 +57,7 @@ var wrapper = (
       } else {
         var spendAssetIdDecoded = wrapperlib.base58.decode(spendAssetId);
         var receiveAssetIdDecoded = wrapperlib.base58.decode(receiveAssetId);
-        
+
         if ( numericArrayCompare(spendAssetIdDecoded, receiveAssetIdDecoded) < 0 ) {
           orderedAssetPair.asset1 = spendAssetId;
           orderedAssetPair.asset2 = receiveAssetId;
@@ -69,7 +68,7 @@ var wrapper = (
       }
       return orderedAssetPair;
     }
-    
+
     function orderToHex(order) {
       function assetToHex(assetID) {
         if (assetID == "") {
@@ -86,8 +85,8 @@ var wrapper = (
       else {
         var otype = "01"
       }
-      
-      return bytesToHex(wrapperlib.base58.decode(order.senderPublicKey)) 
+
+      return bytesToHex(wrapperlib.base58.decode(order.senderPublicKey))
                   + bytesToHex(wrapperlib.base58.decode(order.matcherPublicKey))
                   + assetToHex(order.assetPair.amountAsset)
                   + assetToHex(order.assetPair.priceAsset)
@@ -97,13 +96,13 @@ var wrapper = (
                   + order.timestamp.toString(16).padStart(16, '0')
                   + order.expiration.toString(16).padStart(16, '0')
                   + order.matcherFee.toString(16).padStart(16, '0')
-                    
+
     }
 
   function signOrder(privkey, order, hexRandomSeed) {
     var orderAsHex = orderToHex(order)
     var privkeyAsByteArray = wrapperlib.base58.decode(privkey)
-    var signedUint8Array = axlsign.sign(privkeyAsByteArray, 
+    var signedUint8Array = axlsign.sign(privkeyAsByteArray,
                               hexToBytes(orderAsHex),
                               hexToBytes(hexRandomSeed))
     return wrapperlib.base58.encode(signedUint8Array)
@@ -112,11 +111,11 @@ var wrapper = (
     var functions = {
       makeSignedWavesOrder: function(data,callback) { //data = {spendAmount, receiveAmount, spendAsset, receiveAsset, matcherFee, maxLifetime, hexRandomSeed, matcherPublicKey, publickey, privKey}
         var currentTime = Date.now();
-        
+
         var orderedAssetPair = sortAssets(data.spendAsset.contract, data.receiveAsset.contract);
-        
+
         if (data.receiveAsset.contract == orderedAssetPair.asset1) {
-          var orderType = "buy"; 
+          var orderType = "buy";
           var amount = toSatoshi(data.receiveAmount, data.receiveAsset.factor);
           var price =  wavesPrice(data.receiveAmount, data.spendAmount, data.spendAsset.factor);
         }
@@ -125,8 +124,8 @@ var wrapper = (
           var amount = toSatoshi(data.spendAmount, data.spendAsset.factor);
           var price =  wavesPrice(data.spendAmount, data.receiveAmount, data.receiveAsset.factor);
         }
-        
-        
+
+
         order = {"signature": "",
                   "amount": amount,
                   "matcherPublicKey": data.matcherPublicKey,
