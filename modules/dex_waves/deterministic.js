@@ -18,7 +18,6 @@ if (typeof window === 'object') {
   }
 }
 
-
 var wrapperlib = require('./wrapperlib');
 
 var wrapper = (
@@ -30,7 +29,6 @@ var wrapper = (
         return ('0' + (byte & 0xFF).toString(16)).slice(-2);
       }).join('')
     }
-    
     // Takes a hexadecimal number and returns the corresponding bytes-array.
     function hexToBytes(hex) {
         for (var bytes = [], c = 0; c < hex.length; c += 2)
@@ -79,7 +77,7 @@ var wrapper = (
     // Sorts 2 assets based on the base58 asset id, returns an ordered pair.
     function sortAssets(spendAssetId, receiveAssetId) {
       var orderedAssetPair = {}
-      
+
       if (spendAssetId.length < receiveAssetId.length) {
         orderedAssetPair.asset1 = spendAssetId;
         orderedAssetPair.asset2 = receiveAssetId;
@@ -120,7 +118,7 @@ var wrapper = (
         /*
         var spendAssetIdDecoded = wrapperlib.base58.decode(spendAssetId);
         var receiveAssetIdDecoded = wrapperlib.base58.decode(receiveAssetId);
-        
+
         if ( numericArrayCompare(spendAssetIdDecoded, receiveAssetIdDecoded) < 0 ) {
           orderedAssetPair.asset1 = spendAssetId;
           orderedAssetPair.asset2 = receiveAssetId;
@@ -131,7 +129,6 @@ var wrapper = (
       }
       return orderedAssetPair;
     }
-    
     // Takes in an order and converts it to a hexidecimal number as required by waves for signing the order.
     function orderToHex(order) {
       function assetToHex(assetID) {
@@ -149,8 +146,8 @@ var wrapper = (
       else {
         var otype = "01"
       }
-      
-      return bytesToHex(wrapperlib.base58.decode(order.senderPublicKey)) 
+
+      return bytesToHex(wrapperlib.base58.decode(order.senderPublicKey))
                   + bytesToHex(wrapperlib.base58.decode(order.matcherPublicKey))
                   + assetToHex(order.assetPair.amountAsset)
                   + assetToHex(order.assetPair.priceAsset)
@@ -160,14 +157,13 @@ var wrapper = (
                   + order.timestamp.toString(16).padStart(16, '0')
                   + order.expiration.toString(16).padStart(16, '0')
                   + order.matcherFee.toString(16).padStart(16, '0')
-                    
+
     }
 
   // Takes a privatekey as base58 string, an unsigned waves order and a random seed as hexadecimal string and returns the signature for that order.
   function signOrder(privkey, order, hexRandomSeed) {
     var orderAsHex = orderToHex(order)
     var privkeyAsByteArray = wrapperlib.base58.decode(privkey)
-    
     var axlsign = {}
     wrapperlib.crypto_lib.axlsign(axlsign)
     
@@ -193,9 +189,9 @@ var wrapper = (
        */ 
       makeSignedWavesOrder: function(data) { 
         var orderedAssetPair = sortAssets(data.spendAsset.contract, data.receiveAsset.contract);
-        
+
         if (data.receiveAsset.contract == orderedAssetPair.asset1) {
-          var orderType = "buy"; 
+          var orderType = "buy";
           var amount = toSatoshi(data.receiveAmount, data.receiveAsset.factor);
           var price =  wavesPrice(data.receiveAmount, data.spendAmount, data.spendAsset.factor);
         }
@@ -204,7 +200,7 @@ var wrapper = (
           var amount = toSatoshi(data.spendAmount, data.spendAsset.factor);
           var price =  wavesPrice(data.spendAmount, data.receiveAmount, data.receiveAsset.factor);
         }
-        
+           
         var currentTime = Date.now();
         order = {"signature": "",
                   "amount": amount,
