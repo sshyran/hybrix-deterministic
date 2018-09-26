@@ -23,29 +23,60 @@ var wrapperlib = require('./wrapperlib');
 
 var wrapper = (
   function() {
+    
+    // Takes a bytes-array and returns the corresponding hexadecimal number.
     function bytesToHex(byteArray) {
       return Array.from(byteArray, function(byte) {
         return ('0' + (byte & 0xFF).toString(16)).slice(-2);
       }).join('')
     }
     
+    // Takes a hexadecimal number and returns the corresponding bytes-array.
+    function hexToBytes(hex) {
+        for (var bytes = [], c = 0; c < hex.length; c += 2)
+        bytes.push(parseInt(hex.substr(c, 2), 16));
+        return Uint8Array.from(bytes);
+    }
+    
+    // Takes a number and a factor and adds that many orders of magnitude to the numbers. Returns the number as a string.
     function toSatoshi(amount, factor) {
       amount = new Decimal(amount);
       var toSatoshiFactor = new Decimal(10);
       var toSatoshiFactor = toSatoshiFactor.pow(factor)
       amount = amount.mul(toSatoshiFactor)
-      return amount.toString();
-    }
-
-    function wavesPrice(asset1Amount, asset2Amount, asset2Factor) {
-      var asset1Decimal = new Decimal(asset1Amount)
-      var asset2Decimal = new Decimal(asset2Amount)
-      var factorAsDecimal = new Decimal(10)
-      factorAsDecimal = factorAsDecimal.pow(asset2Factor)
-      
-      return parseInt(asset2Decimal.mul(factorAsDecimal).div(asset1Decimal).toString())
+      return parseInt(amount.toString());
     }
     
+    // Takes the amounts in asset1 and asset2 and the factor of asset2 and returns the price as expected by WAVES. The price returned is the amount of atomic asset2 received for each whole asset1 sent.
+    // e.g. if asset1 is waves and asset2 is waves.usd, how many 0.01 waves.usd do you want to get per 1 waves?
+    function wavesPrice(asset1Amount, asset2Amount, asset2Factor) {
+      var asset1Decimal = new Decimal(asset1Amount);
+      var asset2Decimal = new Decimal(toSatoshi(asset2Amount, asset2Factor));
+      
+      return asset2Decimal.idiv(asset1Decimal).toNumber();
+    }
+    
+    // Takes 2 arrays of numerics and compares them, assumes little endian in the sense that it compares elements in the beginning of the array first, moving through the array until there is a difference.
+    function numericArrayCompare(array1, array2) {
+      if (array1.length < array2.length) {
+        return -1;
+      } else if (array1.length > array2.length) {
+        return 1;
+      } else {
+        for (var i = 0; i < array1.length; i++) {
+          if (array1[i] < array2[i]) {
+            return -1;
+          } else {
+            if (array1[i] > array2[i]) {
+              return 1;
+            }
+          }
+        }
+        return 0;
+      }
+    }
+    
+    // Sorts 2 assets based on the base58 asset id, returns an ordered pair.
     function sortAssets(spendAssetId, receiveAssetId) {
       var orderedAssetPair = {}
       
@@ -56,6 +87,37 @@ var wrapper = (
         orderedAssetPair.asset1 = receiveAssetId;
         orderedAssetPair.asset2 = spendAssetId;
       } else {
+        var reverseSpendID = wrapperlib.base58.decode(spendAssetId)
+        //console.log(reverseSpendID)
+        reverseSpendID = reverseSpendID.reverse()
+        //console.log(reverseSpendID)
+        reverseSpendID = new Buffer(reverseSpendID)
+        
+        var reverseReceiveID = wrapperlib.base58.decode(receiveAssetId)
+        reverseReceiveID = reverseReceiveID.reverse()
+        reverseReceiveID = new Buffer(reverseReceiveID)
+        
+        if ( reverseSpendID.compare(reverseReceiveID) > 0 ) {
+          orderedAssetPair.asset1 = spendAssetId;
+          orderedAssetPair.asset2 = receiveAssetId;
+        }
+        else {
+          orderedAssetPair.asset1 = receiveAssetId;
+          orderedAssetPair.asset2 = spendAssetId;
+        }
+        /*console.log(orderedAssetPair.asset1)
+        console.log(wrapperlib.base58.decode(orderedAssetPair.asset1).toString('decimal'))
+        console.log(orderedAssetPair.asset2)
+        console.log(wrapperlib.base58.decode(orderedAssetPair.asset2).toString('decimal'))
+        asset1AsBuffer = new Buffer(wrapperlib.base58.decode(orderedAssetPair.asset1))
+        asset2AsBuffer = new Buffer(wrapperlib.base58.decode(orderedAssetPair.asset2))
+        console.log(typeof asset1AsBuffer)
+        console.log(typeof asset1AsBuffer[0])
+        console.log(Buffer.compare(asset1AsBuffer, asset2AsBuffer))
+        console.log(reverseSpendID.toString(10))
+        console.log(reverseReceiveID.toString(10))
+        console.log(reverseReceiveID.compare(reverseSpendID))*/
+        /*
         var spendAssetIdDecoded = wrapperlib.base58.decode(spendAssetId);
         var receiveAssetIdDecoded = wrapperlib.base58.decode(receiveAssetId);
         
@@ -65,11 +127,12 @@ var wrapper = (
         } else {
           orderedAssetPair.asset1 = receiveAssetId;
           orderedAssetPair.asset2 = spendAssetId;
-        }
+        }*/
       }
       return orderedAssetPair;
     }
     
+    // Takes in an order and converts it to a hexidecimal number as required by waves for signing the order.
     function orderToHex(order) {
       function assetToHex(assetID) {
         if (assetID == "") {
@@ -100,9 +163,14 @@ var wrapper = (
                     
     }
 
+  // Takes a privatekey as base58 string, an unsigned waves order and a random seed as hexadecimal string and returns the signature for that order.
   function signOrder(privkey, order, hexRandomSeed) {
     var orderAsHex = orderToHex(order)
     var privkeyAsByteArray = wrapperlib.base58.decode(privkey)
+    
+    var axlsign = {}
+    wrapperlib.crypto_lib.axlsign(axlsign)
+    
     var signedUint8Array = axlsign.sign(privkeyAsByteArray, 
                               hexToBytes(orderAsHex),
                               hexToBytes(hexRandomSeed))
@@ -110,9 +178,20 @@ var wrapper = (
   }
 
     var functions = {
-      makeSignedWavesOrder: function(data,callback) { //data = {spendAmount, receiveAmount, spendAsset, receiveAsset, matcherFee, maxLifetime, hexRandomSeed, matcherPublicKey, publickey, privKey}
-        var currentTime = Date.now();
-        
+      
+      /* Takes a data object with properties of a desired waves order, and creates the corresponding signed waves order. 
+       * data = { spendAmount, // The amount of whole token/waves you want to spend in the order.
+       *          spendAsset,  // The details of the token/waves you want to spend (e.g. the result returned by '/asset/waves/details' or '/asset/waves.usd/details').
+       *          receiveAmount, // The amount of whole token/waves you want to receive in the order.
+       *          receiveAsset, // The details of the token/waves you want to receive (e.g. the result returned by '/asset/waves/details' or '/asset/waves.usd/details').
+       *          matcherFee, // The fee to be given to the matcher for fulfilling the order.
+       *          maxLifetime, // The maximum amount of seconds for the order to 'live' before expiring.
+       *          matcherPublicKey, // The public key of the matcher (can be found through: '/engine/dex_waves/getMatcherPublicKey'). 
+       *          publickey, // The public key of the issuer of the order.
+       *          privKey // The private key of the issuer of the order (only used to sign the order).
+       *        }
+       */ 
+      makeSignedWavesOrder: function(data) { 
         var orderedAssetPair = sortAssets(data.spendAsset.contract, data.receiveAsset.contract);
         
         if (data.receiveAsset.contract == orderedAssetPair.asset1) {
@@ -126,7 +205,7 @@ var wrapper = (
           var price =  wavesPrice(data.spendAmount, data.receiveAmount, data.receiveAsset.factor);
         }
         
-        
+        var currentTime = Date.now();
         order = {"signature": "",
                   "amount": amount,
                   "matcherPublicKey": data.matcherPublicKey,
@@ -142,8 +221,8 @@ var wrapper = (
                     "priceAsset": orderedAssetPair.asset2
                   }
                 }
-        console.log(order)
-        order.signature = signOrder(data.privKey, order, data.hexRandomSeed);
+        
+        order.signature = signOrder(data.privKey, order, randomBytes(64).toString('hex'));
         return order;
       }
     }
