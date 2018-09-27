@@ -54,26 +54,6 @@ var wrapper = (
       return asset2Decimal.idiv(asset1Decimal).toNumber();
     }
     
-    // Takes 2 arrays of numerics and compares them, assumes little endian in the sense that it compares elements in the beginning of the array first, moving through the array until there is a difference.
-    function numericArrayCompare(array1, array2) {
-      if (array1.length < array2.length) {
-        return -1;
-      } else if (array1.length > array2.length) {
-        return 1;
-      } else {
-        for (var i = 0; i < array1.length; i++) {
-          if (array1[i] < array2[i]) {
-            return -1;
-          } else {
-            if (array1[i] > array2[i]) {
-              return 1;
-            }
-          }
-        }
-        return 0;
-      }
-    }
-    
     // Sorts 2 assets based on the base58 asset id, returns an ordered pair.
     function sortAssets(spendAssetId, receiveAssetId) {
       var orderedAssetPair = {}
@@ -85,17 +65,10 @@ var wrapper = (
         orderedAssetPair.asset1 = receiveAssetId;
         orderedAssetPair.asset2 = spendAssetId;
       } else {
-        var reverseSpendID = wrapperlib.base58.decode(spendAssetId)
-        //console.log(reverseSpendID)
-        reverseSpendID = reverseSpendID.reverse()
-        //console.log(reverseSpendID)
-        reverseSpendID = new Buffer(reverseSpendID)
+        var spendAssetIDAsBuffer = new Buffer(wrapperlib.base58.decode(spendAssetId))
+        var receiveAssetIDAsBuffer = new Buffer(wrapperlib.base58.decode(receiveAssetId))
         
-        var reverseReceiveID = wrapperlib.base58.decode(receiveAssetId)
-        reverseReceiveID = reverseReceiveID.reverse()
-        reverseReceiveID = new Buffer(reverseReceiveID)
-        
-        if ( reverseSpendID.compare(reverseReceiveID) > 0 ) {
+        if ( spendAssetIDAsBuffer.compare(receiveAssetIDAsBuffer) > 0 ) {
           orderedAssetPair.asset1 = spendAssetId;
           orderedAssetPair.asset2 = receiveAssetId;
         }
@@ -103,29 +76,6 @@ var wrapper = (
           orderedAssetPair.asset1 = receiveAssetId;
           orderedAssetPair.asset2 = spendAssetId;
         }
-        /*console.log(orderedAssetPair.asset1)
-        console.log(wrapperlib.base58.decode(orderedAssetPair.asset1).toString('decimal'))
-        console.log(orderedAssetPair.asset2)
-        console.log(wrapperlib.base58.decode(orderedAssetPair.asset2).toString('decimal'))
-        asset1AsBuffer = new Buffer(wrapperlib.base58.decode(orderedAssetPair.asset1))
-        asset2AsBuffer = new Buffer(wrapperlib.base58.decode(orderedAssetPair.asset2))
-        console.log(typeof asset1AsBuffer)
-        console.log(typeof asset1AsBuffer[0])
-        console.log(Buffer.compare(asset1AsBuffer, asset2AsBuffer))
-        console.log(reverseSpendID.toString(10))
-        console.log(reverseReceiveID.toString(10))
-        console.log(reverseReceiveID.compare(reverseSpendID))*/
-        /*
-        var spendAssetIdDecoded = wrapperlib.base58.decode(spendAssetId);
-        var receiveAssetIdDecoded = wrapperlib.base58.decode(receiveAssetId);
-
-        if ( numericArrayCompare(spendAssetIdDecoded, receiveAssetIdDecoded) < 0 ) {
-          orderedAssetPair.asset1 = spendAssetId;
-          orderedAssetPair.asset2 = receiveAssetId;
-        } else {
-          orderedAssetPair.asset1 = receiveAssetId;
-          orderedAssetPair.asset2 = spendAssetId;
-        }*/
       }
       return orderedAssetPair;
     }
