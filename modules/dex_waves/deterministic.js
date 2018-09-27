@@ -139,7 +139,13 @@ var wrapper = (
        */ 
       makeSignedWavesOrder: function(data) { 
         var orderedAssetPair = sortAssets(data.spendAsset.contract, data.receiveAsset.contract);
-
+        
+        if (data.hasOwnProperty('swap')) {
+          var swapVar = orderedAssetPair.asset1
+          orderedAssetPair.asset1 = orderedAssetPair.asset2
+          orderedAssetPair.asset2 = swapVar
+        }
+        
         if (data.receiveAsset.contract == orderedAssetPair.asset1) {
           var orderType = "buy";
           var amount = toSatoshi(data.receiveAmount, data.receiveAsset.factor);
