@@ -93,8 +93,8 @@ var wrapper = (
         var fThen2 = (x) => {};
         var fCatch = (x) => {
           if(x.data){
-          var body = JSON.parse(x.data.body);
-            callback(body.signature);
+//          var body = JSON.parse();
+            callback(x.data.body.replace('\"','"'));
           }else{
             callback(undefined); //issue with crypto
           }
