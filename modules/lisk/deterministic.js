@@ -41,7 +41,14 @@ var wrapper = (
 
       transaction : function(data) {
         // return deterministic transaction data
-        return JSON.stringify( wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), data.seed) );  // example: lisk.transaction.createTransaction("1859190791819301L", amount, "passphrase", "secondPassphrase");
+        var tx = wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), data.seed) ;
+        if(data.mode === 'lisk'){ // added to match new lisk API, rise and shift still using old
+          tx.amount = String(tx.amount);
+          tx.fee = String(tx.fee);
+        }
+        return JSON.stringify(tx);
+
+      // example: lisk.transaction.createTransaction("1859190791819301L", amount, "passphrase", "secondPassphrase");
         // for more information see: https://github.com/corsaro1/lisk_broadcast
       }
     }
