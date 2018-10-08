@@ -2,6 +2,7 @@
  * Example to test a deterministic wrapper
  */
 
+request = require('request')
 fs = require('fs');
 nacl = require('./../common/crypto/nacl');
 crypto = require('crypto');                   // this supersedes browserify crypto library when code is run in virtual DOM                   // this supersedes browserify crypto library when code is run in virtual DOM
@@ -34,6 +35,19 @@ toInt = function(input,factor) {
   return x.times('1'+(f>1?new Array(f+1).join('0'):''));
 }
 
+// Functionality for sending orders to a node.
+var wavesplatformURL = (APItype) => "https://"+APItype+".wavesplatform.com"; // APItype discovered so far: "matcher" and "nodes"
+var wavesnodesURL = (APItype) => "http://"+APItype+".wavesnodes.com";
+function postRequest(baseURL, requestURL, jsonArgs, callback) {
+  return request({
+    method: 'POST',
+    url: baseURL+requestURL,
+    json: jsonArgs,
+  }, function (err, resp, body) {
+    callback(body);
+  });
+}
+function sendOrder(jsonArgs) { postRequest(wavesnodesURL("matcher"), "/matcher/orderbook", jsonArgs, console.log) }
 
 //
 // first we read from the compiled package and activate the code
@@ -93,8 +107,15 @@ if(typeof deterministic!='object' || deterministic=={}) {
   console.dir(input, {depth:null});
 
   signedOrder = deterministic.makeSignedWavesOrder(input);
-
-  logger(signedOrder)
+  
+  console.dir(signedOrder, {depth: null})
+  
+  var pushOrders = true;
+  
+  if (pushOrders) {
+    sendOrder(signedOrder)
+  }
+  
 }
 
 // activate (deterministic) code from a string
