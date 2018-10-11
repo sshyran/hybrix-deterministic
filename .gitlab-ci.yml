@@ -38,4 +38,4 @@ deterministic:
   artifacts:
     paths:
     #- ./*.js
-    - ./modules/*/*.lzma
+    - ./dist/modules/*/*.lzma
