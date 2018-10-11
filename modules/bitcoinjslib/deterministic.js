@@ -16,7 +16,7 @@ var wrapper = (
     // DISABLED INSIDE wrapper FUNCTION: var wrapperlib = require('bitcoinjs-lib');
 
     window.toSatoshis = function(float, factor) {
-      return float * Math.pow(10, factor);
+      return Number(float) * Math.pow(10, factor);
     }
 
     var functions = {
@@ -27,7 +27,7 @@ var wrapper = (
         if(
             data.mode === 'counterparty' ||
             data.mode === 'bitcoincash'  ||
-            data.mode ==='omni'
+            data.mode === 'omni'
           ) {
           network = 'bitcoin';
         } else {
@@ -109,7 +109,7 @@ var wrapper = (
             var input = data.unspent.unspents[i];
             var hash = Buffer.from(input.txid.match(/.{2}/g).reverse().join(''), 'hex');
             tx.addInput(hash, input.txn);
-            inamount+=toSatoshis(input.amount,data.factor);
+            inamount+=window.toSatoshis(input.amount,data.factor);
           }
           if(data.inamount < MIN_REQUIRED) throw new Error('Insufficient funds');
 
@@ -146,6 +146,7 @@ var wrapper = (
 
           // send back change
           var outchange=parseInt(data.unspent.change)-MIN_REQUIRED;   // fee is already being deducted when calculating unspents
+          if(outchange<0) { outchange=0; }
           tx.addOutput(wrapperlib.address.toOutputScript(data.source, wrapperlib.networks[network]), outchange);
 
         } else {
