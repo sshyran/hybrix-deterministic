@@ -5,7 +5,7 @@ OLDPATH="$PATH"
 
 echo " [!] Build module-deterministics."
 
-# $HYBRIDD/$NODE/scripts/npm  => $HYBRIDD
+# $HYBRIDD/deterministic/scripts/npm  => $HYBRIDD
 SCRIPTDIR="`dirname \"$0\"`"
 HYBRIDD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
 
