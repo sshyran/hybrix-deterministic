@@ -1,5 +1,6 @@
 #!/bin/sh
-HERE="`pwd`";
+WHEREAMI="`pwd`";
+OLDPATH="$PATH"
 
 
 echo " [!] Build module-deterministics."
@@ -14,8 +15,6 @@ NODEJS="$HYBRIDD/nodejs-v8-lts"
 COMMON="$HYBRIDD/common"
 WEB_WALLET="$HYBRIDD/web-wallet"
 
-OLDPATH="$PATH"
-export PATH=$DETERMINISTIC/node/bin:"$PATH"
 
 if [ "`uname`" = "Darwin" ]; then
     SYSTEM="darwin-x64"
@@ -29,9 +28,9 @@ else
 fi
 
 # NODE
-if [ ! -e "$DETERMINISTIC/node" ];then
+if [ ! -e "$DETERMINISTIC/node_binaries" ];then
 
-    echo " [!] deterministic/node not found."
+    echo " [!] deterministic/node_binaries not found."
 
     if [ ! -e "$NODEJS" ];then
         cd "$HYBRIDD"
@@ -39,8 +38,10 @@ if [ ! -e "$DETERMINISTIC/node" ];then
         git clone https://github.com/internetofcoins/nodejs-v8-lts.git
     fi
     echo " [i] Link NODEJS files"
-    ln -sf "$NODEJS/$SYSTEM" "$DETERMINISTIC/node"
+    ln -sf "$NODEJS/$SYSTEM" "$DETERMINISTIC/node_binaries"
 fi
+export PATH="$DETERMINISTIC/node_binaries/bin:$PATH"
+
 
 # COMMON
 if [ ! -e "$DETERMINISTIC/common" ];then
@@ -95,3 +96,4 @@ rsync -aK "$DETERMINISTIC/dist/" "$NODE/modules/deterministic/"
 
 
 export PATH="$OLDPATH"
+cd "$WHEREAMI"
