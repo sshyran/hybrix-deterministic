@@ -21,9 +21,9 @@ deterministic:
     - rm -rf  artifacts-common.zip || true
     
     # remove symbolic link to node
-    - rm -rf  node || true
+    - rm -rf  node_binaries || true
     # don't download git clone https://github.com/internetofcoins/nodejs-v8-lts.git, refer to docker pre installed nodejs as defined in the first line of this file
-    - "ln -s \"$(which nodejs)\" node"
+    - "ln -s \"$(which nodejs)\" node_binaries"
     
     # run the build-script of the interface
     - ./scripts/npm/build.sh
