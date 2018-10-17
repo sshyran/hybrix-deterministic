@@ -9,7 +9,7 @@ var wrapperlib = require('./wrapperlib')
 var wrapper = (
   function() {
 
-    toSatoshis = function(float, factor) {
+    window.toSatoshis = function(float, factor) {
       return float * Math.pow(10, factor);
     }
 
@@ -52,7 +52,7 @@ var wrapper = (
                            outputIndex: utxo.txn,
                            address:     utxo.address,
                            script:      utxo.script,
-                           satoshis:    parseInt(toSatoshis(utxo.amount,data.factor))
+                           satoshis:    parseInt(window.toSatoshis(utxo.amount,data.factor))
                          } ));
                 });
         */
@@ -63,7 +63,7 @@ var wrapper = (
                            outputIndex: utxo.txn,
                            address:     utxo.address,
                            script:      utxo.script,
-                           satoshis:    parseInt(toSatoshis(utxo.amount,data.factor))
+                           satoshis:    parseInt(window.toSatoshis(utxo.amount,data.factor))
                          };
                 }))
           .to(recipientAddr, parseInt(data.amount))
