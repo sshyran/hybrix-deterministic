@@ -44,7 +44,7 @@ for D in *; do
         #Check if compilation is required
         if [ ! -e "$DETERMINISTIC/dist/$D/deterministic.js.lzma" ] || [ "$NEWEST_FILE" -nt "$DETERMINISTIC/dist/$D/deterministic.js.lzma" ]; then
             echo "[.] Needs compiling"
-            ./compile.sh
+            sh compile.sh
             echo "[.] Compiling completed"
             echo "[.] Move to dist"
             mv "deterministic.js.lzma" "$DETERMINISTIC/dist/$D/deterministic.js.lzma"

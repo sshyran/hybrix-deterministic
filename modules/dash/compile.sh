@@ -18,9 +18,7 @@ mv bundle.noundefs.js.lzma deterministic.js.lzma
 # clean up
 rm bundle.js
 rm bundle.noundefs.js
-rm bundle.noundefs.js-e
-rm wrapperlib.js
-rm wrapperlib.js-e
+
 
 export PATH="$OLDPATH"
 cd "$WHEREAMI"

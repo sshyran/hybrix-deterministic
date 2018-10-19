@@ -5,9 +5,7 @@
 
 var wrapper = (
   function () {
-    var bitcore = require('./bitcore-lib');
-    var dashcore = require('./dashcore-lib');
-    var x11hashjs = require('./x11-hash-js');
+    var dashcore = require('./dashcore-lib.min');
 
     var functions = {
       // create deterministic public and private keys based on a seed
