@@ -1,7 +1,7 @@
 #!/bin/sh
 OLDPATH=$PATH
 WHEREAMI=`pwd`
-export PATH=$WHEREAMI/../../../node/bin:"$PATH"
+export PATH="$WHEREAMI/../../node_binaries/bin:$PATH"
 NODEINST=`which node`
 
 # Remove a bug from ark-js library
@@ -20,4 +20,5 @@ mv bundle.noundefs.js.lzma deterministic.js.lzma
 rm bundle.js
 rm bundle.noundefs.js
 
-PATH=$OLDPATH
+export PATH="$OLDPATH"
+cd "$WHEREAMI"

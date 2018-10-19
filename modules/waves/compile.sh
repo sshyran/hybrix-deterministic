@@ -3,7 +3,7 @@
 # set path for developers that don't have node global installation
 OLDPATH=$PATH
 WHEREAMI=`pwd`
-export PATH=$WHEREAMI/../../../node/bin:"$PATH"
+export PATH="$WHEREAMI/../../node_binaries/bin:$PATH"
 NODEINST=`which node`
 
 # copy the vanilla waves minified to wrapperlib
@@ -38,4 +38,5 @@ rm bundle.noundefs.js-e
 rm wrapperlib.js
 rm wrapperlib.js-e
 
-PATH=$OLDPATH
+export PATH="$OLDPATH"
+cd "$WHEREAMI"
