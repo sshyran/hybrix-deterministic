@@ -1,4 +1,6 @@
 common
 node_binaries/*
-**/.tern-port
+node_binaries
 node_modules/.cache/*
+**/.tern-port
+

@@ -4,20 +4,6 @@
 
 function uglyClone(obj){return JSON.parse(JSON.stringify(obj));}
 
-// Why this? When I rm it, stuff still works... Why update window object.
-const randomBytes = crypto.randomBytes;
-if (typeof window === 'object') {
-  const wCrypto = window.crypto || {};
-  if (!wCrypto.getRandomValues) {
-    wCrypto.getRandomValues = function getRandomValues (arr) {
-      const bytes = randomBytes(arr.length);
-      for (var i = 0; i < bytes.length; i++) {
-        arr[i] = bytes[i];
-      }
-    }
-  }
-}
-
 // this to prevent waves api from connecting with waves server, we only want the signed tx, not the pushing of the signed tx.
 window.altFetch = function(url, opts){
   return new Promise((resolve, reject) => {
@@ -57,7 +43,6 @@ var wrapper = (
       },
       transaction: function(data,callback) {
         var txParams;
-
         if (data.mode !== 'token') {
           txParams = {
             recipient: data.target,
@@ -93,7 +78,6 @@ var wrapper = (
         var fThen2 = (x) => {};
         var fCatch = (x) => {
           if(x.data){
-//          var body = JSON.parse();
             callback(x.data.body.replace('\"','"'));
           }else{
             callback(undefined); //issue with crypto

@@ -2,9 +2,6 @@
 WHEREAMI="`pwd`";
 OLDPATH="$PATH"
 
-
-echo " [!] Build module-deterministics."
-
 # $HYBRIDD/deterministic/scripts/npm  => $HYBRIDD
 SCRIPTDIR="`dirname \"$0\"`"
 HYBRIDD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
