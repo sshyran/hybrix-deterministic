@@ -34,7 +34,7 @@ if [ ! -e "$DETERMINISTIC/node_binaries" ];then
         echo " [i] Clone node js runtimes files"
         git clone https://github.com/internetofcoins/nodejs-v8-lts.git
     fi
-    echo " [i] Link NODEJS files"
+    echo " [i] Link node_binaries files"
     ln -sf "$NODEJS/$SYSTEM" "$DETERMINISTIC/node_binaries"
 fi
 export PATH="$DETERMINISTIC/node_binaries/bin:$PATH"
