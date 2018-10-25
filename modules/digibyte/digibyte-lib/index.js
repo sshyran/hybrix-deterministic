@@ -4,6 +4,7 @@ var digibyte = module.exports;
 
 // module information
 digibyte.version = 'v' + require('./package.json').version;
+/* disabled by Agent725
 digibyte.versionGuard = function(version) {
   if (version !== undefined) {
     var message = 'More than one instance of digibyte found. ' +
@@ -13,6 +14,7 @@ digibyte.versionGuard = function(version) {
   }
 };
 digibyte.versionGuard(global._digibyte);
+*/
 global._digibyte = digibyte.version;
 
 // crypto

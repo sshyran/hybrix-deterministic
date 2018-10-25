@@ -65,25 +65,13 @@ var wrapper = (
         var recipientAddr = wrapperlib.Address(data.target, data.mode);
         var changeAddr    = wrapperlib.Address(data.source, data.mode);
 
-        /* DEBUG
-        data.unspent.unspents.map(function(utxo){
-                  logger(JSON.stringify(
-                        { txId:        utxo.txid,
-                           outputIndex: utxo.txn,
-                           address:     utxo.address,
-                           script:      utxo.script,
-                           satoshis:    parseInt(toSatoshis(utxo.amount,data.factor))
-                         } ));
-                });
-        */
-
         var tx = new wrapperlib.Transaction()
           .from(data.unspent.unspents.map(function(utxo){
                   return { txId:        utxo.txid,
                            outputIndex: utxo.txn,
                            address:     utxo.address,
                            script:      utxo.script,
-                           satoshis:    parseInt(toSatoshis(utxo.amount,data.factor))
+                           satoshis:    parseInt(utxo.amount)
                          };
                 }))
           .to(recipientAddr, parseInt(data.amount))
