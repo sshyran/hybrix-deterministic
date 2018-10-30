@@ -8,7 +8,7 @@ HYBRIDD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
 
 NODE="$HYBRIDD/node"
 DETERMINISTIC="$HYBRIDD/deterministic"
-NODEJS="$HYBRIDD/nodejs-v8-lts"
+NODEJS="$HYBRIDD/nodejs"
 COMMON="$HYBRIDD/common"
 WEB_WALLET="$HYBRIDD/web-wallet"
 
