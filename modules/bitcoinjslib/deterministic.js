@@ -15,10 +15,6 @@ var wrapper = (
     var BigInteger = require('bigi');
     // DISABLED INSIDE wrapper FUNCTION: var wrapperlib = require('bitcoinjs-lib');
 
-    window.toSatoshis = function(float, factor) {
-      return Number(float) * Math.pow(10, factor);
-    }
-
     var functions = {
       // create deterministic public and private keys based on a seed
       keys : function(data) {
@@ -109,9 +105,9 @@ var wrapper = (
             var input = data.unspent.unspents[i];
             var hash = Buffer.from(input.txid.match(/.{2}/g).reverse().join(''), 'hex');
             tx.addInput(hash, input.txn);
-            inamount+=window.toSatoshis(input.amount,data.factor);
+            inamount+=input.amount;
           }
-          if(data.inamount < MIN_REQUIRED) throw new Error('Insufficient funds');
+          if(inamount < MIN_REQUIRED) throw new Error('Insufficient funds');
 
           // in case of Counterparty or Omni, add destination output
           if(data.target) {

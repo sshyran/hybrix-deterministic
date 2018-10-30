@@ -1,17 +1,11 @@
 // (C) 2018 Internet of Coins
 // hybridd module - electrum/deterministic_source.js
 // Deterministic encryption wrapper for ZCash
-//
-// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
-//
 
-var wrapperlib = require('./wrapperlib')
+var wrapperlib = require('./wrapperlib');
+
 var wrapper = (
-  function() {
-
-    window.toSatoshis = function(float, factor) {
-      return float * Math.pow(10, factor);
-    }
+  function () {
 
     var functions = {
       // create deterministic public and private keys based on a seed
@@ -45,25 +39,13 @@ var wrapper = (
         var recipientAddr = wrapperlib.zcash.Address(data.target, data.mode);
         var changeAddr    = wrapperlib.zcash.Address(data.source, data.mode);
 
-        /* DEBUG
-        data.unspent.unspents.map(function(utxo){
-                  logger(JSON.stringify(
-                        { txId:        utxo.txid,
-                           outputIndex: utxo.txn,
-                           address:     utxo.address,
-                           script:      utxo.script,
-                           satoshis:    parseInt(window.toSatoshis(utxo.amount,data.factor))
-                         } ));
-                });
-        */
-
         var tx = new wrapperlib.zcash.Transaction()
           .from(data.unspent.unspents.map(function(utxo){
                   return { txId:        utxo.txid,
                            outputIndex: utxo.txn,
                            address:     utxo.address,
                            script:      utxo.script,
-                           satoshis:    parseInt(window.toSatoshis(utxo.amount,data.factor))
+                           satoshis:    parseInt(utxo.amount)
                          };
                 }))
           .to(recipientAddr, parseInt(data.amount))

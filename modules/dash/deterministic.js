@@ -1,8 +1,9 @@
-// (C) 2018 Internet of Coins / Gijs-Jan van Dompseler
+// (C) 2018 Internet of Coins / Gijs-Jan van Dompseler / Joachim de Koning
 // hybridd module - dummycoin/deterministic.js
 // Deterministic encryption wrapper for Dash
-window.dashcore = require('./dashcore-lib.min');
 
+wrapperlib = require('./wrapperlib');
+//var wrapperlib = require('./dashcore-lib.min.js');
 
 var wrapper = (
   function () {
@@ -10,42 +11,50 @@ var wrapper = (
     var functions = {
       // create deterministic public and private keys based on a seed
       // https://github.com/dashevo/dashcore-lib/blob/master/docs/examples.md
-      keys: function (data) {
+      keys : function(data) {
         var seed = new Buffer(data.seed);
-        var hash = window.dashcore.crypto.Hash.sha256(seed);
-        var bn = window.dashcore.crypto.BN.fromBuffer(hash);
+        var hash = wrapperlib.dashcore.crypto.Hash.sha256(seed);
+        var bn = wrapperlib.dashcore.crypto.BN.fromBuffer(hash);
 
-        var privateKey = new window.dashcore.PrivateKey(bn, 'livenet');
+        var privateKey = new wrapperlib.dashcore.PrivateKey(bn, data.mode);
         var wif = privateKey.toWIF();
 
         return { WIF: wif };
       },
 
       // generate a unique wallet address from a given public key
-      address: function (data) {
-        var privateKey = new window.dashcore.PrivateKey(data.WIF, 'livenet');
+      address : function(data) {
+        var privateKey = new wrapperlib.dashcore.PrivateKey(data.WIF, data.mode);
         var address = privateKey.toAddress();
-        if (!window.dashcore.Address.isValid(address, 'livenet')) {
+        if (!wrapperlib.dashcore.Address.isValid(address, data.mode)) {
           throw new Error("Can't generate address from private key. "
-            + "Generated address " + address
-            + "is not valid for " + data.mode);
+                             + "Generated address " + address
+                             + "is not valid for " + data.mode);
         }
 
         return address;
       },
 
-      transaction: function (data, callback) {
+      transaction : function(data) {
+        var privKey       = wrapperlib.dashcore.PrivateKey(data.keys.WIF, data.mode);
+        var recipientAddr = wrapperlib.dashcore.Address(data.target, data.mode);
+        var changeAddr    = wrapperlib.dashcore.Address(data.source, data.mode);
 
-        var privateKey = window.dashcore.PrivateKey(data.keys.WIF, 'livenet');
-
-        var transaction = new window.dashcore.Transaction()
-            .from(data.unspent.unspents)
-            .to(data.target, 15000)
-            .sign(privateKey);
-
-        var result = transaction.serialize();
-
-        callback(result);
+        var tx = new wrapperlib.dashcore.Transaction()
+          .from(data.unspent.unspents.map(function(utxo){
+                  return { txId:        utxo.txid,
+                           outputIndex: utxo.txn,
+                           address:     utxo.address,
+                           script:      utxo.script,
+                           satoshis:    parseInt(utxo.amount)
+                         };
+                }))
+          .to(recipientAddr, parseInt(data.amount))
+          .fee(parseInt(data.fee))
+          .change(changeAddr)
+          .sign(privKey);
+          
+        return tx.serialize();
       }
     }
 

@@ -68,8 +68,7 @@ var wrapper = (
         var serializedTx = tx.serialize();
         var rawTx = '0x' + serializedTx.toString('hex');
         // DEBUG:         return "\n"+JSON.stringify(txParams)+"\n"+JSON.stringify(txParamsB)+"\n"+JSON.stringify(txParamsC);
-        return rawTx;
-
+        return String(rawTx);
       },
       // encode ABI smart contract calls
       encode : function(data) { return encode(data); }
