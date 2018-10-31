@@ -3,7 +3,6 @@
 // Deterministic encryption wrapper for Dash
 
 wrapperlib = require('./wrapperlib');
-//var wrapperlib = require('./dashcore-lib.min.js');
 
 var wrapper = (
   function () {
@@ -32,7 +31,18 @@ var wrapper = (
                              + "is not valid for " + data.mode);
         }
 
-        return address;
+        return address.toString();
+      },
+
+      // return public key
+      publickey : function(data) {
+        var privKey = wrapperlib.dashcore.PrivateKey(data.WIF, data.mode);
+        return new wrapperlib.dashcore.PublicKey(privKey).toString('hex');
+      },
+
+      // return private key
+      privatekey : function(data) {
+        return data.WIF;
       },
 
       transaction : function(data) {

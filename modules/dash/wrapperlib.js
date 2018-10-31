@@ -5,7 +5,7 @@
 
 // inclusion of necessary requires
 var dashcorelib = {
-  dashcore : require('./dashcore-lib')
+  dashcore : require('./dashcore-lib/index.js')
 }
 
 module.exports = dashcorelib;
