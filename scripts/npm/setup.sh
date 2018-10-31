@@ -8,7 +8,7 @@ HYBRIDD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
 
 NODE="$HYBRIDD/node"
 DETERMINISTIC="$HYBRIDD/deterministic"
-NODEJS="$HYBRIDD/nodejs-v8-lts"
+NODEJS="$HYBRIDD/nodejs"
 COMMON="$HYBRIDD/common"
 WEB_WALLET="$HYBRIDD/web-wallet"
 
@@ -32,7 +32,7 @@ if [ ! -e "$DETERMINISTIC/node_binaries" ];then
     if [ ! -e "$NODEJS" ];then
         cd "$HYBRIDD"
         echo " [i] Clone node js runtimes files"
-        git clone https://github.com/internetofcoins/nodejs-v8-lts.git
+        git clone https://www.gitlab.com/iochq/hybridd/dependencies/nodejs.git
     fi
     echo " [i] Link node_binaries files"
     ln -sf "$NODEJS/$SYSTEM" "$DETERMINISTIC/node_binaries"
