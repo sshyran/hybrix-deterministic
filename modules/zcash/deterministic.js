@@ -34,6 +34,17 @@ var wrapper = (
         return addr.toString();
       },
 
+      // return public key
+      publickey : function(data) {
+        var privKey = wrapperlib.zcash.PrivateKey(data.WIF, data.mode);
+        return new wrapperlib.zcash.PublicKey(privKey).toString('hex');
+      },
+
+      // return private key
+      privatekey : function(data) {
+        return data.WIF;
+      },
+
       transaction : function(data) {
         var privKey       = wrapperlib.zcash.PrivateKey(data.keys.WIF, data.mode);
         var recipientAddr = wrapperlib.zcash.Address(data.target, data.mode);

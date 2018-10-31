@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "dependencies": {
+    "@dashevo/x11-hash-js": "^1.0.2",
     "base-58": "^0.0.1",
     "bigi": "^1.4.2",
     "bip66": "^1.1.5",
@@ -15,6 +16,7 @@
     "bitsharesjs": "^1.8.0",
     "browserify-bignum": "^1.3.0-2",
     "bs58check": "^2.1.2",
+    "buffer-compare": "^1.1.1",
     "buffer-reverse": "^1.0.1",
     "bytebuffer": "^5.0.1",
     "ecurve": "^1.0.6",
@@ -28,6 +30,7 @@
     "popsicle": "^10.0.1",
     "pushdata-bitcoin": "^1.0.1",
     "secp256k1": "^3.5.2",
+    "sha512": "0.0.1",
     "stringstream": "^1.0.0",
     "typeforce": "^1.12.0",
     "varuint-bitcoin": "^1.1.0",
@@ -37,6 +40,7 @@
     "wif": "^2.0.6",
     "window": "^4.2.5",
     "ws": "^6.0.0",
+    "x11-hash-js": "^1.0.1",
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {},
@@ -46,7 +50,7 @@
     "compile": "sh scripts/npm/compile.sh",
     "dist": "sh scripts/npm/dist.sh",
     "build": "sh scripts/npm/setup.sh;sh scripts/npm/compile.sh; sh scripts/npm/dist.sh",
-    "clean" : "rm -rf dist/*"
+    "clean": "rm -rf dist/*"
   },
   "repository": {
     "type": "git",

@@ -41,6 +41,16 @@ var wrapper = (
                 return output;
             },
 
+            // return public key
+            publickey : function(data) {
+              return data.publicKey;
+            },
+
+            // return private key
+            privatekey : function(data) {
+              return data.secretPhrase;
+            },
+
             transaction: function(data) {
                 if(typeof data.unspent.unsignedTransactionBytes!=='undefined') {
                   return wrapperlib.signTransactionBytes(data.unspent.unsignedTransactionBytes, data.keys.secretPhrase);

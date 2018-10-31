@@ -60,6 +60,17 @@ var wrapper = (
         return addr.toString();
       },
 
+      // return public key
+      publickey : function(data) {
+        var privKey = wrapperlib.PrivateKey(data.WIF, data.mode);
+        return new wrapperlib.PublicKey(privKey).toString('hex');
+      },
+
+      // return private key
+      privatekey : function(data) {
+        return data.WIF;
+      },
+
       transaction : function(data) {
         var privKey       = wrapperlib.PrivateKey(data.keys.WIF, data.mode);
         var recipientAddr = wrapperlib.Address(data.target, data.mode);

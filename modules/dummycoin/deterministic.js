@@ -19,7 +19,18 @@ var wrapper = (
       address : function(data) {
         return wrapperlib.address(data);
       },
+      
+      // return public key    
+      publickey : function(data) {
+        return wrapperlib.publickey(data);
+      },      
 
+      // return private key    
+      privatekey : function(data) {
+        return wrapperlib.privatekey(data);
+      },      
+
+      // generate a transaction
       transaction : function(data, callback) {
         return wrapperlib.transaction(data,callback);
       }

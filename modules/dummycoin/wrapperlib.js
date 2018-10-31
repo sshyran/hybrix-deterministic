@@ -21,9 +21,25 @@ var dummylib = {
     }
   },
 
+  publickey : function(data) {
+    if(typeof data === 'object' && data.hasOwnProperty('dummy') && data.dummy === 'dummy'){
+      return '_dummypublickey_';
+    }else{
+      throw('Expected data.dummy === "dummy".');
+    }
+  },
+
+  privatekey : function(data) {
+    if(typeof data === 'object' && data.hasOwnProperty('dummy') && data.dummy === 'dummy'){
+      return '_dummyprivatekey_';
+    }else{
+      throw('Expected data.dummy === "dummy".');
+    }
+  },
+
   transaction : function(data, callback) {
     callback('_dummytransaction_');
-    }
+  }
 
 //  dummyfy : require('./bitcore-lib'),
 }

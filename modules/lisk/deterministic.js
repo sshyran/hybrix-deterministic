@@ -17,7 +17,6 @@ var wrapper = (
       // create deterministic public and private keys based on a seed
       keys : function(data) {
         // return object { publicKey:'', privateKey:'' }
-
         return wrapperlib.crypto.getKeys(data.seed);
       },
 
@@ -37,6 +36,16 @@ var wrapper = (
           break;
         }
         return output;
+      },
+
+      // return public key
+      publickey : function(data) {
+        return data.publicKey;
+      },
+
+      // return private key
+      privatekey : function(data) {
+        return data.privateKey;
       },
 
       transaction : function(data) {

@@ -21,6 +21,16 @@ var wrapper = (
         return wrapperlib.crypto.getAddress(data.publicKey);
       },
 
+      // return public key
+      publickey : function(data) {
+        return data.publicKey;
+      },
+
+      // return private key
+      privatekey : function(data) {
+        return data.d.toBuffer().toString("hex");
+      },
+
       transaction : function(data) {
         // return deterministic transaction data
         return JSON.stringify( wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), null, data.seed) );

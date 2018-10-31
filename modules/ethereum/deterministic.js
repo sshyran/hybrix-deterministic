@@ -36,6 +36,17 @@ var wrapper = (
         return '0x'+wrapperlib.ethUtil.publicToAddress(publicKey).toString('hex');
       },
 
+      // return public key
+      publickey : function(data) {
+        var publicKey = wrapperlib.ethUtil.privateToPublic(data.privateKey);
+        return publicKey.toString('hex');
+      },
+
+      // return private key
+      privatekey : function(data) {
+        return data.privateKey.toString('hex');
+      },
+
       // create and sign a transaction
       transaction : function(data) {
         if (data.mode != 'token') {

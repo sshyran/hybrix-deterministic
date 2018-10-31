@@ -141,6 +141,16 @@ var wrapper = (
         return {privateKey:privateKey};
       },
 
+      // return public key
+      publickey : function(data) {
+        return wrapperlib.nem.crypto.keyPair.create(data.privateKey).publicKey.toString();
+      },
+
+      // return private key
+      privatekey : function(data) {
+        return data.privateKey;
+      },
+
       // generate a unique wallet address from a given public key
       address : function(data) {
         var network = wrapperlib.nem.model.network.data['mainnet']; // mainnet or testnet

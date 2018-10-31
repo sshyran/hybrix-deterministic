@@ -15,21 +15,28 @@ var wrapper = (
     var BigInteger = require('bigi');
     // DISABLED INSIDE wrapper FUNCTION: var wrapperlib = require('bitcoinjs-lib');
 
-    var functions = {
-      // create deterministic public and private keys based on a seed
-      keys : function(data) {
-        // return deterministic transaction data
+    function setNetwork(data) {
         var network = 'bitcoin';
         if(
+            data.mode === 'bitcoincash'
+          ) {
+          return '[UNDER MAINTENANCE]';
+        } else if(
             data.mode === 'counterparty' ||
-            data.mode === 'bitcoincash'  ||
-            data.mode === 'omni'
+            data.mode ==='omni'
           ) {
           network = 'bitcoin';
         } else {
           network = data.mode;
         }
+        return network;
+    }
 
+    var functions = {
+      // create deterministic public and private keys based on a seed
+      keys : function(data) {
+        // return deterministic transaction data
+        var network = setNetwork(data);
         var hash = wrapperlib.crypto.sha256(data.seed);
         var privk = BigInteger.fromBuffer(hash);
         var pubk  = null;
@@ -49,40 +56,26 @@ var wrapper = (
       // generate a unique wallet address from a given public key
       address : function(data) {
         // return deterministic transaction data
-        var network = 'bitcoin';
-        if(
-            data.mode === 'bitcoincash'
-          ) {
-          return '[UNDER MAINTENANCE]';
-        } else if(
-            data.mode === 'counterparty' ||
-            data.mode ==='omni'
-          ) {
-          network = 'bitcoin';
-        } else {
-          network = data.mode;
-        }
-
-        var keyPair = wrapperlib.ECPair.fromWIF(data.WIF,wrapperlib.networks[network])
+        var network = setNetwork(data);
+        var keyPair = wrapperlib.ECPair.fromWIF(data.WIF,wrapperlib.networks[network]);
         return keyPair.getAddress();
+      },
+
+      // return public key
+      publickey : function(data) {
+        var network = setNetwork(data);
+        var keyPair = wrapperlib.ECPair.fromWIF(data.WIF,wrapperlib.networks[network]);
+        return keyPair.getPublicKeyBuffer().toString('hex');
+      },
+
+      // return private key
+      privatekey : function(data) {
+        return data.WIF;
       },
 
       transaction : function(data) {
         // return deterministic transaction data
-        var network = 'bitcoin';
-        if(
-            data.mode === 'bitcoincash'
-          ) {
-          return '[UNDER MAINTENANCE]';
-        } else if(
-            data.mode === 'counterparty' ||
-            data.mode ==='omni'
-          ) {
-          network = 'bitcoin';
-        } else {
-          network = data.mode;
-        }
-
+        var network = setNetwork(data);
         var keyPair = wrapperlib.ECPair.fromWIF(data.keys.WIF,wrapperlib.networks[network]);
         var tx = new wrapperlib.TransactionBuilder(wrapperlib.networks[network]);
 

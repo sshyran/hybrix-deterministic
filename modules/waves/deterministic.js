@@ -34,13 +34,26 @@ var wrapper = (
 
     var functions = {
 
+      // create deterministic public and private keys based on a seed
       keys: function(data) {
         return uglyClone(Waves.Seed.fromExistingPhrase(data.seed));
       },
 
+      // return public address
       address: function(data) {
         return uglyClone(data.address);
       },
+
+      // return public key TODO
+      publickey : function(data) {
+        return uglyClone(data.keyPair.publicKey);
+      },
+
+      // return private key TODO
+      privatekey : function(data) {
+        return uglyClone(data.keyPair.privateKey);
+      },
+
       transaction: function(data,callback) {
         var txParams;
         if (data.mode !== 'token') {
