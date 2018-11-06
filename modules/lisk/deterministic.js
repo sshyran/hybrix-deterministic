@@ -7,9 +7,6 @@
 
 var wrapperlib = require('./lisk-js/index.js');
 
-
-
-
 var wrapper = (
   function() {
 

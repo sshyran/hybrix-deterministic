@@ -21,7 +21,7 @@ else
 fi
 
 # define undefined globals explicitly
-sh $DETERMINISTIC/scripts/deglobalify/deglobalify.sh "$BUNDLE/bundle.js" > "$BUNDLE/bundle.noundefs.js"
+sh "$DETERMINISTIC/scripts/deglobalify/deglobalify.sh" "$BUNDLE/bundle.js" > "$BUNDLE/bundle.noundefs.js"
 
 # lmza compression
 $DETERMINISTIC/scripts/lzma/lzmapack.js "$BUNDLE/bundle.noundefs.js"
