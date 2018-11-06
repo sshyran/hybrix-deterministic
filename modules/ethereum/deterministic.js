@@ -1,5 +1,4 @@
 // (C) 2017 Internet of Coins / Joachim de Koning
-// hybridd module - ethereum/deterministic.js
 // Deterministic encryption wrapper for Ethereum
 
 var wrapperlib = require('./wrapperlib');
@@ -50,7 +49,7 @@ var wrapper = (
 
       // create and sign a transaction
       transaction : function(data) {
-        if (data.mode != 'token') {
+        if (data.mode !== 'token') {
           // Base ETH mode
           var txParams = {                                               // optional-> data: payloadData
             nonce: parseLargeIntToHex(data.unspent.nonce),  // nonce
@@ -65,13 +64,16 @@ var wrapper = (
           var encoded = encode({ 'func':'transfer(address,uint256):(bool)','vars':['target','amount'],'target':data.target,'amount':parseLargeIntToHex( data.amount ) }); // returns the encoded binary (as a Buffer) data to be sent
           var txParams = {
             nonce: parseLargeIntToHex(data.unspent.nonce),          // nonce
-            gasPrice: parseLargeIntToHex((data.fee/(21000*tokenfeeMultiply))*2),    // must be 2x normal tx!
-            gasLimit: parseLargeIntToHex((21000*tokenfeeMultiply)/2),               // should not exceed 300000 !
+            gasPrice: parseLargeIntToHex(new Decimal(String(data.fee)).dividedBy(21000*tokenfeeMultiply).times(2).toString()),     // must be 2x normal tx!
+            gasLimit: parseLargeIntToHex(new Decimal(String(21000*tokenfeeMultiply)).dividedBy(2).toString()),                     // should not exceed 300000 !
             to: data.contract,                                      // send payload to contract address
             value: '0x0',                                           // set to zero, since we're sending tokens
             data: encoded                                           // payload as encoded using the smart contract
           };
         }
+
+        // DEBUG: return JSON.stringify(txParams);
+        
         // Transaction is created
         var tx = new wrapperlib.ethTx(txParams);
 
@@ -79,7 +81,6 @@ var wrapper = (
         tx.sign(data.keys.privateKey);
         var serializedTx = tx.serialize();
         var rawTx = '0x' + serializedTx.toString('hex');
-        // DEBUG:         return "\n"+JSON.stringify(txParams)+"\n"+JSON.stringify(txParamsB)+"\n"+JSON.stringify(txParamsC);
         return String(rawTx);
       },
       // encode ABI smart contract calls
