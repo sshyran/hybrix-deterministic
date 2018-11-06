@@ -93,7 +93,7 @@ var wrapper = (
           if(x.data){
             callback(x.data.body.replace('\"','"'));
           }else{
-            callback(undefined); //issue with crypto
+            callback('Error: Waves transaction build failure!'); //issue with crypto
           }
         }
 

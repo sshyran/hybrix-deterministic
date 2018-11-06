@@ -1,5 +1,4 @@
 // (C) 2018 Internet of Coins / Gijs-Jan van Dompseler / Joachim de Koning
-// hybridd module - dummycoin/deterministic.js
 // Deterministic encryption wrapper for Dash
 
 wrapperlib = require('./wrapperlib');

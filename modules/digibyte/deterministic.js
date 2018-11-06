@@ -1,13 +1,12 @@
-// (C) 2015 Internet of Coins / Metasync / Joachim de Koning
-// hybridd module - electrum/deterministic_source.js
-// Deterministic encryption wrapper for Bitcoin
+// (C) 2018 Internet of Coins / Metasync / Joachim de Koning
+// Deterministic encryption wrapper for Digibyte
 //
 // [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
 //
 
 // inclusion of necessary requires
 
-Decimal = require('../../common/crypto/decimal-light'); Decimal.set({ precision: 64 });
+//Decimal = require('../../common/crypto/decimal-light'); Decimal.set({ precision: 64 });
 
 // shim for randomBytes to avoid require('crypto') incompatibilities
 // solves bug: "There was an error collecting entropy from the browser
