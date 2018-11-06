@@ -8,7 +8,7 @@ DEGLOBALIFY="`cd \"$SCRIPTDIR\" && pwd`"
 export PATH="$DEGLOBALIFY/../../node_binaries/bin:$PATH"
 
 
-eslint -f compact -c "$DEGLOBALIFY/.eslintrc.json" "$1" > "$1.eslint.txt"
+"$DEGLOBALIFY/../../node_modules/eslint/bin/eslint.js" -f compact -c "$DEGLOBALIFY/.eslintrc.json" "$1" > "$1.eslint.txt"
 grep -n "no-undef" "$1.eslint.txt" > "$1.no-undef1.txt"
 sed -n 's/^.*'\''\([^'\'']*\)'\''.*$/\1/p' "$1.no-undef1.txt" > "$1.no-undef2.txt"
 awk '!a[$0]++' "$1.no-undef2.txt" > "$1.no-undef3.txt"
