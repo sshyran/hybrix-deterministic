@@ -1,0 +1,85 @@
+{
+  "_from": "dashcore-lib",
+  "_id": "dashcore-lib@8.2.3",
+  "_inBundle": false,
+  "_integrity": "sha512-RKWvIYNfUhmUzlTyTyi2cVyjClzYIT8p+IHSlVbyLSv/NzCazZg95rTWi6yr+fqLY3tuqmYFmbX+QR9c7ZqYvg==",
+  "_location": "/dashcore-lib",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "dashcore-lib",
+    "name": "dashcore-lib",
+    "escapedName": "dashcore-lib",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/dashcore-lib/-/dashcore-lib-8.2.3.tgz",
+  "_shasum": "2143f12fddce5ca58a69e0b724470ef1110ceb12",
+  "_spec": "dashcore-lib",
+  "_where": "/home/user/Build/IoC/hybridd/SCRAPBOOK",
+  "author": {
+    "name": "BitPay",
+    "email": "dev@bitpay.com"
+  },
+  "browser": {
+    "request": "browser-request"
+  },
+  "bugs": {
+    "url": "https://github.com/bitpay/poliscore-lib/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "bn.js": "=4.11.8",
+    "bs58": "=4.0.1",
+    "buffer-compare": "=1.1.1",
+    "elliptic": "=6.4.0",
+    "inherits": "=2.0.1",
+    "lodash": "=4.17.4",
+    "x11-hash-js": "^1.0.0"
+  },
+  "deprecated": false,
+  "description": "A pure and powerful JavaScript Polis library.",
+  "devDependencies": {
+    "brfs": "^1.2.0",
+    "chai": "^1.10.0",
+    "gulp": "^3.8.10",
+    "sinon": "^1.13.0"
+  },
+  "homepage": "https://github.com/bitpay/poliscore-lib#readme",
+  "keywords": [
+    "polis",
+    "transaction",
+    "address",
+    "p2p",
+    "ecies",
+    "cryptocurrency",
+    "blockchain",
+    "payment",
+    "bip21",
+    "bip32",
+    "bip37",
+    "bip69",
+    "bip70",
+    "multisig"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "dashcore-lib",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitpay/poliscore-lib.git"
+  },
+  "scripts": {
+    "build": "gulp",
+    "coverage": "gulp coverage",
+    "lint": "gulp lint",
+    "test": "gulp test"
+  },
+  "version": "8.2.3"
+}

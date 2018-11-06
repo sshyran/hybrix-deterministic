@@ -1,0 +1,21 @@
+{
+  "name": "poliscore-lib",
+  "main": "./poliscore-lib.min.js",
+  "version": "5.0.0-beta.1",
+  "homepage": "http://poliscore.io",
+  "authors": ["BitPay, Inc."],
+  "description": "A pure, powerful core for your polis project.",
+  "moduleType": ["globals"],
+  "keywords": ["polis", "poliscore", "btc", "satoshi"],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "CONTRIBUTING.md",
+    "gulpfile.js",
+    "lib",
+    "index.js",
+    "karma.conf.js",
+    "npm-shrinkwrap.json",
+    "test"
+  ]
+}
