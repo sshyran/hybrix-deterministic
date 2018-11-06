@@ -42,7 +42,7 @@ for D in *; do
 
         mkdir -p "$DETERMINISTIC/dist/$D"
         #Check if compilation is required
-#        if [ ! -e "$DETERMINISTIC/dist/$D/deterministic.js.lzma" ] || [ "$NEWEST_FILE" -nt "$DETERMINISTIC/dist/$D/deterministic.js.lzma" ]; then
+        if [ ! -e "$DETERMINISTIC/dist/$D/deterministic.js.lzma" ] || [ "$NEWEST_FILE" -nt "$DETERMINISTIC/dist/$D/deterministic.js.lzma" ]; then
             echo "[.] Needs compiling"
             if [ -e "precompile.sh" ]; then
                 sh precompile.sh
@@ -55,9 +55,9 @@ for D in *; do
             echo "[.] Compiling completed"
             echo "[.] Move to dist"
             mv "deterministic.js.lzma" "$DETERMINISTIC/dist/$D/deterministic.js.lzma"
-      #  else
-       #     echo "[.] Skip compiling"
-       # fi
+        else
+            echo "[.] Skip compiling"
+        fi
         cd ..
     fi
 done
