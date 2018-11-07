@@ -13,7 +13,7 @@ javascript code that can be executed on the client side.
 **Types**
 
 Most client side modules will be asset modules. For example the client
-module `bitcoinjs` to handle bitcoin key and address generation and transaction signing.
+module `bitcoinjslib` to handle bitcoin key and address generation and transaction signing.
 Other custom client side modules can also be provided. For example to
 provide connectivity to (decentralized) exchanges.
 
@@ -25,11 +25,11 @@ The source files for deterministic modules with name `$MY_ASSET_NAME` are groupe
 
 You will need to create the following file(s):
 
-- deterministic.js               The entry file see below for the deterministic.js template
+- `deterministic.js`              The entry file see below for the deterministic.js template
 
-- [Optional]: precompile.sh         A script to standardize and
+- [Optional]: `precompile.sh`         A script to standardize and
   automate changes to third party libraries.
-- [Optional]: compile.sh            a script to compile the above into a single lmza file
+- [Optional]: `compile.sh`            a script to compile the above into a single lmza file
 
 The artifact (compilation result) is build in the
 `$HYBRIDD/deterministic/dist/$MY_ASSET_NAME/` folder. It will consist of a lmza
