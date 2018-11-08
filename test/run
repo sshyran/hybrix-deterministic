@@ -1,0 +1,13 @@
+#!/bin/sh
+OLDPATH=$PATH
+WHEREAMI=`pwd`
+export PATH=$WHEREAMI/node_binaries/bin:"$PATH"
+NODEINST=`which node`
+
+#TODO set node
+
+echo " [i] using node executable $NODEINST"
+node $@
+
+export PATH=$OLDPATH
+cd "$WHEREAMI"

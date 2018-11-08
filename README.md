@@ -171,7 +171,7 @@ format:
       contract:,
       unspent:,
       target,
-      ammount
+      amount
 }
 ```
 
@@ -187,7 +187,20 @@ than the corresponding lmza) are compiled by executing:
 
 **Testing**
 
-TODO
+Use `$HYBRIDD/interface/test/run test.js --symbol $YOUR_ASSET_NAME` to
+test your implementation for nodejs or browse to:
+
+`file://$HYBRIDD/interface/test/test.html?symbol=$YOUR_ASSET_NAME`
+
+to test your implementation for web.
+
+If you encounter issues you can do a partial testing (without webpack)
+by running:
+
+`$HYBRIDD/deterministic/test/run test.js --symbol $YOUR_ASSET_NAME`
+
+Note that this will not incoorporate any custom `precompile.sh` and
+`compile.sh` steps.
 
 **Pipeline**
 The following steps are performed to create the client code blob:
