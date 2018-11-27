@@ -66,7 +66,7 @@ var wrapper = (
           signedTx = transfer({ 
             recipient: data.target,
             // ID of a token, or WAVES
-            assetId: 'WAVES',
+            assetId: '', // defaults to WAVES
             // The real amount is the given number divided by 10^(precision of the token)
             amount: parseInt(data.amount),
             feeAssetId: '', // defaults to WAVES
