@@ -38,7 +38,7 @@ var dummylib = {
   },
 
   transaction : function(data, callback) {
-    callback('_dummytransaction_');
+    callback('_dummytransaction_'+data.amount+'_'+data.fee);
   }
 
 //  dummyfy : require('./bitcore-lib'),
