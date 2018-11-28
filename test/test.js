@@ -11,7 +11,7 @@ var ops = stdio.getopt({
 
 
 nacl_factory = require('../common/crypto/nacl.js');
-var Hybridd = require('../../interface/dist/hybridd.interface.nodejs.js');
+var Hybridd = require('../interface/hybridd.interface.nodejs.js');
 var hybridd = new Hybridd.Interface({http: require('http')});
 
 

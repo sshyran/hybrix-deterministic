@@ -10,6 +10,7 @@ NODE="$HYBRIDD/node"
 DETERMINISTIC="$HYBRIDD/deterministic"
 NODEJS="$HYBRIDD/nodejs"
 COMMON="$HYBRIDD/common"
+INTERFACE="$HYBRIDD/interface"
 WEB_WALLET="$HYBRIDD/web-wallet"
 
 
@@ -53,6 +54,20 @@ if [ ! -e "$DETERMINISTIC/common" ];then
     echo " [i] Link common files"
     ln -sf "$COMMON" "$DETERMINISTIC/common"
 
+fi
+
+# INTERFACE
+if [ ! -e "$DETERMINISTIC/interface" ];then
+
+    echo " [!] deterministic/interface not found."
+
+    if [ ! -e "$INTERFACE" ];then
+        cd "$HYBRIDD"
+        echo " [i] Clone interface files"
+        git clone https://www.gitlab.com/iochq/hybridd/interface.git
+    fi
+    echo " [i] Link interface files"
+    ln -sf "$INTERFACE/dist" "$DETERMINISTIC/interface"
 fi
 
 
