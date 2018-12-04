@@ -40,9 +40,10 @@ deterministic:
     - rm -rf !(dist) || true
     - mv ./dist/* ./
     - rm -rf ./dist || true
+    - rm -rf ./.git || true
 
     # remove all files starting with a .
-    - find -name ".*" -delete
+    - find -name ".*" -type f -delete
     
      # create a .version file
     - timestamp=$(date -u '+%Y-%m-%dT%H:%M:%S+00:00')
