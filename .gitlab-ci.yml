@@ -27,7 +27,11 @@ deterministic:
     
     # run the build-script of the interface
     - ./scripts/npm/compile.sh
-    
+    - npmlist=$(npm list --only=prod --depth=0 -json)
+    - set +e
+    - npmaudit=$(npm audit -json)
+    - set -e
+
     - ls -l
     
     # clean up and prepare the artifacts (instead of having a dist) 
@@ -40,7 +44,7 @@ deterministic:
      # create a .version file
     - timestamp=$(date -u '+%Y-%m-%dT%H:%M:%S+00:00')
     - if [[ "$DEBUG_ENABLED" == "1"  ]]; then mode=debug; else mode=release; fi 
-    - echo "{\"${CI_PROJECT_PATH_SLUG}\":{\"mode\":\"${mode}\", \"project_path\":\"${CI_PROJECT_PATH}\", \"commit_ref_name\":\"${CI_COMMIT_REF_NAME}\", \"commit_ref_slug\":\"${CI_COMMIT_REF_SLUG}\", \"commit_sha\":\"${CI_COMMIT_SHA}\", \"pipeline_url\":\"${CI_PIPELINE_URL}\", \"packaged\":\"${timestamp}\"}}" > .version
+    - echo "{\"${CI_PROJECT_PATH_SLUG}\":{\"mode\":\"${mode}\", \"project_path\":\"${CI_PROJECT_PATH}\", \"commit_ref_name\":\"${CI_COMMIT_REF_NAME}\", \"commit_ref_slug\":\"${CI_COMMIT_REF_SLUG}\", \"commit_sha\":\"${CI_COMMIT_SHA}\", \"pipeline_url\":\"${CI_PIPELINE_URL}\", \"npm-list\":${npmlist}, \"npm-audit\":${npmaudit}, \"packaged\":\"${timestamp}\"}}" > .version
 
     - ls -l
     
