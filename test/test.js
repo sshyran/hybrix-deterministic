@@ -11,8 +11,8 @@ var ops = stdio.getopt({
 
 
 nacl_factory = require('../common/crypto/nacl.js');
-var hybrixd = require('../interface/hybrixd.interface.nodejs.js');
-var hybrixd = new hybrixd.Interface({http: require('http')});
+var Hybrixd = require('../interface/hybrixd.interface.nodejs.js');
+var hybrixd = new Hybrixd.Interface({http: require('http')});
 
 
 function getKeysAndAddress(details){
