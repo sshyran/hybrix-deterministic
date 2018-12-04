@@ -2,15 +2,15 @@
 WHEREAMI="`pwd`";
 OLDPATH="$PATH"
 
-# $HYBRIDD/deterministic/scripts/npm  => $HYBRIDD
+# $HYBRIXD/deterministic/scripts/npm  => $HYBRIXD
 SCRIPTDIR="`dirname \"$0\"`"
-HYBRIDD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
+HYBRIXD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
 
-NODE="$HYBRIDD/node"
-DETERMINISTIC="$HYBRIDD/deterministic"
-NODEJS="$HYBRIDD/nodejs-v8-lts"
-COMMON="$HYBRIDD/common"
-WEB_WALLET="$HYBRIDD/web-wallet"
+NODE="$HYBRIXD/node"
+DETERMINISTIC="$HYBRIXD/deterministic"
+NODEJS="$HYBRIXD/nodejs-v8-lts"
+COMMON="$HYBRIXD/common"
+WEB_WALLET="$HYBRIXD/web-wallet"
 
 export PATH="$DETERMINISTIC/node_binaries/bin:$PATH"
 

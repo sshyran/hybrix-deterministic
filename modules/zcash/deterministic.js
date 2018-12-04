@@ -1,5 +1,5 @@
 // (C) 2018 Internet of Coins
-// hybridd module - electrum/deterministic_source.js
+// hybrixd module - electrum/deterministic_source.js
 // Deterministic encryption wrapper for ZCash
 
 var wrapperlib = require('./wrapperlib');

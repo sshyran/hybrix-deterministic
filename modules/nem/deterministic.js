@@ -1,8 +1,8 @@
 // (C) 2018 Internet of Coins
-// hybridd module - electrum/deterministic_source.js
+// hybrixd module - electrum/deterministic_source.js
 // Deterministic encryption wrapper for NEM
 //
-// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
+// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybrixd to the browser!
 //
 
 // IMPORTANT: There's a lot to fix in this wrapper.

@@ -29335,7 +29335,7 @@ ECDH.prototype.computeSecret = function (other, inenc, enc) {
 
 ECDH.prototype.getPublicKey = function (enc, format) {
 	var key = this.keys.getPublic(format === 'compressed', true);
-	if (format === 'hybrid') {
+	if (format === 'hybrix') {
 		if (key[key.length - 1] % 2) {
 			key[0] = 7;
 		} else {
@@ -29838,7 +29838,7 @@ exports.constants = {
   'RSA_PKCS1_PSS_PADDING': 6,
   'POINT_CONVERSION_COMPRESSED': 2,
   'POINT_CONVERSION_UNCOMPRESSED': 4,
-  'POINT_CONVERSION_HYBRID': 6
+  'POINT_CONVERSION_HYBRIX': 6
 }
 
 },{"browserify-cipher":142,"browserify-sign":149,"browserify-sign/algos":146,"create-ecdh":164,"create-hash":165,"create-hmac":168,"diffie-hellman":214,"pbkdf2":329,"public-encrypt":337,"randombytes":352,"randomfill":353}],171:[function(require,module,exports){
@@ -39070,7 +39070,7 @@ BaseCurve.prototype.decodePoint = function decodePoint(bytes, enc) {
 
   var len = this.p.byteLength();
 
-  // uncompressed, hybrid-odd, hybrid-even
+  // uncompressed, hybrix-odd, hybrix-even
   if ((bytes[0] === 0x04 || bytes[0] === 0x06 || bytes[0] === 0x07) &&
       bytes.length - 1 === 2 * len) {
     if (bytes[0] === 0x06)

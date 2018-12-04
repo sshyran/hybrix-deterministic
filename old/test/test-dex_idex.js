@@ -46,7 +46,7 @@ var deterministic = activate( LZString.decompressFromEncodedURIComponent(dcode) 
 
 // 000000000000000000
 
-// ./hybridd /asset/eth.kin/details
+// ./hybrixd /asset/eth.kin/details
 var kin_token = {"symbol":"eth.kin"
                   ,"name":"Kin"
                   ,"mode":"ethereum.token"

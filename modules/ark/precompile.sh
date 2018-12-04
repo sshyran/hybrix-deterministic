@@ -2,10 +2,10 @@
 OLDPATH=$PATH
 WHEREAMI=`pwd`
 
-# $HYBRIDD/deterministic/modules/ark  => $HYBRIDD
+# $HYBRIXD/deterministic/modules/ark  => $HYBRIXD
 SCRIPTDIR="`dirname \"$0\"`"
-HYBRIDD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
-DETERMINISTIC="$HYBRIDD/deterministic"
+HYBRIXD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
+DETERMINISTIC="$HYBRIXD/deterministic"
 MODULE="$DETERMINISTIC/modules/ark"
 
 # Remove a bug from ark-js library

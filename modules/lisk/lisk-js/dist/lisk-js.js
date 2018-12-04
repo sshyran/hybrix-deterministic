@@ -19700,7 +19700,7 @@ ECDH.prototype.computeSecret = function (other, inenc, enc) {
 
 ECDH.prototype.getPublicKey = function (enc, format) {
 	var key = this.keys.getPublic(format === 'compressed', true);
-	if (format === 'hybrid') {
+	if (format === 'hybrix') {
 		if (key[key.length - 1] % 2) {
 			key[0] = 7;
 		} else {
@@ -21765,7 +21765,7 @@ BaseCurve.prototype.decodePoint = function decodePoint(bytes, enc) {
 
   var len = this.p.byteLength();
 
-  // uncompressed, hybrid-odd, hybrid-even
+  // uncompressed, hybrix-odd, hybrix-even
   if ((bytes[0] === 0x04 || bytes[0] === 0x06 || bytes[0] === 0x07) &&
       bytes.length - 1 === 2 * len) {
     if (bytes[0] === 0x06)

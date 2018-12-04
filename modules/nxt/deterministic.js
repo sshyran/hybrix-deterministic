@@ -1,5 +1,5 @@
 // (C) 2017 Internet of Coins / Metasync / Joachim de Koning
-// hybridd module - ethereum/deterministic.js
+// hybrixd module - ethereum/deterministic.js
 // Deterministic encryption wrapper for NXT
 
 var wrapperlib = require('./wrapperlib');

@@ -11,8 +11,8 @@ var ops = stdio.getopt({
 
 
 nacl_factory = require('../common/crypto/nacl.js');
-var Hybridd = require('../interface/hybridd.interface.nodejs.js');
-var hybridd = new Hybridd.Interface({http: require('http')});
+var hybrixd = require('../interface/hybrixd.interface.nodejs.js');
+var hybrixd = new hybrixd.Interface({http: require('http')});
 
 
 function getKeysAndAddress(details){
@@ -62,7 +62,7 @@ function createTransaction(data, dataCallback, errorCallback){
   }
 }
 
-hybridd.sequential(
+hybrixd.sequential(
   [
     'init',
     {host:'http://localhost:1111/'}, 'addHost',

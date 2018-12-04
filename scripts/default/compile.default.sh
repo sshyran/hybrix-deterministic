@@ -2,10 +2,10 @@
 OLDPATH=$PATH
 WHEREAMI=`pwd`
 
-# $HYBRIDD/deterministic/scripts/npm  => $HYBRIDD
+# $HYBRIXD/deterministic/scripts/npm  => $HYBRIXD
 SCRIPTDIR="`dirname \"$0\"`"
-HYBRIDD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
-DETERMINISTIC="$HYBRIDD/deterministic"
+HYBRIXD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
+DETERMINISTIC="$HYBRIXD/deterministic"
 export PATH="$DETERMINISTIC/node_binaries/bin:$PATH"
 
 MODULE="$DETERMINISTIC/modules/$1"

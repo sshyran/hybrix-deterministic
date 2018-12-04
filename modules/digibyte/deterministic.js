@@ -1,7 +1,7 @@
 // (C) 2018 Internet of Coins / Metasync / Joachim de Koning
 // Deterministic encryption wrapper for Digibyte
 //
-// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
+// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybrixd to the browser!
 //
 
 // inclusion of necessary requires

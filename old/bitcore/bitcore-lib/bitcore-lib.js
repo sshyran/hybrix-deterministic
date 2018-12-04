@@ -19491,7 +19491,7 @@ BaseCurve.prototype.decodePoint = function decodePoint(bytes, enc) {
 
   var len = this.p.byteLength();
 
-  // uncompressed, hybrid-odd, hybrid-even
+  // uncompressed, hybrix-odd, hybrix-even
   if ((bytes[0] === 0x04 || bytes[0] === 0x06 || bytes[0] === 0x07) &&
       bytes.length - 1 === 2 * len) {
     if (bytes[0] === 0x06)
@@ -25504,7 +25504,7 @@ ECDH.prototype.computeSecret = function (other, inenc, enc) {
 
 ECDH.prototype.getPublicKey = function (enc, format) {
 	var key = this.keys.getPublic(format === 'compressed', true);
-	if (format === 'hybrid') {
+	if (format === 'hybrix') {
 		if (key[key.length - 1] % 2) {
 			key[0] = 7;
 		} else {
@@ -26126,7 +26126,7 @@ exports.constants = {
   'RSA_PKCS1_PSS_PADDING': 6,
   'POINT_CONVERSION_COMPRESSED': 2,
   'POINT_CONVERSION_UNCOMPRESSED': 4,
-  'POINT_CONVERSION_HYBRID': 6
+  'POINT_CONVERSION_HYBRIX': 6
 }
 
 },{"browserify-cipher":81,"browserify-sign":89,"browserify-sign/algos":86,"create-ecdh":116,"create-hash":134,"create-hmac":137,"diffie-hellman":146,"pbkdf2":199,"public-encrypt":206,"randombytes":217}],140:[function(require,module,exports){
@@ -34301,7 +34301,7 @@ module.exports = Array.isArray || function (arr) {
         length -= holders.length;
         if (length < arity) {
           return createRecurry(
-            func, bitmask, createHybrid, wrapper.placeholder, undefined,
+            func, bitmask, createhybrix, wrapper.placeholder, undefined,
             args, holders, undefined, undefined, arity - length);
         }
         var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
@@ -34410,7 +34410,7 @@ module.exports = Array.isArray || function (arr) {
      * @param {number} [arity] The arity of `func`.
      * @returns {Function} Returns the new wrapped function.
      */
-    function createHybrid(func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity) {
+    function createhybrix(func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity) {
       var isAry = bitmask & WRAP_ARY_FLAG,
           isBind = bitmask & WRAP_BIND_FLAG,
           isBindKey = bitmask & WRAP_BIND_KEY_FLAG,
@@ -34440,7 +34440,7 @@ module.exports = Array.isArray || function (arr) {
         if (isCurried && length < arity) {
           var newHolders = replaceHolders(args, placeholder);
           return createRecurry(
-            func, bitmask, createHybrid, wrapper.placeholder, thisArg,
+            func, bitmask, createhybrix, wrapper.placeholder, thisArg,
             args, newHolders, argPos, ary, arity - length
           );
         }
@@ -34803,7 +34803,7 @@ module.exports = Array.isArray || function (arr) {
       } else if ((bitmask == WRAP_PARTIAL_FLAG || bitmask == (WRAP_BIND_FLAG | WRAP_PARTIAL_FLAG)) && !holders.length) {
         result = createPartial(func, bitmask, thisArg, partials);
       } else {
-        result = createHybrid.apply(undefined, newData);
+        result = createhybrix.apply(undefined, newData);
       }
       var setter = data ? baseSetData : setData;
       return setWrapToString(setter(result, newData), func, bitmask);
@@ -46206,9 +46206,9 @@ module.exports = Array.isArray || function (arr) {
           isLazy = useLazy = false;
         }
         var chainAll = this.__chain__,
-            isHybrid = !!this.__actions__.length,
+            ishybrix = !!this.__actions__.length,
             isUnwrapped = retUnwrapped && !chainAll,
-            onlyLazy = isLazy && !isHybrid;
+            onlyLazy = isLazy && !ishybrix;
 
         if (!retUnwrapped && useLazy) {
           value = onlyLazy ? value : new LazyWrapper(this);
@@ -46253,7 +46253,7 @@ module.exports = Array.isArray || function (arr) {
       }
     });
 
-    realNames[createHybrid(undefined, WRAP_BIND_KEY_FLAG).name] = [{
+    realNames[createhybrix(undefined, WRAP_BIND_KEY_FLAG).name] = [{
       'name': 'wrapper',
       'func': undefined
     }];

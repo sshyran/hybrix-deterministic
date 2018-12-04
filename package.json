@@ -1,7 +1,7 @@
 {
   "name": "module-deterministic",
   "version": "1.0.0",
-  "description": "Deterministic module for hybridd",
+  "description": "Deterministic module for hybrixd",
   "main": "index.js",
   "directories": {
     "lib": "lib",

@@ -1,5 +1,5 @@
 // (C) 2017 Internet of Coins / Joachim de Koning
-// hybridd module - bitshares/deterministic.js
+// hybrixd module - bitshares/deterministic.js
 // Deterministic encryption wrapper for Counterparty
 
 

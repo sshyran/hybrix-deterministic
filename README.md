@@ -1,9 +1,9 @@
 # module-deterministic
-Deterministic module for hybridd
+Deterministic module for hybrixd
 
 **Purpose**
 
-A deterministic module is a client side module for hybridd. It is used
+A deterministic module is a client side module for hybrixd. It is used
 to handle client seeds, keys addresses and signing. As we
 do not want a client to share their keys all these actions should be
 performed client side. The node should never touch this data.
@@ -21,7 +21,7 @@ provide connectivity to (decentralized) exchanges.
 
 The source files for deterministic modules with name `$MY_ASSET_NAME` are grouped in the module folder
 
-`$HYBRIDD/deterministic/modules/$MY_ASSET_NAME/`
+`$HYBRIXD/deterministic/modules/$MY_ASSET_NAME/`
 
 You will need to create the following file(s):
 
@@ -32,7 +32,7 @@ You will need to create the following file(s):
 - [Optional]: `compile.sh`            a script to compile the above into a single lmza file
 
 The artifact (compilation result) is build in the
-`$HYBRIDD/deterministic/dist/$MY_ASSET_NAME/` folder. It will consist of a lmza
+`$HYBRIXD/deterministic/dist/$MY_ASSET_NAME/` folder. It will consist of a lmza
 compressed code blob file named `deterministic.js.lmza`
 
 
@@ -42,7 +42,7 @@ To implement a deterministic module you will need the following
 
 1) Node Side Module
 
-A qrtz module added to the `$HYBRIDD/node/recipes` folder.
+A qrtz module added to the `$HYBRIXD/node/recipes` folder.
 This should provide a connection to the asset API's (for example: the block
 explorers) Handling queries for balance, unspents and pushing transactions.
 
@@ -56,7 +56,7 @@ to a github repository or npm module which you can download.
 To install npm modules: please use supplied npm:
 
 ```
-cd $HYBRIDD/deterministic
+cd $HYBRIXD/deterministic
 node_binaries/bin/npm i $MY_ASSETS_NPM_MODULE
 ```
 
@@ -69,7 +69,7 @@ var myAssetLib = require("$MY_ASSETS_NPM_MODULE")
 To include a js library file:
 
 Place the file in the module folder:
-`$HYBRIDD/deterministic/modules/$MY_ASSET_NAME/$MY_ASSET_LIBRARY/$SOME_FILE.js`
+`$HYBRIXD/deterministic/modules/$MY_ASSET_NAME/$MY_ASSET_LIBRARY/$SOME_FILE.js`
 
 To then include the js library in your `deterministic.js`:
 
@@ -183,21 +183,21 @@ is asynchronious. The function will return the stringified signed transaction.
 All deterministic modules (which source files are modified more recent
 than the corresponding lmza) are compiled by executing:
 
-`$HYBRIDD/deterministic/npm run build`
+`$HYBRIXD/deterministic/npm run build`
 
 **Testing**
 
-Use `$HYBRIDD/interface/test/run test.js --symbol $YOUR_ASSET_NAME` to
+Use `$HYBRIXD/interface/test/run test.js --symbol $YOUR_ASSET_NAME` to
 test your implementation for nodejs or browse to:
 
-`file://$HYBRIDD/interface/test/test.html?symbol=$YOUR_ASSET_NAME`
+`file://$HYBRIXD/interface/test/test.html?symbol=$YOUR_ASSET_NAME`
 
 to test your implementation for web.
 
 If you encounter issues you can do a partial testing (without webpack)
 by running:
 
-`$HYBRIDD/deterministic/test/run test.js --symbol $YOUR_ASSET_NAME`
+`$HYBRIXD/deterministic/test/run test.js --symbol $YOUR_ASSET_NAME`
 
 Note that this will not incoorporate any custom `precompile.sh` and
 `compile.sh` steps.

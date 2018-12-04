@@ -1,8 +1,8 @@
 // (C) 2015 Internet of Coins / Metasync / Joachim de Koning
-// hybridd module - electrum/deterministic_source.js
+// hybrixd module - electrum/deterministic_source.js
 // Deterministic encryption wrapper for Bitcoin
 //
-// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
+// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybrixd to the browser!
 //
 
 var wrapper = (

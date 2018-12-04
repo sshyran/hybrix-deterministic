@@ -1,8 +1,8 @@
 // (C) 2015 Internet of Coins / Metasync / Joachim de Koning
-// hybridd module - dummycoin/deterministic.js
+// hybrixd module - dummycoin/deterministic.js
 // Deterministic encryption wrapper for Dummy test coin
 //
-// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
+// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybrixd to the browser!
 //
 var wrapperlib = require('./wrapperlib');
 

@@ -1,5 +1,5 @@
 // (C) 2017 Internet of Coins / Metasync / Joachim de Koning
-// hybridd module - waves/deterministic.js
+// hybrixd module - waves/deterministic.js
 // Deterministic encryption wrapper for Waves
 
 // this to prevent waves api from connecting with waves server, we only want the signed tx, not the pushing of the signed tx.

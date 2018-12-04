@@ -119,8 +119,8 @@ var tx = {
     'amount':1,                                             // amount to send, for xem transfer mode, ignored in mosaic mode
     'fee':0.05,                                             // fee for the miners or the system
     'factor':6,                                             // amount of decimals, i.e.: 10^x (6, but nem-sdk is doing this conversion for us)
-    'contract':'NB6TCTRBT7KUN5T5337LBSBIAYHL375VHCFZNOAU:internetofcoins:hybrid',
-    'unspent':{"creator":"6b162d5fe5b3ad5de97f0c2a9608d6f00aef242c59525ec80589b8bd49a1bf89","description":"HYBRID is the first hybrid asset to float on the Internet of Coins.","id":{"namespaceId":"internetofcoins","name":"hybrid"},"properties":[{"name":"divisibility","value":"6"},{"name":"initialSupply","value":"1000000"},{"name":"supplyMutable","value":"true"},{"name":"transferable","value":"true"}],"levy":{}}
+    'contract':'NB6TCTRBT7KUN5T5337LBSBIAYHL375VHCFZNOAU:internetofcoins:hybrix',
+    'unspent':{"creator":"6b162d5fe5b3ad5de97f0c2a9608d6f00aef242c59525ec80589b8bd49a1bf89","description":"HYBRIX is the first hybrix asset to float on the Internet of Coins.","id":{"namespaceId":"internetofcoins","name":"hybrix"},"properties":[{"name":"divisibility","value":"6"},{"name":"initialSupply","value":"1000000"},{"name":"supplyMutable","value":"true"},{"name":"transferable","value":"true"}],"levy":{}}
   }
 }
 

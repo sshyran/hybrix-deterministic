@@ -5,8 +5,8 @@ OLDPATH=$PATH
 WHEREAMI=`pwd`
 
 SCRIPTDIR="`dirname \"$0\"`"
-HYBRIDD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
-DETERMINISTIC="$HYBRIDD/deterministic"
+HYBRIXD="`cd \"$SCRIPTDIR/../../..\" && pwd`"
+DETERMINISTIC="$HYBRIXD/deterministic"
 MODULE="$DETERMINISTIC/modules/waves"
 DEFAULT="$DETERMINISTIC/scripts/default"
 export PATH="$DETERMINISTIC/node_binaries/bin:$PATH"

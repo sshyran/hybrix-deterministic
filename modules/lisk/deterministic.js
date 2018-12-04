@@ -1,8 +1,8 @@
 // (C) 2015 Internet of Coins / Metasync / Joachim de Koning
-// hybridd module - lisk/deterministic.js
+// hybrixd module - lisk/deterministic.js
 // Deterministic encryption wrapper for Lisk
 //
-// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybridd to the browser!
+// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybrixd to the browser!
 //
 
 var wrapperlib = require('./lisk-js/index.js');

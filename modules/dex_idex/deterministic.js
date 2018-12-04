@@ -1,5 +1,5 @@
 // (C) 2017 Internet of Coins / Joachim de Koning
-// hybridd module - ethereum/deterministic.js
+// hybrixd module - ethereum/deterministic.js
 // Deterministic encryption wrapper for Ethereum
 
 var wrapperlib = require('./wrapperlib');

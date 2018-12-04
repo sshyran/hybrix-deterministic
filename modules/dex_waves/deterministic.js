@@ -1,5 +1,5 @@
 // (C) 2017 Internet of Coins / Metasync / Joachim de Koning
-// hybridd module - waves/deterministic.js
+// hybrixd module - waves/deterministic.js
 // Deterministic encryption wrapper for Waves
 
 function uglyClone(obj){return JSON.parse(JSON.stringify(obj));}
