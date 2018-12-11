@@ -14,26 +14,26 @@ var dummylib = {
 
   // generate a unique wallet address from a given public key
   address : function(data) {
-    if(typeof data === 'object' && data.hasOwnProperty('dummy') && data.dummy === 'dummy'){
+    if(typeof data === 'object' && data.public === '_dummypublickey_' && data.private === '_dummyprivatekey_'){
       return '_dummyaddress_';
     }else{
-      throw('Expected data.dummy === "dummy".');
+      throw('Expected correct keys.');
     }
   },
 
   publickey : function(data) {
-    if(typeof data === 'object' && data.hasOwnProperty('dummy') && data.dummy === 'dummy'){
+    if(typeof data === 'object' && data.public === '_dummypublickey_' && data.private === '_dummyprivatekey_'){
       return '_dummypublickey_';
     }else{
-      throw('Expected data.dummy === "dummy".');
+      throw('Expected correct keys.');
     }
   },
 
   privatekey : function(data) {
-    if(typeof data === 'object' && data.hasOwnProperty('dummy') && data.dummy === 'dummy'){
+    if(typeof data === 'object' && data.public === '_dummypublickey_' && data.private === '_dummyprivatekey_'){
       return '_dummyprivatekey_';
     }else{
-      throw('Expected data.dummy === "dummy".');
+      throw('Expected correct keys.');
     }
   },
 
