@@ -9,7 +9,7 @@ var dummylib = {
 
     // create deterministic public and private keys based on a seed
     keys : function(data) {
-      return { dummy:'dummy' };
+      return { public:'_dummypublickey_', private: '_dummyprivatekey_'};
     },
 
   // generate a unique wallet address from a given public key
