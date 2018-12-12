@@ -33,7 +33,7 @@ if [ ! -e "$DETERMINISTIC/node_binaries" ];then
     if [ ! -e "$NODEJS" ];then
         cd "$HYBRIXD"
         echo " [i] Clone node js runtimes files"
-        git clone https://www.gitlab.com/iochq/hybrixd/dependencies/nodejs.git
+        git clone https://www.gitlab.com/hybrix/hybrixd/dependencies/nodejs.git
     fi
     echo " [i] Link node_binaries files"
     ln -sf "$NODEJS/$SYSTEM" "$DETERMINISTIC/node_binaries"
@@ -49,7 +49,7 @@ if [ ! -e "$DETERMINISTIC/common" ];then
     if [ ! -e "$COMMON" ];then
         cd "$HYBRIXD"
         echo " [i] Clone common files"
-        git clone https://www.gitlab.com/iochq/hybrixd/common.git
+        git clone https://www.gitlab.com/hybrix/hybrixd/common.git
     fi
     echo " [i] Link common files"
     ln -sf "$COMMON" "$DETERMINISTIC/common"
@@ -64,7 +64,7 @@ if [ ! -e "$DETERMINISTIC/interface" ];then
     if [ ! -e "$INTERFACE" ];then
         cd "$HYBRIXD"
         echo " [i] Clone interface files"
-        git clone https://www.gitlab.com/iochq/hybrixd/interface.git
+        git clone https://www.gitlab.com/hybrix/hybrixd/interface.git
     fi
     echo " [i] Link interface files"
     ln -sf "$INTERFACE/dist" "$DETERMINISTIC/interface"
