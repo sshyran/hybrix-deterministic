@@ -10,10 +10,8 @@ var ops = stdio.getopt({
 });
 
 
-nacl_factory = require('../common/crypto/nacl.js');
-var Hybrixd = require('../interface/hybrixd.interface.nodejs.js');
-var hybrixd = new Hybrixd.Interface({http: require('http')});
-
+var Hybrix = require('../interface/hybrix-lib.nodejs.js');
+var hybrix = new Hybrix.Interface({http: require('http')});
 
 function getKeysAndAddress(details){
 
@@ -62,7 +60,7 @@ function createTransaction(data, dataCallback, errorCallback){
   }
 }
 
-hybrixd.sequential(
+hybrix.sequential(
   [
     'init',
     {host:'http://localhost:1111/'}, 'addHost',
