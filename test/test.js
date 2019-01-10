@@ -6,8 +6,24 @@ window = {};
 var stdio = require('stdio');
 
 var ops = stdio.getopt({
-  'symbol': {key: 's', args: 1, description: 'Select a symbol to run test'}
+  'symbol': {key: 's', args: 1, description: 'Select a symbol to run test.'},
+  'amount': {key: 'a', args: 1, description: 'Transaction amount.'},
+  'unspent': {key: 'u', args: 1, description: 'Manually specify unspents.'},
+  'target': {key: 't', args: 1, description: ' Target address (Defaults to source address)'},
+  'fee': {key: 'f', args: 1, description: 'Manually specify fee.'}
 });
+
+var amount = '100';
+var unspent;
+
+if(typeof ops.unspent === 'string'){
+  unspent= ops.unspent;
+}else if(typeof ops.unspent !== 'undefined'){
+  unspent= JSON.stringify(ops.unspent);
+}
+
+var fee = ops.fee;
+var target = ops.target;
 
 
 var Hybrix = require('../interface/hybrix-lib.nodejs.js');
@@ -36,22 +52,22 @@ function getKeysAndAddress(details){
   keys.mode = subMode;
   var address = window.deterministic.address(keys);
   console.log("Address:",address);
-  return {address, keys, details};
+  return {address, keys, details, publicKey};
 }
 
 
+
 function createTransaction(data, dataCallback, errorCallback){
-
-
+  console.log('Unspents: '+JSON.stringify(data.unspent));
   var tx = {
-    amount :'100',//TODO
-    fee: data.details.fee,//TODO
-    keys: data.keys,
-    source_address: data.address,
-    target_address: data.address,//TODO
-    contract:data.details.contract,//TODO
-    unspent :'0',//TODO
-    factor : data.details.factor //TODO
+    amount : amount,
+    fee: typeof fee === 'undefined'?data.result.details.fee:fee, //TODO
+    keys: data.result.keys,
+    source_address: data.result.address,
+    target_address: target||data.result.address,
+    contract:data.result.details.contract,
+    unspent :unspent||data.unspent,//TODO
+    factor : data.result.details.factor
   }
 
   var result = window.deterministic.transaction(tx, dataCallback);
@@ -66,6 +82,11 @@ hybrix.sequential(
     {host:'http://localhost:1111/'}, 'addHost',
     {query:'/asset/'+ops.symbol+'/details'},'rout',
     getKeysAndAddress,
+    result => {
+      return {
+        unspent:{data:{query: '/asset/' + ops.symbol + '/unspent/'+result.address+'/'+(Number(amount)+Number(typeof fee === 'undefined'?result.details.fee:fee))+'/'+result.address+'/'+result.publicKey}, step:'rout'},
+        result:{data:result,step:'id'}};
+    }, 'parallel',
     result => {return {data: result, func:createTransaction};}, 'call'
   ],
   result => {console.log("Transaction:",result);},
