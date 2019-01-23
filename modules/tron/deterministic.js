@@ -50,15 +50,19 @@ var wrapper = (
 
       // generate a transaction
       transaction : function (data, callback) {
-        const privateKey_ = data.privateKey;
+        const privateKey_ = data.keys.privateKey;
         const target = data.target;
-        const address = data.address;
-        const amount = data.amount;
-        const tx = tronWeb.transactionBuilder.sendTrx(target, amount, address)
+        const address = data.source;
+        const amount = Number(data.amount);
 
-        console.log("data = ", data);
-
-        return tronWeb.trx.sign(tx, privateKey_, true, callback)
+        tronWeb.transactionBuilder.sendTrx(target, amount, address)
+          .then(tx => tronWeb.trx.sign(tx, privateKey_, true)
+                .then(signedTx => {
+                  callback(Buffer.from(JSON.stringify(signedTx), 'utf-8').toString('hex'));
+                })
+                .catch(callback))
+          .catch(callback)
+        //
       }
     }
 
