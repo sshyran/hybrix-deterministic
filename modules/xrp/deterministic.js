@@ -35,7 +35,7 @@ var bs58 = require('base-x')(BASE58);
             Seed: {version: 0x21}
           }
         });
-        var hash = window.nacl.to_hex(nacl.crypto_hash_sha256(data.seed));
+        var hash = nacl.to_hex(nacl.crypto_hash_sha256(data.seed));
         var secret = Buffer.from(hash.substr(0,32), 'hex');
         // It can encode a Buffer
         var encoded = api2.encodeSeed(secret);
@@ -60,7 +60,7 @@ var bs58 = require('base-x')(BASE58);
 
       // generate a transaction
       transaction : (data, callback) => {
-        return api.transaction(data,callback);
+        return undefined;// api.transaction(data,callback);
       }
     }
 
