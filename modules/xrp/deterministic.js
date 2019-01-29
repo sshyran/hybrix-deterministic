@@ -19,6 +19,7 @@ var bs58 = require('base-x')(BASE58);
     var wrapper = {
       // create deterministic public and private keys based on a seed
       keys : data => {
+        console.log("data  keys = ", data);
         // console.log("data keys = ", data);
         var api2 = apiFactory({
           // We probably have your favorite alphabet, if not, contact us
@@ -44,24 +45,34 @@ var bs58 = require('base-x')(BASE58);
 
       // generate a unique wallet address from a given public key
       address : data => {
+        console.log("data  address = ", data);
         // console.log("data address = ", data);
         return rippleKeyPairs.deriveAddress(data.publicKey);
       },
 
       // return public key
       publickey : data => {
+        console.log("data pubkey = ", data);
         return data.publicKey;
       },
 
       // return private key
       privatekey : data => {
+        console.log("data privkey = ", data);
         return data.privateKey;
       },
 
       // generate a transaction
       transaction : (data, callback) => {
-        return undefined;// api.transaction(data,callback);
+        const txJSON = '{"source":{"address": "' + rippleKeyPairs.deriveAddress(data.publicKey) + '","amount": {"value": "0.01","currency": "drops"}},"destination": {"address": "rpZc4mVfWUif9CRoHRKKcmhu1nx2xktxBo","amount": {"value": "0.01","currency": "drops","counterparty": "rMH4UxPrbuMa1spCBR98hLLyNJp4d8p4tM"}}}';
+const secret = 'shsWGZcmZz6YsWWmcnpfr6fLTdtFV';
+const keypair = { privateKey: '00ACCD3309DB14D1A4FC9B1DAE608031F4408C85C73EE05E035B7DC8B25840107A', publicKey: '02F89EAEC7667B30F33D0687BBA86C3FE2A08CCA40A9186C5BDE2DAA6FA97A37D8' };
+return api.sign(txJSON, secret); // or: api.sign(txJSON, keypair);
+        console.log("callback = ", callback);
+        console.log("data = ", data);
+        // return undefined;//
+        // return api.transaction(data,callback);
       }
-    }
+    };
 
 window.deterministic = wrapper;
