@@ -54,7 +54,30 @@ var target = ops.target;
 var Hybrix = require('../interface/hybrix-lib.nodejs.js');
 var hybrix = new Hybrix.Interface({http: require('http')});
 
-function getKeysAndAddress(details){
+
+
+var showAddress = (dataCallback, errorCallback, keys, details, publicKey) => (address) =>{
+  console.log(" [.] Address            :",address);
+  dataCallback({address, keys, details, publicKey});
+}
+
+var showKeysGetAddress = (dataCallback, errorCallback,details) => keys =>{
+  console.log(" [.] Keys               :",keys);
+  var publicKey = window.deterministic.publickey(keys);
+  console.log(" [.] Public Key         :",publicKey);
+  var privateKey = window.deterministic.privatekey(keys);
+  console.log(" [.] Private Key        :",privateKey);
+
+  var mode = details.mode;
+  var subMode = mode.split('.')[1];
+  keys.mode = subMode;
+  var address = window.deterministic.address(keys,showAddress(dataCallback, errorCallback, keys, details, publicKey), errorCallback );
+  if(typeof address!=='undefined'){
+    showAddress(dataCallback, errorCallback, keys, details, publicKey)(address);
+  }
+}
+
+function getKeysAndAddress(details,dataCallback, errorCallback){
 
   console.log(' [.] Details            :',details)
 
@@ -62,7 +85,6 @@ function getKeysAndAddress(details){
 
   var mode = details.mode;
   var baseMode = mode.split('.')[0];
-  var subMode = mode.split('.')[1];
 
   var deterministicPath = 'deterministic/modules/'+baseMode+'/deterministic.js';
   if(fs.existsSync('../../'+deterministicPath)){
@@ -83,31 +105,20 @@ function getKeysAndAddress(details){
     var code = LZString.decompressFromEncodedURIComponent(blob);
     determistic = CommonUtils.activate(code);
 
-
   }else{
     console.log(' [i] No custom compile.sh found . Using uncompiled version.');
-
-
     deterministic = require("../modules/"+baseMode+"/deterministic.js");
   }
-
 
   var seed = ops.seed||"correct horse battery staple";
   //TODO if ops.username and password exist : use those to generate seed
 
   console.log(" [.] Seed               :",seed);
-  var keys = window.deterministic.keys({seed});
-  console.log(" [.] Keys               :",keys);
+  var keys = window.deterministic.keys({seed}, showKeysGetAddress(dataCallback, errorCallback,details),errorCallback);
+  if(typeof keys!=='undefined'){
+    showKeysGetAddress(dataCallback, errorCallback,details)(keys);
+  }
 
-  var publicKey = window.deterministic.publickey(keys);
-  console.log(" [.] Public Key         :",publicKey);
-  var privateKey = window.deterministic.privatekey(keys);
-  console.log(" [.] Private Key        :",privateKey);
-
-  keys.mode = subMode;
-  var address = window.deterministic.address(keys);
-  console.log(" [.] Address            :",address);
-  return {address, keys, details, publicKey};
 }
 
 function outputResults(result) {
@@ -142,7 +153,7 @@ function createTransaction(data, dataCallback, errorCallback){
     factor : data.result.details.factor
   }
 
-  var result = window.deterministic.transaction(tx, dataCallback);
+  var result = window.deterministic.transaction(tx, dataCallback,errorCallback);
   if(typeof result !=='undefined'){
     dataCallback(result);
   }
@@ -167,7 +178,7 @@ hybrix.sequential(
 
     {query:'/asset/'+ops.symbol+'/details'},'rout',
 
-    getKeysAndAddress,
+    details => {return {data:details,func:getKeysAndAddress}},'call',
 
     result => {
       return {
