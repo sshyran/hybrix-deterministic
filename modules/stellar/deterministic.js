@@ -35,6 +35,15 @@ const wrapper = (
 
       transaction: function(data,callback){
         const sequence = data.unspent;
+
+        // the Stellar network requires that an account is funded with at least 1 XLM
+        // in order to be able to use the API.
+        // if this is not the case, the API will return HTTP 404 Not Found
+        // and the 'unspent' field will be null
+        if(sequence === undefined) {
+            throw 'Invalid unspent. Maybe the Stellar account ' + data.source_address + ' balance is below 1 XLM?';
+        }
+
         const source = new StellarSdk.Account(data.source_address, sequence);
         StellarSdk.Network.usePublicNetwork();
 
