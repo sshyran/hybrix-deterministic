@@ -29,7 +29,6 @@ var wrapper = (
     var functions = {
       // create deterministic public and private keys based on a seed
       keys : data => {
-        console.log('loei', hex2base32.base32ToHex(data.seed))
         return {
           privateKey: hex2base32.base32ToHex(data.seed)
         }
