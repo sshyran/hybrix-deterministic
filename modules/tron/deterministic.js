@@ -9,7 +9,6 @@ const TronWeb = require('tronweb');
 const fullNode = 'https://api.trongrid.io';
 const solidityNode = 'https://api.trongrid.io';
 const eventServer = 'https://api.trongrid.io/';
-const privateKey = 'da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0'; // GET FROM ACCOUNT?
 
 const hex2base32 = require('./../../common/crypto/hex2base32.js')
 const createAddressUrl = 'https://api.trongrid.io/wallet/createaddress';
@@ -17,8 +16,7 @@ const createAddressUrl = 'https://api.trongrid.io/wallet/createaddress';
 const tronWeb = new TronWeb(
   fullNode,
   solidityNode,
-  eventServer,
-  privateKey
+  eventServer
 )
 
 GL.tronWeb = tronWeb;
