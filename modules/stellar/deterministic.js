@@ -1,22 +1,22 @@
 // (C) 2018 Internet of Coins / Gijs-Jan van Dompseler / Joachim de Koning
-// Deterministic encryption wrapper for Dash
+// Deterministic encryption wrapper for Stellar
 
-var StellarSdk = require('stellar-sdk');
+'use strict';
 
-var wrapper = (
+const StellarSdk = require('stellar-sdk');
+
+const wrapper = (
   function () {
-
-
-    var functions = {
+    const functions = {
       // create deterministic public and private keys based on a seed
       // https://stellar.github.io/js-stellar-sdk/Keypair.html
       keys : function(data) {
-        var hash = window.nacl.to_hex(nacl.crypto_hash_sha256(data.seed));
-        var secret = Buffer.from(hash.substr(0,32), 'utf8');
-        var keyPair = StellarSdk.Keypair.fromRawEd25519Seed(secret);
+        const seed = Buffer.from(data.seed, 'utf8');
+        const hash = window.nacl.to_hex(window.nacl.crypto_hash_sha256(seed));
+        const secret = Buffer.from(hash.substr(0,32), 'utf8');
+        const keyPair = StellarSdk.Keypair.fromRawEd25519Seed(secret);
         return {publicKey: keyPair.publicKey(), privateKey: keyPair.secret()};
       },
-
 
       // generate a unique wallet address from a given public key
       address : function(data) {
@@ -34,27 +34,26 @@ var wrapper = (
       },
 
       transaction: function(data,callback){
-        var sequence = data.unspent;
-        var source = new StellarSdk.Account(data.source_address, sequence);
+        const sequence = data.unspent;
+        const source = new StellarSdk.Account(data.source_address, sequence);
         StellarSdk.Network.usePublicNetwork();
 
-        var transaction = new StellarSdk.TransactionBuilder(source)
+        const transaction = new StellarSdk.TransactionBuilder(source)
             .addOperation(StellarSdk.Operation.payment({
               destination: data.target_address,
               amount: String(data.amount),
               asset: StellarSdk.Asset.native()
             }))
             .build();
-        var keyPair = StellarSdk.Keypair.fromSecret(data.keys.privateKey);
+        const keyPair = StellarSdk.Keypair.fromSecret(data.keys.privateKey);
 
         transaction.sign(keyPair);
         return transaction.toEnvelope().toXDR('base64').replace(/\//g, '*');
-
       }
-    }
+    };
     return functions;
   }
 )();
 
-// export the functionality to a pre-prepared var
+// export the functionality to a pre-prepared const
 window.deterministic = wrapper;
