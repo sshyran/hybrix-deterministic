@@ -11,7 +11,8 @@ const wrapper = (
       // create deterministic public and private keys based on a seed
       // https://stellar.github.io/js-stellar-sdk/Keypair.html
       keys : function(data) {
-        const hash = window.nacl.to_hex(nacl.crypto_hash_sha256(data.seed));
+        const seed = Buffer.from(data.seed, 'utf8');
+        const hash = window.nacl.to_hex(window.nacl.crypto_hash_sha256(seed));
         const secret = Buffer.from(hash.substr(0,32), 'utf8');
         const keyPair = StellarSdk.Keypair.fromRawEd25519Seed(secret);
         return {publicKey: keyPair.publicKey(), privateKey: keyPair.secret()};
