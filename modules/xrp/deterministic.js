@@ -12,6 +12,11 @@ const createHash = require('create-hash');
 const api = new RippleAPI();
 var BASE58 = '123456789ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 var bs58 = require('base-x')(BASE58);
+const testAddress = 'rJX759X9AuXGtqDtEeGJqHBW1tFm6gTL55';
+const testSecret = 'shoNrRQMBEux9qmjazZiPHgaUTLHx';
+
+const testAddress2 = 'rfqShznipXZ31WMcSQfh2Ctzw5njGusAhU';
+const testSecret2 = 'snSpMnYgYzxppHJncnUNSxXZEwDLh';
 // GL.ripple = api;
 // GL.keyPairs = rippleKeyPairs;
 
@@ -25,9 +30,7 @@ var bs58 = require('base-x')(BASE58);
           // We probably have your favorite alphabet, if not, contact us
           defaultAlphabet: 'ripple',
           // But we insist you bring your own hash to the party :)
-          sha256: function(bytes) {
-            return createHash('sha256').update(new Buffer(bytes)).digest();
-          },
+          sha256: bytes => createHash('sha256').update(new Buffer(bytes)).digest(),
           // We'll endow your api with encode|decode* for you
           codecMethods : {
             // public keys
@@ -40,38 +43,68 @@ var bs58 = require('base-x')(BASE58);
         var secret = Buffer.from(hash.substr(0,32), 'hex');
         // It can encode a Buffer
         var encoded = api2.encodeSeed(secret);
-        return rippleKeyPairs.deriveKeypair(encoded);
+        return rippleKeyPairs.deriveKeypair(testSecret);
       },
 
       // generate a unique wallet address from a given public key
       address : data => {
         console.log("data  address = ", data);
+        console.log("address in XRP = ", rippleKeyPairs.deriveAddress(data.publicKey));
         // console.log("data address = ", data);
-        return rippleKeyPairs.deriveAddress(data.publicKey);
+        const address = rippleKeyPairs.deriveAddress(data.publicKey);
+        return address;
       },
 
       // return public key
-      publickey : data => {
-        console.log("data pubkey = ", data);
-        return data.publicKey;
-      },
+      publickey : data => data.publicKey,
 
       // return private key
-      privatekey : data => {
-        console.log("data privkey = ", data);
-        return data.privateKey;
-      },
+      privatekey : data => data.privateKey,
 
       // generate a transaction
       transaction : (data, callback) => {
-        const txJSON = '{"source":{"address": "' + rippleKeyPairs.deriveAddress(data.publicKey) + '","amount": {"value": "0.01","currency": "drops"}},"destination": {"address": "rpZc4mVfWUif9CRoHRKKcmhu1nx2xktxBo","amount": {"value": "0.01","currency": "drops","counterparty": "rMH4UxPrbuMa1spCBR98hLLyNJp4d8p4tM"}}}';
-const secret = 'shsWGZcmZz6YsWWmcnpfr6fLTdtFV';
-const keypair = { privateKey: '00ACCD3309DB14D1A4FC9B1DAE608031F4408C85C73EE05E035B7DC8B25840107A', publicKey: '02F89EAEC7667B30F33D0687BBA86C3FE2A08CCA40A9186C5BDE2DAA6FA97A37D8' };
-return api.sign(txJSON, secret); // or: api.sign(txJSON, keypair);
         console.log("callback = ", callback);
-        console.log("data = ", data);
-        // return undefined;//
-        // return api.transaction(data,callback);
+        console.log("data in tx xrp= ", data);
+        const address = data.source;
+        const payment = {
+          "source": {
+            "address": address,
+            "maxAmount": {
+              "value": data.amount,
+              "currency": "drops"
+            }
+          },
+          "destination": {
+            "address": data.target,
+            "amount": {
+              "value": data.amount,
+              "currency": "drops"
+            }
+          }
+        };
+        console.log("payment = ", payment);
+        const alteredFee = parseInt(data.fee);
+        const smallerFee = alteredFee / 1000000000000;
+        const instructions = {
+          "fee": smallerFee.toString(),
+          "sequence": parseInt(data.unspent.sequence),
+          "maxLedgerVersion": parseInt(data.unspent.lastLedgerSequencePlus)
+        };
+        const keypair = {
+          privateKey: data.keys.privateKey,
+          publicKey: data.keys.publicKey
+        };
+        const tx = api.preparePayment(address, payment, instructions)
+              .then(prepared => api.sign(prepared.txJSON, keypair))
+              .then(signed2 => {
+                console.log('signed2 = ', signed2);
+                const sendTx = {
+                  id: 3,
+                  command: 'submit',
+                  tx_blob: signed2.signedTransaction
+                };
+                return callback(JSON.stringify(sendTx));
+              });
       }
     };
 
