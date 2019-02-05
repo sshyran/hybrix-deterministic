@@ -2,20 +2,10 @@
  * Test a deterministic wrapper
  */
 
-/*
-  TODO
-  - check if fee is number, factor is integer, other things are strings etc
-  - check if details match direct calls  (e.g. /a/$SYMBOL/details.mode === /a/$SYMBOL/mode etc.
-  - use username and password to create a seed
-  - compile if not yet up to date
-  - check balance (for generated and sample)
-  - check transaction (for sample)
-  - check history (for generated and sample)
-*/
-
 window = {};
 var stdio = require('stdio');
 var fs = require('fs');
+var CommonUtils = require('../common/index');
 
 var ops = stdio.getopt({
   'symbol': {key: 's', args: 1, description: 'Select a symbol to run test.'},
@@ -23,10 +13,13 @@ var ops = stdio.getopt({
   'unspent': {key: 'u', args: 1, description: 'Manually specify unspents.'},
   'target': {key: 't', args: 1, description: ' Target address (Defaults to source address)'},
   'fee': {key: 'f', args: 1, description: 'Manually specify fee (Defaults to asset default fee).'},
-  'seed': {args: 1, description: 'Manually specify seed (Defaults to "correct horse battery staple").'}
-//  'username': {args: 1, description: 'Manually specify username.'},
-//  'password': {args: 1, description: 'Manually specify password.'}
+  'seed': {args: 1, description: 'Manually specify seed.'},
+  'username': {args: 1, description: 'Manually specify username.'},
+  'password': {args: 1, description: 'Manually specify password.'}
 });
+
+const username = ops.username || 'BGQCUO55L57O266P';
+const password = ops.password || '6WAE5LYKAADLZ4P3YLE3EGBSNUKMLV4VGU4UJ6JZV7SEE276';
 
 console.log(' [=] NODE SIDE MODULE =======================================');
 
@@ -100,7 +93,6 @@ function getKeysAndAddress(details,dataCallback, errorCallback){
 
     var blob = fs.readFileSync('../../deterministic/dist/'+baseMode+'/deterministic.js.lzma').toString('utf-8');
     var LZString = require('../common/crypto/lz-string');
-    var CommonUtils = require('../common/index');
 
     var code = LZString.decompressFromEncodedURIComponent(blob);
     determistic = CommonUtils.activate(code);
@@ -110,8 +102,8 @@ function getKeysAndAddress(details,dataCallback, errorCallback){
     deterministic = require("../modules/"+baseMode+"/deterministic.js");
   }
 
-  var seed = ops.seed||"correct horse battery staple";
-  //TODO if ops.username and password exist : use those to generate seed
+  const user_keys = CommonUtils.generateKeys(password, username, 0);
+  const seed = ops.seed || CommonUtils.seedGenerator(user_keys, details['keygen-base']);
 
   console.log(" [.] Seed               :",seed);
   var keys = window.deterministic.keys({seed}, showKeysGetAddress(dataCallback, errorCallback,details),errorCallback);
