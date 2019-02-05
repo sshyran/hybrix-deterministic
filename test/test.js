@@ -2,12 +2,13 @@
  * Test a deterministic wrapper
  */
 
-window = {};
-var stdio = require('stdio');
-var fs = require('fs');
-var CommonUtils = require('../common/index');
+'use strict';
 
-var ops = stdio.getopt({
+const stdio = require('stdio');
+const fs = require('fs');
+const CommonUtils = require('../common/index');
+
+const ops = stdio.getopt({
   'symbol': {key: 's', args: 1, description: 'Select a symbol to run test.'},
   'amount': {key: 'a', args: 1, description: 'Transaction amount. (Defaults to 100)'},
   'unspent': {key: 'u', args: 1, description: 'Manually specify unspents.'},
@@ -18,178 +19,197 @@ var ops = stdio.getopt({
   'password': {args: 1, description: 'Manually specify password.'}
 });
 
+// if we were called without arguments, display a message
+if (!ops.symbol) {
+  console.log('\nThis script tests a deterministic wrapper. A Hybrixd needs to be running for it to work. \n\nUsage example:\n');
+  console.log('./run test.js --symbol=dummy\n');
+  console.log('For help, type:\n');
+  console.log('./run test.js --help\n');
+
+  process.exit(1);
+}
+
 const username = ops.username || 'BGQCUO55L57O266P';
 const password = ops.password || '6WAE5LYKAADLZ4P3YLE3EGBSNUKMLV4VGU4UJ6JZV7SEE276';
 
 console.log(' [=] NODE SIDE MODULE =======================================');
 
-var recipePath = '../../node/recipes/';
-if(fs.existsSync(recipePath+'asset.'+ops.symbol+'.json')){
-  console.log(' [.] Recipe file        : $HYBRIXD/node/recipes/asset.'+ops.symbol+'.json found.');
-}else if(fs.existsSync(recipePath+'token.'+ops.symbol+'.json')){
-  console.log(' [.] Recipe file        : $HYBRIXD/node/recipes/token.'+ops.symbol+'.json found.');
-}else{
-  console.log(' [!] No Recipe file found. ($HYBRIXD/node/recipes/asset.'+ops.symbol+'.json or $HYBRIXD/node/recipes/token.'+ops.symbol+'.json)');
+const recipePath = '../../node/recipes/';
+if (fs.existsSync(recipePath + 'asset.' + ops.symbol + '.json')) {
+  console.log(' [.] Recipe file        : $HYBRIXD/node/recipes/asset.' + ops.symbol + '.json found.');
+} else if (fs.existsSync(recipePath + 'token.' + ops.symbol + '.json')) {
+  console.log(' [.] Recipe file        : $HYBRIXD/node/recipes/token.' + ops.symbol + '.json found.');
+} else {
+  console.log(' [!] No Recipe file found. ($HYBRIXD/node/recipes/asset.' + ops.symbol + '.json or $HYBRIXD/node/recipes/token.' + ops.symbol + '.json)');
 }
 
-var amount = ops.amount||'100';
-var unspent;
+const amount = ops.amount || '100';
+let unspent;
 
-if(typeof ops.unspent === 'string'){
+if (typeof ops.unspent === 'string') {
   unspent = ops.unspent;
-}else if(typeof ops.unspent !== 'undefined'){
+} else if (typeof ops.unspent !== 'undefined') {
   unspent = JSON.stringify(ops.unspent);
 }
 
-var fee = ops.fee;
-var target = ops.target;
+const fee = ops.fee;
+const target = ops.target;
 
-var Hybrix = require('../interface/hybrix-lib.nodejs.js');
-var hybrix = new Hybrix.Interface({http: require('http')});
+const Hybrix = require('../interface/hybrix-lib.nodejs.js');
+const hybrix = new Hybrix.Interface({http: require('http')});
 
 
-
-var showAddress = (dataCallback, errorCallback, keys, details, publicKey) => (address) =>{
-  console.log(" [.] Address            :",address);
+const showAddress = (dataCallback, errorCallback, keys, details, publicKey) => (address) => {
+  console.log(' [.] Address            :', address);
   dataCallback({address, keys, details, publicKey});
-}
+};
 
-var showKeysGetAddress = (dataCallback, errorCallback,details) => keys =>{
-  console.log(" [.] Keys               :",keys);
-  var publicKey = window.deterministic.publickey(keys);
-  console.log(" [.] Public Key         :",publicKey);
-  var privateKey = window.deterministic.privatekey(keys);
-  console.log(" [.] Private Key        :",privateKey);
+const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
+  console.log(' [.] Keys               :', keys);
+  const publicKey = window.deterministic.publickey(keys);
+  console.log(' [.] Public Key         :', publicKey);
+  const privateKey = window.deterministic.privatekey(keys);
+  console.log(' [.] Private Key        :', privateKey);
 
-  var mode = details.mode;
-  var subMode = mode.split('.')[1];
+  const mode = details.mode;
+  const subMode = mode.split('.')[1];
   keys.mode = subMode;
-  var address = window.deterministic.address(keys,showAddress(dataCallback, errorCallback, keys, details, publicKey), errorCallback );
-  if(typeof address!=='undefined'){
+  const address = window.deterministic.address(keys, showAddress(dataCallback, errorCallback, keys, details, publicKey), errorCallback);
+  if (typeof address !== 'undefined') {
     showAddress(dataCallback, errorCallback, keys, details, publicKey)(address);
   }
-}
+};
 
-function getKeysAndAddress(details,dataCallback, errorCallback){
+function getKeysAndAddress(details, dataCallback, errorCallback) {
 
-  console.log(' [.] Details            :',details)
+  console.log(' [.] Details            :', details)
 
   console.log(' [=] CLIENT SIDE MODULE  =======================================');
 
-  var mode = details.mode;
-  var baseMode = mode.split('.')[0];
+  const mode = details.mode;
+  const baseMode = mode.split('.')[0];
 
-  var deterministicPath = 'deterministic/modules/'+baseMode+'/deterministic.js';
-  if(fs.existsSync('../../'+deterministicPath)){
-    console.log(' [.] Deterministic file : $HYBRIXD/'+ deterministicPath + ' exists.');
-  }else{
-    console.log(' [!] Deterministic file : $HYBRIXD/'+ deterministicPath + ' does not exist!');
+  const deterministicPath = 'deterministic/modules/' + baseMode + '/deterministic.js';
+  if (fs.existsSync('../../' + deterministicPath)) {
+    console.log(' [.] Deterministic file : $HYBRIXD/' + deterministicPath + ' exists.');
+  } else {
+    console.log(' [!] Deterministic file : $HYBRIXD/' + deterministicPath + ' does not exist!');
   }
 
-  var deterministic;
-  if(fs.existsSync('../../deterministic/modules/'+baseMode+'/compile.sh')){
+  let deterministic;
+  if (fs.existsSync('../../deterministic/modules/' + baseMode + '/compile.sh')) {
     console.log(' [i] Custom compile.sh found. Using compiled version.');
     console.log(' [i] Extract lzma.');
 
-    var blob = fs.readFileSync('../../deterministic/dist/'+baseMode+'/deterministic.js.lzma').toString('utf-8');
-    var LZString = require('../common/crypto/lz-string');
+    const blob = fs.readFileSync('../../deterministic/dist/' + baseMode + '/deterministic.js.lzma').toString('utf-8');
+    const LZString = require('../common/crypto/lz-string');
 
-    var code = LZString.decompressFromEncodedURIComponent(blob);
-    determistic = CommonUtils.activate(code);
-
-  }else{
+    const code = LZString.decompressFromEncodedURIComponent(blob);
+    deterministic = CommonUtils.activate(code);
+  } else {
     console.log(' [i] No custom compile.sh found . Using uncompiled version.');
-    deterministic = require("../modules/"+baseMode+"/deterministic.js");
+    deterministic = require('../modules/' + baseMode + '/deterministic.js');
   }
 
   const user_keys = CommonUtils.generateKeys(password, username, 0);
   const seed = ops.seed || CommonUtils.seedGenerator(user_keys, details['keygen-base']);
 
-  console.log(" [.] Seed               :",seed);
-  var keys = window.deterministic.keys({seed}, showKeysGetAddress(dataCallback, errorCallback,details),errorCallback);
-  if(typeof keys!=='undefined'){
-    showKeysGetAddress(dataCallback, errorCallback,details)(keys);
+  console.log(' [.] Seed               :', seed);
+  const keys = window.deterministic.keys({seed}, showKeysGetAddress(dataCallback, errorCallback, details), errorCallback);
+  if (typeof keys !== 'undefined') {
+    showKeysGetAddress(dataCallback, errorCallback, details)(keys);
   }
 
 }
 
 function outputResults(result) {
-  if(typeof result.sample==='object'){
-    console.log(' [.] Sample address     : '+ result.sample.address);
-    console.log(' [.] Sample transaction : '+ result.sample.address);
-  }else{
+  if (typeof result.sample === 'object') {
+    console.log(' [.] Sample address     : ' + result.sample.address);
+    console.log(' [.] Sample transaction : ' + result.sample.address);
+  } else {
     console.log(' [!] No sample available.');
   }
-  console.log(' [.] Contract           : '+ result.contract);
-  console.log(' [.] Fee                : '+ result.fee);
-  console.log(' [.] Factor             : '+ result.factor);
-  console.log(' [.] Fee-symbol         : '+ result['fee-symbol']);
-  console.log(' [.] Keygen-base        : '+ result['keygen-base']);
-  if(typeof result.mode === 'string'){
-    console.log(' [.] Mode               : '+ result.mode);
-  }else{
+  console.log(' [.] Contract           : ' + result.contract);
+  console.log(' [.] Fee                : ' + result.fee);
+  console.log(' [.] Factor             : ' + result.factor);
+  console.log(' [.] Fee-symbol         : ' + result['fee-symbol']);
+  console.log(' [.] Keygen-base        : ' + result['keygen-base']);
+  if (typeof result.mode === 'string') {
+    console.log(' [.] Mode               : ' + result.mode);
+  } else {
     console.log(' [!] Mode not defined');
   }
 }
 
-function createTransaction(data, dataCallback, errorCallback){
-  console.log(' [.] Unspents           : '+JSON.stringify(data.unspent));
-  var tx = {
-    amount : amount,
-    fee: typeof fee === 'undefined'?data.result.details.fee:fee,
+function createTransaction(data, dataCallback, errorCallback) {
+  console.log(' [.] Unspents           : ' + JSON.stringify(data.unspent));
+  const tx = {
+    amount: amount,
+    fee: typeof fee === 'undefined' ? data.result.details.fee : fee,
     keys: data.result.keys,
     source_address: data.result.address,
-    target_address: target||data.result.address,
-    contract:data.result.details.contract,
-    unspent :unspent||data.unspent,
-    factor : data.result.details.factor
-  }
+    target_address: target || data.result.address,
+    contract: data.result.details.contract,
+    unspent: unspent || data.unspent,
+    factor: data.result.details.factor
+  };
 
-  var result = window.deterministic.transaction(tx, dataCallback,errorCallback);
-  if(typeof result !=='undefined'){
+  const result = window.deterministic.transaction(tx, dataCallback, errorCallback);
+  if (typeof result !== 'undefined') {
     dataCallback(result);
   }
 }
 
 hybrix.sequential(
-  [
-    'init',
-    {host:'http://localhost:1111/'}, 'addHost',
-    {
-      sample: {data:{query:'/asset/'+ops.symbol+'/sample'} ,step:'rout'},
+    [
+      'init',
+      {host: 'http://localhost:1111/'}, 'addHost',
+      {
+        sample: {data: {query: '/asset/' + ops.symbol + '/sample'}, step: 'rout'},
 
-      contract: {data:{query:'/asset/'+ops.symbol+'/contract'} ,step:'rout'},
-      fee: {data:{query:'/asset/'+ops.symbol+'/fee'} ,step:'rout'},
-      factor: {data:{query:'/asset/'+ops.symbol+'/factor'} ,step:'rout'},
-      'fee-symbol': {data:{query:'/asset/'+ops.symbol+'/fee-symbol'} ,step:'rout'},
-      'keygen-base': {data:{query:'/asset/'+ops.symbol+'/keygen-base'} ,step:'rout'},
-      mode: {data:{query:'/asset/'+ops.symbol+'/mode'} ,step:'rout'}
-    }, 'parallel',
+        contract: {data: {query: '/asset/' + ops.symbol + '/contract'}, step: 'rout'},
+        fee: {data: {query: '/asset/' + ops.symbol + '/fee'}, step: 'rout'},
+        factor: {data: {query: '/asset/' + ops.symbol + '/factor'}, step: 'rout'},
+        'fee-symbol': {data: {query: '/asset/' + ops.symbol + '/fee-symbol'}, step: 'rout'},
+        'keygen-base': {data: {query: '/asset/' + ops.symbol + '/keygen-base'}, step: 'rout'},
+        mode: {data: {query: '/asset/' + ops.symbol + '/mode'}, step: 'rout'}
+      }, 'parallel',
 
-    outputResults,
+      outputResults,
 
-    {query:'/asset/'+ops.symbol+'/details'},'rout',
+      {query: '/asset/' + ops.symbol + '/details'}, 'rout',
 
-    details => {return {data:details,func:getKeysAndAddress}},'call',
+      details => {
+        return {data: details, func: getKeysAndAddress}
+      }, 'call',
 
+      result => {
+        return {
+          unspent: {
+            data: {query: '/asset/' + ops.symbol + '/unspent/' + result.address + '/' + (Number(amount) + Number(typeof fee === 'undefined' ? result.details.fee : fee)) + '/' + result.address + '/' + result.publicKey},
+            step: 'rout'
+          },
+          result: {data: result, step: 'id'}
+        };
+      }, 'parallel',
+      result => {
+        return {data: result, func: createTransaction};
+      }, 'call',
+    ],
     result => {
-      return {
-        unspent:{data:{query: '/asset/' + ops.symbol + '/unspent/'+result.address+'/'+(Number(amount)+Number(typeof fee === 'undefined'?result.details.fee:fee))+'/'+result.address+'/'+result.publicKey}, step:'rout'},
-        result:{data:result,step:'id'}};
-    }, 'parallel',
-    result => {return {data: result, func:createTransaction};}, 'call',
-  ],
-  result => {console.log(" [.] Transaction        :",result);},
-  error => {
-    try{
-      var data = JSON.parse(error);
-      if(data.hasOwnProperty('help')){
-        console.log(' [!] '+data.help)
-      }else{
-        console.log(' [!] '+error)
+      console.log(' [.] Transaction        :', result);
+      console.log(`\n [OK] Successfully ran test for symbol ${ops.symbol}\n`);
+    },
+    error => {
+      try {
+        const data = JSON.parse(error);
+        if (data.hasOwnProperty('help')) {
+          console.log(' [!] ' + data.help)
+        } else {
+          console.log(' [!] ' + error)
+        }
+      } catch (e) {
+        console.log(' [!] ' + error)
       }
-    }catch(e){
-      console.log(' [!] '+error)
     }
-  }
 );
