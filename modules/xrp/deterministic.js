@@ -12,11 +12,11 @@ const createHash = require('create-hash');
 const api = new RippleAPI();
 var BASE58 = '123456789ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 var bs58 = require('base-x')(BASE58);
-const testAddress = 'rJX759X9AuXGtqDtEeGJqHBW1tFm6gTL55';
-const testSecret = 'shoNrRQMBEux9qmjazZiPHgaUTLHx';
+const testAddress = 'rNbzh3w4ERGbjDQE4JkwQnGhbCUHAdBnhn';
+const testSecret = 'shHxz6zLQg9U4LMerjB8Jcqs2inSK';
 
-const testAddress2 = 'rfqShznipXZ31WMcSQfh2Ctzw5njGusAhU';
-const testSecret2 = 'snSpMnYgYzxppHJncnUNSxXZEwDLh';
+const testAddress2 = 'rwehTC9Gv88bYXK9TijZqaBZ9EKi2VrJWo';
+const testSecret2 = 'shuoYzxMPBwbawcxzognzJgiDUaCN';
 // GL.ripple = api;
 // GL.keyPairs = rippleKeyPairs;
 
@@ -24,8 +24,6 @@ const testSecret2 = 'snSpMnYgYzxppHJncnUNSxXZEwDLh';
     var wrapper = {
       // create deterministic public and private keys based on a seed
       keys : data => {
-        console.log("data  keys = ", data);
-        // console.log("data keys = ", data);
         var api2 = apiFactory({
           // We probably have your favorite alphabet, if not, contact us
           defaultAlphabet: 'ripple',
@@ -43,14 +41,11 @@ const testSecret2 = 'snSpMnYgYzxppHJncnUNSxXZEwDLh';
         var secret = Buffer.from(hash.substr(0,32), 'hex');
         // It can encode a Buffer
         var encoded = api2.encodeSeed(secret);
-        return rippleKeyPairs.deriveKeypair(testSecret);
+        return rippleKeyPairs.deriveKeypair(testSecret);// encoded
       },
 
       // generate a unique wallet address from a given public key
       address : data => {
-        console.log("data  address = ", data);
-        console.log("address in XRP = ", rippleKeyPairs.deriveAddress(data.publicKey));
-        // console.log("data address = ", data);
         const address = rippleKeyPairs.deriveAddress(data.publicKey);
         return address;
       },
@@ -63,8 +58,6 @@ const testSecret2 = 'snSpMnYgYzxppHJncnUNSxXZEwDLh';
 
       // generate a transaction
       transaction : (data, callback) => {
-        console.log("callback = ", callback);
-        console.log("data in tx xrp= ", data);
         const address = data.source;
         const payment = {
           "source": {
@@ -82,11 +75,8 @@ const testSecret2 = 'snSpMnYgYzxppHJncnUNSxXZEwDLh';
             }
           }
         };
-        console.log("payment = ", payment);
-        const alteredFee = parseInt(data.fee);
-        const smallerFee = alteredFee / 1000000000000;
         const instructions = {
-          "fee": smallerFee.toString(),
+          "fee": data.fee,
           "sequence": parseInt(data.unspent.sequence),
           "maxLedgerVersion": parseInt(data.unspent.lastLedgerSequencePlus)
         };
@@ -97,7 +87,6 @@ const testSecret2 = 'snSpMnYgYzxppHJncnUNSxXZEwDLh';
         const tx = api.preparePayment(address, payment, instructions)
               .then(prepared => api.sign(prepared.txJSON, keypair))
               .then(signed2 => {
-                console.log('signed2 = ', signed2);
                 const sendTx = {
                   id: 3,
                   command: 'submit',
