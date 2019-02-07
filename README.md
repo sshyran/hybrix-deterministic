@@ -134,7 +134,7 @@ var wrapper = (
 window.deterministic = wrapper;
 ```
 
-The `keys' function expects a data parameter containig the seed
+The `keys' function expects a data parameter containing the seed
 property and returns an keys object with a key.
 
 ```
@@ -142,7 +142,7 @@ keys : function({seed: ..}){
         return  {privateKey:...}; // or {privateKey: ...,
         publicKey: ...} or { WIF: wif }
       }
-      ```
+```
 
 The `address` function expects a data parameter containing the seed,
 the keys, and the mode. (The mode is used to distinguish between
@@ -208,10 +208,10 @@ The following steps are performed to create the client code blob:
 - [Optional] Precompile : automatic modification are made to third
 party libraries.
 - Compile:
-- - Degloballify:  All global/undeclared variables 'x' are declared as
+  - Degloballify:  All global/undeclared variables 'x' are declared as
 'window.x'
-- - Webpack : create a package that can be used by browsers
-- - Compress : compress the result using lmza
+  - Webpack : create a package that can be used by browsers
+  - Compress : compress the result using lmza
 
 **Precompile**
 The precompile step is only executed if there's a precompile.sh
