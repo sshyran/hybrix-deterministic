@@ -29,6 +29,8 @@ if (!ops.symbol) {
   process.exit(1);
 }
 
+let coinSpecificTestData = { "unspent": "" };
+
 const username = ops.username || 'BGQCUO55L57O266P';
 const password = ops.password || '6WAE5LYKAADLZ4P3YLE3EGBSNUKMLV4VGU4UJ6JZV7SEE276';
 
@@ -72,6 +74,19 @@ const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
   console.log(' [.] Private Key        :', privateKey);
 
   const mode = details.mode;
+
+  // Some projects such as Stellar require that an account is funded in order to be able to use the API.
+  // In these cases, use coin specific test data to override any variables to circumvent this so that the tests may keep working.
+  const coinSpecificTestDataFilename = `../modules/${mode}/testdata/coin-specific-test-data.json`;
+  // default data
+  // load coin specific test data from file
+  // ignore any load errors and use the default data.
+  try {
+    coinSpecificTestData = require(coinSpecificTestDataFilename);
+    console.log(` [.] Using coin specific test data from file '${coinSpecificTestDataFilename}'`);
+  } catch(ignored) {
+  }
+
   const subMode = mode.split('.')[1];
   keys.mode = subMode;
   const address = window.deterministic.address(keys, showAddress(dataCallback, errorCallback, keys, details, publicKey), errorCallback);
@@ -81,9 +96,7 @@ const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
 };
 
 function getKeysAndAddress(details, dataCallback, errorCallback) {
-
-  console.log(' [.] Details            :', details)
-
+  console.log(' [.] Details            :', details);
   console.log(' [=] CLIENT SIDE MODULE  =======================================');
 
   const mode = details.mode;
@@ -119,7 +132,6 @@ function getKeysAndAddress(details, dataCallback, errorCallback) {
   if (typeof keys !== 'undefined') {
     showKeysGetAddress(dataCallback, errorCallback, details)(keys);
   }
-
 }
 
 function outputResults(result) {
@@ -142,7 +154,9 @@ function outputResults(result) {
 }
 
 function createTransaction(data, dataCallback, errorCallback) {
-  console.log(' [.] Unspents           : ' + JSON.stringify(data.unspent));
+  const actualUnspent = unspent || data.unspent || coinSpecificTestData.unspent;
+
+  console.log(' [.] Unspents           : ' + JSON.stringify(actualUnspent));
   const tx = {
     amount: amount,
     fee: typeof fee === 'undefined' ? data.result.details.fee : fee,
@@ -150,7 +164,7 @@ function createTransaction(data, dataCallback, errorCallback) {
     source_address: data.result.address,
     target_address: target || data.result.address,
     contract: data.result.details.contract,
-    unspent: unspent || data.unspent,
+    unspent: actualUnspent,
     factor: data.result.details.factor
   };
 

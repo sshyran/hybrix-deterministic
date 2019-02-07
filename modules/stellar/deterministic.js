@@ -33,8 +33,18 @@ const wrapper = (
         return data.privateKey;
       },
 
-      transaction: function(data,callback){
+      transaction: function(data, callback, errorCallback){
         const sequence = data.unspent;
+
+        // the Stellar network requires that an account is funded with at least 1 XLM
+        // in order to be able to use the API.
+        // if this is not the case, the API will return HTTP 404 Not Found
+        // and the 'unspent' field will be null
+        if(sequence === undefined) {
+            const message = `Expected unspent to be a positive integer string, e.g. "998719879287873". Check the value and check if the Stellar account ${data.source_address} balance is below 1 XLM.`;
+            errorCallback(message);
+        }
+
         const source = new StellarSdk.Account(data.source_address, sequence);
         StellarSdk.Network.usePublicNetwork();
 
