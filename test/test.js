@@ -16,7 +16,8 @@ const ops = stdio.getopt({
   'fee': {key: 'f', args: 1, description: 'Manually specify fee (Defaults to asset default fee).'},
   'seed': {args: 1, description: 'Manually specify seed.'},
   'username': {args: 1, description: 'Manually specify username.'},
-  'password': {args: 1, description: 'Manually specify password.'}
+  'password': {args: 1, description: 'Manually specify password.'},
+  'push': {key: 'p', args: 0, description: 'Push the signed transaction to the target chain. Restrictions such as transaction cost and funding requirements may apply. Also, you might want to specify --seed for this to work.'}
 });
 
 // if we were called without arguments, display a message
@@ -174,6 +175,20 @@ function createTransaction(data, dataCallback, errorCallback) {
   }
 }
 
+/**
+ * When the optional --push flag is specified, the transaction is pushed to the target chain.
+ *
+ * Restrictions such as transaction cost and funding requirements may apply.
+ *
+ * @param signedTrxData The signed transaction data
+ * @returns The Hybrix command for 'push', depending on the --push flag
+ */
+  function optionalPushToTargetChain(signedTrxData) {
+  return ops.push ?
+      { result: { data: { query: `/asset/${ops.symbol}/push/${signedTrxData}` }, step: 'rout' } } :
+      { result: { data: { signedTrxData }, step: 'id' } };
+}
+
 hybrix.sequential(
     [
       'init',
@@ -209,9 +224,12 @@ hybrix.sequential(
       result => {
         return {data: result, func: createTransaction};
       }, 'call',
+      // When the optional --push flag is specified, the transaction is pushed to the target chain.
+      // Restrictions such as transaction cost and funding requirements may apply.
+      signedTrxData => optionalPushToTargetChain(signedTrxData), 'parallel'
     ],
     result => {
-      console.log(' [.] Transaction        :', result);
+      console.log(' [.] Transaction        :', JSON.stringify(result));
       console.log(`\n [OK] Successfully ran test for symbol ${ops.symbol}\n`);
     },
     error => {
