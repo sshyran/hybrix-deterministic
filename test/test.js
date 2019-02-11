@@ -14,7 +14,7 @@ const ops = stdio.getopt({
   'unspent': {key: 'u', args: 1, description: 'Manually specify unspents.'},
   'target': {key: 't', args: 1, description: ' Target address (Defaults to source address)'},
   'fee': {key: 'f', args: 1, description: 'Manually specify fee (Defaults to asset default fee).'},
-  'seed': {args: 1, description: 'Manually specify seed.'},
+  'seed': {args: 1, description: 'Manually specify seed. NOTE: Never store the credentials anywhere unencrypted, run the command through an IDE and not through a command line, and have a separate test account ready with only small amounts.'},
   'username': {args: 1, description: 'Manually specify username.'},
   'password': {args: 1, description: 'Manually specify password.'},
   'push': {key: 'p', args: 0, description: 'Push the signed transaction to the target chain. Restrictions such as transaction cost and funding requirements may apply. Also, you might want to specify --seed for this to work.'}
