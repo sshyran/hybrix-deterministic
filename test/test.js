@@ -162,8 +162,8 @@ function createTransaction(data, dataCallback, errorCallback) {
     amount: amount,
     fee: typeof fee === 'undefined' ? data.result.details.fee : fee,
     keys: data.result.keys,
-    source_address: data.result.address,
-    target_address: target || data.result.address,
+    source: data.result.address,
+    target: target || data.result.address,
     contract: data.result.details.contract,
     unspent: actualUnspent,
     factor: data.result.details.factor

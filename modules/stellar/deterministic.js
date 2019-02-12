@@ -45,12 +45,12 @@ const wrapper = (
             errorCallback(message);
         }
 
-        const source = new StellarSdk.Account(data.source_address, sequence);
+        const source = new StellarSdk.Account(data.source, sequence);
         StellarSdk.Network.usePublicNetwork();
 
         const transaction = new StellarSdk.TransactionBuilder(source)
             .addOperation(StellarSdk.Operation.payment({
-              destination: data.target_address,
+              destination: data.target,
               amount: String(data.amount),
               asset: StellarSdk.Asset.native()
             }))
