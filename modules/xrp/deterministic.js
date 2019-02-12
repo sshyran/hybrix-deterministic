@@ -24,6 +24,7 @@ const testSecret2 = 'shuoYzxMPBwbawcxzognzJgiDUaCN';
     var wrapper = {
       // create deterministic public and private keys based on a seed
       keys : data => {
+        console.log("data = ", data);
         var api2 = apiFactory({
           // We probably have your favorite alphabet, if not, contact us
           defaultAlphabet: 'ripple',
@@ -41,11 +42,12 @@ const testSecret2 = 'shuoYzxMPBwbawcxzognzJgiDUaCN';
         var secret = Buffer.from(hash.substr(0,32), 'hex');
         // It can encode a Buffer
         var encoded = api2.encodeSeed(secret);
-        return rippleKeyPairs.deriveKeypair(testSecret);// encoded
+        return rippleKeyPairs.deriveKeypair(encoded);// encoded
       },
 
       // generate a unique wallet address from a given public key
       address : data => {
+        console.log("data = ", data);
         const address = rippleKeyPairs.deriveAddress(data.publicKey);
         return address;
       },
@@ -58,6 +60,7 @@ const testSecret2 = 'shuoYzxMPBwbawcxzognzJgiDUaCN';
 
       // generate a transaction
       transaction : (data, callback) => {
+        console.log("data = ", data);
         const address = data.source;
         const payment = {
           "source": {
