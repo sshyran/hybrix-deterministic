@@ -70,6 +70,8 @@ if [ ! -e "$DETERMINISTIC/interface" ];then
     ln -sf "$INTERFACE/dist" "$DETERMINISTIC/interface"
 fi
 
+# GIT HOOKS
+sh "$COMMON/hooks/hooks.sh" "$DETERMINISTIC"
 
 export PATH="$OLDPATH"
 cd "$WHEREAMI"
