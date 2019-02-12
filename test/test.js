@@ -29,7 +29,7 @@ if (!ops.symbol) {
   process.exit(1);
 }
 
-let coinSpecificTestData = { "unspent": "" };
+let coinSpecificTestData = { 'unspent': '' };
 
 const username = ops.username || 'BGQCUO55L57O266P';
 const password = ops.password || '6WAE5LYKAADLZ4P3YLE3EGBSNUKMLV4VGU4UJ6JZV7SEE276';
@@ -60,7 +60,6 @@ const target = ops.target;
 const Hybrix = require('../interface/hybrix-lib.nodejs.js');
 const hybrix = new Hybrix.Interface({http: require('http')});
 
-
 const showAddress = (dataCallback, errorCallback, keys, details, publicKey) => (address) => {
   console.log(' [.] Address            :', address);
   dataCallback({address, keys, details, publicKey});
@@ -84,7 +83,7 @@ const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
   try {
     coinSpecificTestData = require(coinSpecificTestDataFilename);
     console.log(` [.] Using coin specific test data from file '${coinSpecificTestDataFilename}'`);
-  } catch(ignored) {
+  } catch (ignored) {
   }
 
   const subMode = mode.split('.')[1];
@@ -95,7 +94,7 @@ const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
   }
 };
 
-function getKeysAndAddress(details, dataCallback, errorCallback) {
+function getKeysAndAddress (details, dataCallback, errorCallback) {
   console.log(' [.] Details            :', details);
   console.log(' [=] CLIENT SIDE MODULE  =======================================');
 
@@ -134,7 +133,7 @@ function getKeysAndAddress(details, dataCallback, errorCallback) {
   }
 }
 
-function outputResults(result) {
+function outputResults (result) {
   if (typeof result.sample === 'object') {
     console.log(' [.] Sample address     : ' + result.sample.address);
     console.log(' [.] Sample transaction : ' + result.sample.address);
@@ -153,7 +152,7 @@ function outputResults(result) {
   }
 }
 
-function createTransaction(data, dataCallback, errorCallback) {
+function createTransaction (data, dataCallback, errorCallback) {
   const actualUnspent = unspent || data.unspent || coinSpecificTestData.unspent;
 
   console.log(' [.] Unspents           : ' + JSON.stringify(actualUnspent));
@@ -161,8 +160,8 @@ function createTransaction(data, dataCallback, errorCallback) {
     amount: amount,
     fee: typeof fee === 'undefined' ? data.result.details.fee : fee,
     keys: data.result.keys,
-    source_address: data.result.address,
-    target_address: target || data.result.address,
+    source: data.result.address,
+    target: target || data.result.address,
     contract: data.result.details.contract,
     unspent: actualUnspent,
     factor: data.result.details.factor
@@ -175,55 +174,55 @@ function createTransaction(data, dataCallback, errorCallback) {
 }
 
 hybrix.sequential(
-    [
-      'init',
-      {host: 'http://localhost:1111/'}, 'addHost',
-      {
-        sample: {data: {query: '/asset/' + ops.symbol + '/sample'}, step: 'rout'},
+  [
+    'init',
+    {host: 'http://localhost:1111/'}, 'addHost',
+    {
+      sample: {data: {query: '/asset/' + ops.symbol + '/sample'}, step: 'rout'},
 
-        contract: {data: {query: '/asset/' + ops.symbol + '/contract'}, step: 'rout'},
-        fee: {data: {query: '/asset/' + ops.symbol + '/fee'}, step: 'rout'},
-        factor: {data: {query: '/asset/' + ops.symbol + '/factor'}, step: 'rout'},
-        'fee-symbol': {data: {query: '/asset/' + ops.symbol + '/fee-symbol'}, step: 'rout'},
-        'keygen-base': {data: {query: '/asset/' + ops.symbol + '/keygen-base'}, step: 'rout'},
-        mode: {data: {query: '/asset/' + ops.symbol + '/mode'}, step: 'rout'}
-      }, 'parallel',
+      contract: {data: {query: '/asset/' + ops.symbol + '/contract'}, step: 'rout'},
+      fee: {data: {query: '/asset/' + ops.symbol + '/fee'}, step: 'rout'},
+      factor: {data: {query: '/asset/' + ops.symbol + '/factor'}, step: 'rout'},
+      'fee-symbol': {data: {query: '/asset/' + ops.symbol + '/fee-symbol'}, step: 'rout'},
+      'keygen-base': {data: {query: '/asset/' + ops.symbol + '/keygen-base'}, step: 'rout'},
+      mode: {data: {query: '/asset/' + ops.symbol + '/mode'}, step: 'rout'}
+    }, 'parallel',
 
-      outputResults,
+    outputResults,
 
-      {query: '/asset/' + ops.symbol + '/details'}, 'rout',
+    {query: '/asset/' + ops.symbol + '/details'}, 'rout',
 
-      details => {
-        return {data: details, func: getKeysAndAddress}
-      }, 'call',
+    details => {
+      return {data: details, func: getKeysAndAddress};
+    }, 'call',
 
-      result => {
-        return {
-          unspent: {
-            data: {query: '/asset/' + ops.symbol + '/unspent/' + result.address + '/' + (Number(amount) + Number(typeof fee === 'undefined' ? result.details.fee : fee)) + '/' + result.address + '/' + result.publicKey},
-            step: 'rout'
-          },
-          result: {data: result, step: 'id'}
-        };
-      }, 'parallel',
-      result => {
-        return {data: result, func: createTransaction};
-      }, 'call',
-    ],
     result => {
-      console.log(' [.] Transaction        :', result);
-      console.log(`\n [OK] Successfully ran test for symbol ${ops.symbol}\n`);
-    },
-    error => {
-      try {
-        const data = JSON.parse(error);
-        if (data.hasOwnProperty('help')) {
-          console.log(' [!] ' + data.help)
-        } else {
-          console.log(' [!] ' + error)
-        }
-      } catch (e) {
-        console.log(' [!] ' + error)
+      return {
+        unspent: {
+          data: {query: '/asset/' + ops.symbol + '/unspent/' + result.address + '/' + (Number(amount) + Number(typeof fee === 'undefined' ? result.details.fee : fee)) + '/' + result.address + '/' + result.publicKey},
+          step: 'rout'
+        },
+        result: {data: result, step: 'id'}
+      };
+    }, 'parallel',
+    result => {
+      return {data: result, func: createTransaction};
+    }, 'call'
+  ],
+  result => {
+    console.log(' [.] Transaction        :', result);
+    console.log(`\n [OK] Successfully ran test for symbol ${ops.symbol}\n`);
+  },
+  error => {
+    try {
+      const data = JSON.parse(error);
+      if (data.hasOwnProperty('help')) {
+        console.log(' [!] ' + data.help);
+      } else {
+        console.log(' [!] ' + error);
       }
+    } catch (e) {
+      console.log(' [!] ' + error);
     }
+  }
 );
