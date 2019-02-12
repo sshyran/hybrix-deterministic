@@ -60,6 +60,7 @@
     "dist": "sh scripts/npm/dist.sh",
     "build": "sh scripts/npm/setup.sh;sh scripts/npm/compile.sh; sh scripts/npm/dist.sh",
     "check": "sh scripts/npm/check.sh",
+    "lint": "sh ../common/scripts/lint/lint.sh deterministic",
     "clean": "rm -rf dist/*"
   },
   "repository": {
