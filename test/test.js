@@ -208,7 +208,7 @@ hybrix.sequential(
     {query: '/asset/' + ops.symbol + '/details'}, 'rout',
 
     details => {
-      return {data: details, func: getKeysAndAddress}
+      return {data: details, func: getKeysAndAddress};
     }, 'call',
 
     result => {
