@@ -95,7 +95,7 @@ const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
   }
 };
 
-function getKeysAndAddress(details, dataCallback, errorCallback) {
+function getKeysAndAddress (details, dataCallback, errorCallback) {
   console.log(' [.] Details            :', details);
   console.log(' [=] CLIENT SIDE MODULE  =======================================');
 
@@ -134,7 +134,7 @@ function getKeysAndAddress(details, dataCallback, errorCallback) {
   }
 }
 
-function outputResults(result) {
+function outputResults (result) {
   if (typeof result.sample === 'object') {
     console.log(' [.] Sample address     : ' + result.sample.address);
     console.log(' [.] Sample transaction : ' + result.sample.address);
@@ -153,7 +153,7 @@ function outputResults(result) {
   }
 }
 
-function createTransaction(data, dataCallback, errorCallback) {
+function createTransaction (data, dataCallback, errorCallback) {
   const actualUnspent = unspent || data.unspent || coinSpecificTestData.unspent;
 
   console.log(' [.] Unspents           : ' + JSON.stringify(actualUnspent));
