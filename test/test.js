@@ -14,10 +14,10 @@ const ops = stdio.getopt({
   'unspent': {key: 'u', args: 1, description: 'Manually specify unspents.'},
   'target': {key: 't', args: 1, description: ' Target address (Defaults to source address)'},
   'fee': {key: 'f', args: 1, description: 'Manually specify fee (Defaults to asset default fee).'},
-  'seed': {args: 1, description: 'Manually specify seed. NOTE: Never store the credentials anywhere unencrypted, run the command through an IDE and not through a command line, and have a separate test account ready with only small amounts.'},
+  'seed': {args: 1,description: 'Manually specify seed. NOTE: Never store the credentials anywhere unencrypted, run the command through an IDE and not through a command line, and have a separate test account ready with only small amounts.'  },
   'username': {args: 1, description: 'Manually specify username.'},
   'password': {args: 1, description: 'Manually specify password.'},
-  'push': {key: 'p', args: 0, description: 'Push the signed transaction to the target chain. Restrictions such as transaction cost and funding requirements may apply. Also, you might want to specify --seed for this to work.'}
+  'push': {key: 'p', args: 0, description: 'Push the signed transaction to the target chain. Restrictions such as transaction cost and funding requirements may apply. Also, you might want to specify --seed for this to work.' }
 });
 
 // if we were called without arguments, display a message
@@ -30,7 +30,7 @@ if (!ops.symbol) {
   process.exit(1);
 }
 
-let coinSpecificTestData = { "unspent": "" };
+let coinSpecificTestData = { 'unspent': '' };
 
 const username = ops.username || 'BGQCUO55L57O266P';
 const password = ops.password || '6WAE5LYKAADLZ4P3YLE3EGBSNUKMLV4VGU4UJ6JZV7SEE276';
@@ -61,7 +61,6 @@ const target = ops.target;
 const Hybrix = require('../interface/hybrix-lib.nodejs.js');
 const hybrix = new Hybrix.Interface({http: require('http')});
 
-
 const showAddress = (dataCallback, errorCallback, keys, details, publicKey) => (address) => {
   console.log(' [.] Address            :', address);
   dataCallback({address, keys, details, publicKey});
@@ -85,7 +84,7 @@ const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
   try {
     coinSpecificTestData = require(coinSpecificTestDataFilename);
     console.log(` [.] Using coin specific test data from file '${coinSpecificTestDataFilename}'`);
-  } catch(ignored) {
+  } catch (ignored) {
   }
 
   const subMode = mode.split('.')[1];
@@ -183,65 +182,65 @@ function createTransaction(data, dataCallback, errorCallback) {
  * @param signedTrxData The signed transaction data
  * @returns The Hybrix command for 'push', depending on the --push flag
  */
-  function optionalPushToTargetChain(signedTrxData) {
+function optionalPushToTargetChain(signedTrxData) {
   return ops.push ?
-      { result: { data: { query: `/asset/${ops.symbol}/push/${signedTrxData}` }, step: 'rout' } } :
-      { result: { data: { signedTrxData }, step: 'id' } };
+    {result: {data: {query: `/asset/${ops.symbol}/push/${signedTrxData}`}, step: 'rout'}} :
+    {result: {data: {signedTrxData}, step: 'id'}};
 }
 
 hybrix.sequential(
-    [
-      'init',
-      {host: 'http://localhost:1111/'}, 'addHost',
-      {
-        sample: {data: {query: '/asset/' + ops.symbol + '/sample'}, step: 'rout'},
+  [
+    'init',
+    {host: 'http://localhost:1111/'}, 'addHost',
+    {
+      sample: {data: {query: '/asset/' + ops.symbol + '/sample'}, step: 'rout'},
 
-        contract: {data: {query: '/asset/' + ops.symbol + '/contract'}, step: 'rout'},
-        fee: {data: {query: '/asset/' + ops.symbol + '/fee'}, step: 'rout'},
-        factor: {data: {query: '/asset/' + ops.symbol + '/factor'}, step: 'rout'},
-        'fee-symbol': {data: {query: '/asset/' + ops.symbol + '/fee-symbol'}, step: 'rout'},
-        'keygen-base': {data: {query: '/asset/' + ops.symbol + '/keygen-base'}, step: 'rout'},
-        mode: {data: {query: '/asset/' + ops.symbol + '/mode'}, step: 'rout'}
-      }, 'parallel',
+      contract: {data: {query: '/asset/' + ops.symbol + '/contract'}, step: 'rout'},
+      fee: {data: {query: '/asset/' + ops.symbol + '/fee'}, step: 'rout'},
+      factor: {data: {query: '/asset/' + ops.symbol + '/factor'}, step: 'rout'},
+      'fee-symbol': {data: {query: '/asset/' + ops.symbol + '/fee-symbol'}, step: 'rout'},
+      'keygen-base': {data: {query: '/asset/' + ops.symbol + '/keygen-base'}, step: 'rout'},
+      mode: {data: {query: '/asset/' + ops.symbol + '/mode'}, step: 'rout'}
+    }, 'parallel',
 
-      outputResults,
+    outputResults,
 
-      {query: '/asset/' + ops.symbol + '/details'}, 'rout',
+    {query: '/asset/' + ops.symbol + '/details'}, 'rout',
 
-      details => {
-        return {data: details, func: getKeysAndAddress}
-      }, 'call',
+    details => {
+      return {data: details, func: getKeysAndAddress}
+    }, 'call',
 
-      result => {
-        return {
-          unspent: {
-            data: {query: '/asset/' + ops.symbol + '/unspent/' + result.address + '/' + (Number(amount) + Number(typeof fee === 'undefined' ? result.details.fee : fee)) + '/' + result.address + '/' + result.publicKey},
-            step: 'rout'
-          },
-          result: {data: result, step: 'id'}
-        };
-      }, 'parallel',
-      result => {
-        return {data: result, func: createTransaction};
-      }, 'call',
-      // When the optional --push flag is specified, the transaction is pushed to the target chain.
-      // Restrictions such as transaction cost and funding requirements may apply.
-      signedTrxData => optionalPushToTargetChain(signedTrxData), 'parallel'
-    ],
     result => {
-      console.log(' [.] Transaction        :', JSON.stringify(result));
-      console.log(`\n [OK] Successfully ran test for symbol ${ops.symbol}\n`);
-    },
-    error => {
-      try {
-        const data = JSON.parse(error);
-        if (data.hasOwnProperty('help')) {
-          console.log(' [!] ' + data.help)
-        } else {
-          console.log(' [!] ' + error)
-        }
-      } catch (e) {
-        console.log(' [!] ' + error)
+      return {
+        unspent: {
+          data: {query: '/asset/' + ops.symbol + '/unspent/' + result.address + '/' + (Number(amount) + Number(typeof fee === 'undefined' ? result.details.fee : fee)) + '/' + result.address + '/' + result.publicKey},
+          step: 'rout'
+        },
+        result: {data: result, step: 'id'}
+      };
+    }, 'parallel',
+    result => {
+      return {data: result, func: createTransaction};
+    }, 'call',
+    // When the optional --push flag is specified, the transaction is pushed to the target chain.
+    // Restrictions such as transaction cost and funding requirements may apply.
+    signedTrxData => optionalPushToTargetChain(signedTrxData), 'parallel'
+  ],
+  result => {
+    console.log(' [.] Transaction        :', JSON.stringify(result));
+    console.log(`\n [OK] Successfully ran test for symbol ${ops.symbol}\n`);
+  },
+  error => {
+    try {
+      const data = JSON.parse(error);
+      if (data.hasOwnProperty('help')) {
+        console.log(' [!] ' + data.help);
+      } else {
+        console.log(' [!] ' + error);
       }
+    } catch (e) {
+      console.log(' [!] ' + error);
     }
+  }
 );
