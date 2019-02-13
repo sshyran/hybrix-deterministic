@@ -109,7 +109,6 @@ function getKeysAndAddress (details, dataCallback, errorCallback) {
     console.log(' [!] Deterministic file : $HYBRIXD/' + deterministicPath + ' does not exist!');
   }
 
-  let deterministic;
   if (fs.existsSync('../../deterministic/modules/' + baseMode + '/compile.sh')) {
     console.log(' [i] Custom compile.sh found. Using compiled version.');
     console.log(' [i] Extract lzma.');
@@ -118,14 +117,14 @@ function getKeysAndAddress (details, dataCallback, errorCallback) {
     const LZString = require('../common/crypto/lz-string');
 
     const code = LZString.decompressFromEncodedURIComponent(blob);
-    deterministic = CommonUtils.activate(code);
+    CommonUtils.activate(code);
   } else {
     console.log(' [i] No custom compile.sh found . Using uncompiled version.');
-    deterministic = require('../modules/' + baseMode + '/deterministic.js');
+    require('../modules/' + baseMode + '/deterministic.js');
   }
 
-  const user_keys = CommonUtils.generateKeys(password, username, 0);
-  const seed = ops.seed || CommonUtils.seedGenerator(user_keys, details['keygen-base']);
+  const userKeys = CommonUtils.generateKeys(password, username, 0);
+  const seed = ops.seed || CommonUtils.seedGenerator(userKeys, details['keygen-base']);
 
   console.log(' [.] Seed               :', seed);
   const keys = window.deterministic.keys({seed}, showKeysGetAddress(dataCallback, errorCallback, details), errorCallback);
