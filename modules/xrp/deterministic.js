@@ -26,7 +26,7 @@ let wrapper = {
       // We probably have your favorite alphabet, if not, contact us
       defaultAlphabet: 'ripple',
       // But we insist you bring your own hash to the party :)
-      sha256: bytes => createHash('sha256').update(new Buffer(bytes)).digest(),
+      sha256: bytes => createHash('sha256').update(Buffer.from(bytes)).digest(),
       // We'll endow your api with encode|decode* for you
       codecMethods: {
         // public keys
