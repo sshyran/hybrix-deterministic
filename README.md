@@ -19,7 +19,7 @@ provide connectivity to (decentralized) exchanges.
 
 **Source Files**
 
-The source files for deterministic modules with name `$MY_ASSET_NAME` are grouped in the module folder
+The source files for deterministic modules with name `$MY_ASSET_NAME` are grouped in the module folder:
 
 `$HYBRIXD/deterministic/modules/$MY_ASSET_NAME/`
 
@@ -29,11 +29,11 @@ You will need to create the following file(s):
 
 - [Optional]: `precompile.sh`         A script to standardize and
   automate changes to third party libraries.
-- [Optional]: `compile.sh`            a script to compile the above into a single lmza file
+- [Optional]: `compile.sh`            a script to compile the above into a single LZMA file
 
 The artifact (compilation result) is build in the
-`$HYBRIXD/deterministic/dist/$MY_ASSET_NAME/` folder. It will consist of a lmza
-compressed code blob file named `deterministic.js.lmza`
+`$HYBRIXD/deterministic/dist/$MY_ASSET_NAME/` folder. It will consist of a LZMA
+compressed code blob file named `deterministic.js.lzma`
 
 
 **Grocery List**
@@ -181,7 +181,7 @@ is asynchronious. The function will return the stringified signed transaction.
 
 **Compilation**
 All deterministic modules (which source files are modified more recent
-than the corresponding lmza) are compiled by executing:
+than the corresponding LZMA) are compiled by executing:
 
 `$HYBRIXD/deterministic/npm run build`
 

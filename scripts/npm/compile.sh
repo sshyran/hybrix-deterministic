@@ -62,6 +62,8 @@ for D in *; do
     fi
 done
 
+rsync -aK "$DETERMINISTIC/lib/" "$DETERMINISTIC/dist/"
+
 
 export PATH="$OLDPATH"
 cd "$WHEREAMI"
