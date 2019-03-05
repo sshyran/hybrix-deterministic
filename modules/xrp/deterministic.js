@@ -3,25 +3,14 @@
 
 const RippleAPI = require('ripple-lib').RippleAPI;
 const rippleKeyPairs = require('ripple-keypairs');
-// const apiFactory = require('../');
 const apiFactory = require('x-address-codec');
 const createHash = require('create-hash');
 const api = new RippleAPI();
-let BASE58 = '123456789ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-let bs58 = require('base-x')(BASE58);
-const testAddress = 'rNbzh3w4ERGbjDQE4JkwQnGhbCUHAdBnhn';
-const testSecret = 'shHxz6zLQg9U4LMerjB8Jcqs2inSK';
-
-const testAddress2 = 'rwehTC9Gv88bYXK9TijZqaBZ9EKi2VrJWo';
-const testSecret2 = 'shuoYzxMPBwbawcxzognzJgiDUaCN';
-// GL.ripple = api;
-// GL.keyPairs = rippleKeyPairs;
 
 // instantiate Ripple in offline mode for securing keysfrom the ripplenetwork
 let wrapper = {
   // create deterministic public and private keys based on a seed
   keys: data => {
-    console.log('data = ', data);
     let api2 = apiFactory({
       // We probably have your favorite alphabet, if not, contact us
       defaultAlphabet: 'ripple',
@@ -44,7 +33,6 @@ let wrapper = {
 
   // generate a unique wallet address from a given public key
   address: data => {
-    console.log('data = ', data);
     const address = rippleKeyPairs.deriveAddress(data.publicKey);
     return address;
   },
@@ -57,7 +45,6 @@ let wrapper = {
 
   // generate a transaction
   transaction: (data, callback) => {
-    console.log('data = ', data);
     const address = data.source;
     const payment = {
       'source': {
@@ -75,7 +62,6 @@ let wrapper = {
         }
       }
     };
-    console.log('payment = ', payment);
     const instructions = {
       'fee': data.fee,
       'sequence': parseInt(data.unspent.sequence),
