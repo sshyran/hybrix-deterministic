@@ -1,4 +1,5 @@
 common
+dist
 node_binaries/*
 node_binaries
 node_modules/.cache/*
