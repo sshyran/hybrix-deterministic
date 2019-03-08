@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "dependencies": {
+    "acorn": "6.0.0",
     "@dashevo/x11-hash-js": "^1.0.2",
     "base-58": "^0.0.1",
     "bigi": "^1.4.2",

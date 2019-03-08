@@ -26,7 +26,7 @@ deterministic:
     # don't download git clone https://github.com/internetofcoins/nodejs-v8-lts.git, refer to docker pre installed nodejs as defined in the first line of this file
     - "ln -s \"$(which nodejs)\" node_binaries"
 
-    # run the build-script of the interface
+    # run the build-script of deterministic
     - ./scripts/npm/compile.sh
     - npmlist=$(npm list --only=prod --depth=0 -json)
     - set +e
