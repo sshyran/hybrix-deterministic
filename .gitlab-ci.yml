@@ -7,6 +7,7 @@ deterministic:
     - apt-get update
     - apt-get install unzip
     - apt-get install rsync -y
+    - npm install acorn@^6.0.0 
 
     # trigger pipeline common
     # - "curl --request POST --form \"token=$CI_JOB_TOKEN\" --form ref=master https://gitlab.com/api/v4/projects/hybrix%2Fhybrixd%2Fcommon/trigger/pipeline"
