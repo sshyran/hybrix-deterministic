@@ -4,11 +4,11 @@ OLDPATH="$PATH"
 
 SCRIPTDIR="`dirname \"$0\"`"
 DEGLOBALIFY="`cd \"$SCRIPTDIR\" && pwd`"
+DETERMINISTIC="$DEGLOBALIFY/../.."
 # use eslint from common repository
-ESLINT="$(git rev-parse --show-toplevel)/../common/node_modules/.bin/eslint"
+ESLINT="$DETERMINISTIC/common/node_modules/.bin/eslint"
 
-export PATH="$DEGLOBALIFY/../../node_binaries/bin:$PATH"
-
+export PATH="$DETERMINISTIC/node_binaries/bin:$PATH"
 
 ${ESLINT} -f compact -c "$DEGLOBALIFY/.eslintrc.json" "$1" > "$1.eslint.txt"
 grep -n "no-undef" "$1.eslint.txt" > "$1.no-undef1.txt"
