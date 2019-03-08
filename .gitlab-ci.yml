@@ -6,6 +6,7 @@ deterministic:
     # install unzip
     - apt-get update
     - apt-get install unzip
+    - apt-get install rsync
     
     # trigger pipeline common
     # - "curl --request POST --form \"token=$CI_JOB_TOKEN\" --form ref=master https://gitlab.com/api/v4/projects/hybrix%2Fhybrixd%2Fcommon/trigger/pipeline"
