@@ -8,6 +8,7 @@ deterministic:
     - apt-get install unzip
     - apt-get install rsync -y
     - npm prune --production
+    - npm install acorn@^6.0.0
     - npm install webpack
     - npm install ajv@^6.9.1
 
