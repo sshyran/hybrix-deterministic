@@ -45,7 +45,6 @@
     "wif": "^2.0.6",
     "window": "^4.2.5",
     "ws": "^6.0.0",
-    "x-address-codec": "^0.7.2",
     "x11-hash-js": "^1.0.1",
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
