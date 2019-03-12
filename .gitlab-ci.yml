@@ -7,6 +7,10 @@ deterministic:
     - apt-get update
     - apt-get install unzip
     - apt-get install rsync -y
+     
+     # install build-essential to prevent gyp-rebuild make not found error
+    - apt-get install build-essential
+    
     - npm prune --production
     - npm install acorn@^6.0.0
     - npm install webpack
