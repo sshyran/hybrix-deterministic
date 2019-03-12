@@ -49,9 +49,6 @@
     "x11-hash-js": "^1.0.1",
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
-  "optionalDependencies": {
-    "fsevents": "^1.0.0"
-  },
   "devDependencies": {
     "eslint": "^5.8.0",
     "webpack": "^4.18.0",
