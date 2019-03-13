@@ -1,0 +1,19 @@
+{
+  "name": "module-deterministic-xrp",
+  "version": "1.0.0",
+  "description": "Deterministic module for xrp",
+  "dependencies": {
+    "create-hash": "*",
+    "net": "^1.0.2",
+    "ripple-keypairs": "*",
+    "ripple-lib": "*",
+    "tls": "0.0.1",
+    "x-address-codec": "*"
+  },
+  "author": "Internet of Coins",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://gitlab.com/iochq/module-deterministic/issues"
+  },
+  "homepage": "https://gitlab.com/iochq/module-deterministic#README"
+}

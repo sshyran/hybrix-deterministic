@@ -8,8 +8,7 @@
     ],
     "code" : [
       "type 'file:data'",
-      "logs 'modules/deterministic/$1/deterministic.js.lzma'",
-      "done"
+      "done 'modules/deterministic/$1/deterministic.js.lzma'"
     ],
     "hash" : [
       "func 'hash'"
