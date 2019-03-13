@@ -8,7 +8,6 @@ const window = new Window();
 
 var source = process.argv[2];
 var noUndef3 = process.argv[3]
-var target = process.argv[2]+'.mod';
 
 fs.readFile(noUndef3, "utf8", function (err, unDefVars) {
   if(err) throw err;
@@ -17,6 +16,7 @@ fs.readFile(noUndef3, "utf8", function (err, unDefVars) {
   fs.readFile(source, "utf8", function (err, bundle) {
     var vars = array
         .filter(function (var_) {return var_ !== ''
+                                 && var_ !== 'proto' // For tron
                                  && var_ !== 'DataView' // For eth
                                  && var_ !== 'nacl' && var_ !== 'naclInstance'  // For lsk
                                 })
