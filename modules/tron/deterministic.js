@@ -24,7 +24,7 @@ let wrapper = (
       },
       // return public key
       publickey: function (data) {
-        let buffer = new Buffer(data.privateKey, 'utf16le');
+        let buffer = Buffer.from(data.privateKey, 'utf16le');
         return CryptoUtils.getPubKeyFromPriKey(buffer).toString('utf8');
       },
 
