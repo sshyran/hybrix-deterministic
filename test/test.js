@@ -163,6 +163,7 @@ function createTransaction (data, dataCallback, errorCallback) {
     source: data.result.address,
     target: target || data.result.address,
     contract: data.result.details.contract,
+    mode: data.result.details.mode,
     unspent: actualUnspent,
     factor: data.result.details.factor
   };

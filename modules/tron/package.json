@@ -1,0 +1,17 @@
+{
+  "name": "tron",
+  "version": "1.0.0",
+  "description": "",
+  "main": "deterministic.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "btoa": "^1.2.1",
+    "google-protobuf": "^3.7.0",
+    "tronweb": "^2.2.8"
+  }
+}
