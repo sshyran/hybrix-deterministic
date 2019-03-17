@@ -9,6 +9,7 @@ var coins = [
   require('./coins/dcr'),
   require('./coins/dgb'),
   require('./coins/doge'),
+  require('./coins/flo'),
   require('./coins/ltc'),
   require('./coins/via'),
   require('./coins/mona'),
@@ -66,7 +67,6 @@ coins.forEach(function (coin) {
 
 function toBitcoinJS () {
   return Object.assign({}, this, {
-    messagePrefix: null, // TODO
     bip32: {
       public: this.versions.bip32.public,
       private: this.versions.bip32.private
@@ -74,7 +74,6 @@ function toBitcoinJS () {
     pubKeyHash: this.versions.public,
     scriptHash: this.versions.scripthash,
     wif: this.versions.private,
-    dustThreshold: null // TODO
   })
 }
 
