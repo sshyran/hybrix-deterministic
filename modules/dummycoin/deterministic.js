@@ -4,37 +4,40 @@
 //
 // [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybrixd to the browser!
 //
-var wrapperlib = require('./wrapperlib');
+let wrapperlib = require('./wrapperlib');
 
-var wrapper = (
-  function() {
-
-    var functions = {
+let wrapper = (
+  function () {
+    let functions = {
       // create deterministic public and private keys based on a seed
-      keys : function(data) {
+      keys: function (data) {
         return wrapperlib.keys(data);
       },
 
+      importKeys: function (data) {
+        return {public: '_dummypublickey_', private: data.privateKey};
+      },
+
       // generate a unique wallet address from a given public key
-      address : function(data) {
+      address: function (data) {
         return wrapperlib.address(data);
       },
-      
-      // return public key    
-      publickey : function(data) {
-        return wrapperlib.publickey(data);
-      },      
 
-      // return private key    
-      privatekey : function(data) {
+      // return public key
+      publickey: function (data) {
+        return wrapperlib.publickey(data);
+      },
+
+      // return private key
+      privatekey: function (data) {
         return wrapperlib.privatekey(data);
-      },      
+      },
 
       // generate a transaction
-      transaction : function(data, callback) {
-        return wrapperlib.transaction(data,callback);
+      transaction: function (data, callback) {
+        return wrapperlib.transaction(data, callback);
       }
-    }
+    };
 
     return functions;
   }
