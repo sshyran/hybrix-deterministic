@@ -30,7 +30,7 @@ if (!ops.symbol) {
   process.exit(1);
 }
 
-let coinSpecificTestData = { 'unspent': '' };
+let coinSpecificTestData = {};
 
 const username = ops.username || 'BGQCUO55L57O266P';
 const password = ops.password || '6WAE5LYKAADLZ4P3YLE3EGBSNUKMLV4VGU4UJ6JZV7SEE276';
@@ -78,13 +78,9 @@ const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
   // Some projects such as Stellar require that an account is funded in order to be able to use the API.
   // In these cases, use coin specific test data to override any variables to circumvent this so that the tests may keep working.
   const coinSpecificTestDataFilename = `../modules/${mode}/testdata/coin-specific-test-data.json`;
-  // default data
-  // load coin specific test data from file
-  // ignore any load errors and use the default data.
-  try {
-    coinSpecificTestData = require(coinSpecificTestDataFilename);
+  if (fs.existsSync(coinSpecificTestDataFilename)) {
+    coinSpecificTestData = JSON.parse(fs.readFileSync(coinSpecificTestDataFilename).toString());
     console.log(` [.] Using coin specific test data from file '${coinSpecificTestDataFilename}'`);
-  } catch (ignored) {
   }
 
   const subMode = mode.split('.')[1];
@@ -154,10 +150,19 @@ function outputResults (result) {
 }
 
 function createTransaction (data, dataCallback, errorCallback) {
-  const actualUnspent = unspent || data.unspent || coinSpecificTestData.unspent;
-
-  console.log(' [.] Unspents           : ' + JSON.stringify(actualUnspent));
+  let actualUnspent;
+  if (typeof unspent !== 'undefined') {
+    actualUnspent = unspent;
+    console.log(' [.] Unspents           : ' + JSON.stringify(actualUnspent) + ' (Manual)');
+  } else if (coinSpecificTestData && coinSpecificTestData.hasOwnProperty('unspent')) {
+    actualUnspent = coinSpecificTestData.unspent;
+    console.log(' [.] Unspents           : ' + JSON.stringify(actualUnspent) + ' (Coin specific test data )');
+  } else {
+    actualUnspent = data.unspent;
+    console.log(' [.] Unspents           : ' + JSON.stringify(actualUnspent));
+  }
   const tx = {
+    symbol: data.result.details.symbol,
     amount: amount,
     fee: typeof fee === 'undefined' ? data.result.details.fee : fee,
     keys: data.result.keys,
