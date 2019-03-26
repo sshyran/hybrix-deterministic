@@ -11,20 +11,23 @@ const TransactionUtils = require('@tronscan/client/src/utils/transactionBuilder'
 let wrapper = (
   function () {
     let functions = {
-      // create deterministic public and private keys based on a seed
+      // create deterministic public and private keys based on a seed (must be 64 chars in length!)
       keys: data => {
+        let privKey = hex2base32.base32ToHex(data.seed).substr(0, 64);
         return {
-          privateKey: hex2base32.base32ToHex(data.seed)
+          privateKey: privKey
         };
       },
 
       // generate a unique wallet address from a given public key
       address: function (data, cb) {
-        return CryptoUtils.getBase58CheckAddressFromPriKeyBase64String(data.privateKey);
+        let buffer = Buffer.from(data.privateKey, 'hex');
+        let privKeyBase64 = buffer.toString('base64');
+        return CryptoUtils.getBase58CheckAddressFromPriKeyBase64String(privKeyBase64);
       },
       // return public key
       publickey: function (data) {
-        let buffer = Buffer.from(data.privateKey, 'utf16le');
+        let buffer = Buffer.from(data.privateKey, 'hex');
         return CryptoUtils.getPubKeyFromPriKey(buffer).toString('utf8');
       },
 
