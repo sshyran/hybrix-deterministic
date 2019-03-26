@@ -1,4 +1,4 @@
-common
+common/*
 node_binaries/*
 node_binaries
 node_modules/.cache/*
