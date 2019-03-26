@@ -5,7 +5,7 @@ OLDPATH="$PATH"
 SCRIPTDIR="`dirname \"$0\"`"
 DEGLOBALIFY="`cd \"$SCRIPTDIR\" && pwd`"
 # use eslint from common repository
-ESLINT="$(git rev-parse --show-toplevel)/../common/node_modules/.bin/eslint"
+ESLINT="$DEGLOBALIFY/../../common/node_modules/.bin/eslint"
 
 export PATH="$DEGLOBALIFY/../../node_binaries/bin:$PATH"
 
