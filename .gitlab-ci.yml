@@ -6,25 +6,26 @@ deterministic:
     # install unzip
     - apt-get update
     - apt-get install unzip
-    
+    - apt-get install rsync
+
     # trigger pipeline common
     # - "curl --request POST --form \"token=$CI_JOB_TOKEN\" --form ref=master https://gitlab.com/api/v4/projects/hybrix%2Fhybrixd%2Fcommon/trigger/pipeline"
-    
+
     # download [common] artifact
     - "curl --location --header \"JOB-TOKEN: $CI_JOB_TOKEN\" \"https://gitlab.com/api/v4/projects/hybrix%2Fhybrixd%2Fcommon/jobs/artifacts/master/download?job=common\" -o artifacts-common.zip"
-    
+
     # remove link to common and unzip the downloaded artifact to the directory (|| true --> on error, no problem)
     - rm -rf  common || true
     - unzip -o artifacts-common.zip -d common
-    
+
     # remove the zip-file (|| true --> on error, no problem)
     - rm -rf  artifacts-common.zip || true
-    
+
     # remove symbolic link to node
     - rm -rf  node_binaries || true
     # don't download git clone https://github.com/internetofcoins/nodejs-v8-lts.git, refer to docker pre installed nodejs as defined in the first line of this file
     - "ln -s \"$(which nodejs)\" node_binaries"
-    
+
     # run the build-script of the interface
     - ./scripts/npm/compile.sh
     - npmlist=$(npm list --only=prod --depth=0 -json)
@@ -33,8 +34,8 @@ deterministic:
     - set -e
 
     - ls -l
-    
-    # clean up and prepare the artifacts (instead of having a dist) 
+
+    # clean up and prepare the artifacts (instead of having a dist)
     # remove everything except () is extglob syntax, which should be enabled first
     - shopt -s extglob
     - rm -rf !(dist) || true
@@ -44,18 +45,18 @@ deterministic:
 
     # remove all files starting with a .
     - find -name ".*" -type f -delete
-    
+
      # create a .version file
     - timestamp=$(date -u '+%Y-%m-%dT%H:%M:%S+00:00')
-    - if [[ "$DEBUG_ENABLED" == "1"  ]]; then mode=debug; else mode=release; fi 
+    - if [[ "$DEBUG_ENABLED" == "1"  ]]; then mode=debug; else mode=release; fi
     - echo "{\"${CI_PROJECT_PATH_SLUG}\":{\"mode\":\"${mode}\", \"project_path\":\"${CI_PROJECT_PATH}\", \"commit_ref_name\":\"${CI_COMMIT_REF_NAME}\", \"commit_ref_slug\":\"${CI_COMMIT_REF_SLUG}\", \"commit_sha\":\"${CI_COMMIT_SHA}\", \"pipeline_url\":\"${CI_PIPELINE_URL}\", \"npm-list\":${npmlist}, \"npm-audit\":${npmaudit}, \"packaged\":\"${timestamp}\"}}" > .version
 
     - ls -l
-    
-    # verification steps 
+
+    # verification steps
     - if [ ! -f module.js ]; then echo "module.js not found!"; exit 1; fi
     - if [ ! -f source.deterministic.json ]; then echo "source.deterministic.json not found!"; exit 1; fi
-    
+
   artifacts:
     paths:
     - ./*
