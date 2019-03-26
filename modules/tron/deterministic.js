@@ -13,7 +13,7 @@ let wrapper = (
     let functions = {
       // create deterministic public and private keys based on a seed (must be 64 chars in length!)
       keys: data => {
-        let privKey = hex2base32.base32ToHex(data.seed).substr(0,64);
+        let privKey = hex2base32.base32ToHex(data.seed).substr(0, 64);
         return {
           privateKey: privKey
         };

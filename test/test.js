@@ -101,6 +101,7 @@ function getKeysAndAddress (details, dataCallback, errorCallback) {
 
   const mode = details.mode;
   const baseMode = mode.split('.')[0];
+  const subMode = mode.split('.')[1];
 
   const deterministicPath = 'deterministic/modules/' + baseMode + '/deterministic.js';
   if (fs.existsSync('../../' + deterministicPath)) {
@@ -127,7 +128,7 @@ function getKeysAndAddress (details, dataCallback, errorCallback) {
   const seed = ops.seed || CommonUtils.seedGenerator(userKeys, details['keygen-base']);
 
   console.log(' [.] Seed               :', seed);
-  const keys = window.deterministic.keys({seed}, showKeysGetAddress(dataCallback, errorCallback, details), errorCallback);
+  const keys = window.deterministic.keys({seed, mode: subMode}, showKeysGetAddress(dataCallback, errorCallback, details), errorCallback);
   if (typeof keys !== 'undefined') {
     showKeysGetAddress(dataCallback, errorCallback, details)(keys);
   }
