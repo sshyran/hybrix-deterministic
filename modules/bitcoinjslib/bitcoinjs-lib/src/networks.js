@@ -1,1 +1,1 @@
-../../coininfo/networks.js
+module.exports = require('../../coininfo/networks.js');

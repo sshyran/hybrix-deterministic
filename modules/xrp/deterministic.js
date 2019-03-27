@@ -1,5 +1,4 @@
 // (C) 2019 Internet of Coins / Jacob Petrovic
-//
 
 const RippleAPI = require('ripple-lib').RippleAPI;
 const rippleKeyPairs = require('ripple-keypairs');
@@ -24,7 +23,8 @@ let wrapper = {
         Seed: {version: 0x21}
       }
     });
-    let hash = nacl.to_hex(nacl.crypto_hash_sha256(data.seed));
+    const seed = Buffer.from(data.seed, 'utf8');
+    let hash = nacl.to_hex(nacl.crypto_hash_sha256(seed));
     let secret = Buffer.from(hash.substr(0, 32), 'hex');
     // It can encode a Buffer
     let encoded = api2.encodeSeed(secret);
@@ -51,14 +51,14 @@ let wrapper = {
         'address': address,
         'maxAmount': {
           'value': data.amount,
-          'currency': data.mode === 'xrp' ? 'drops' : data.mode.toUpperCase()
+          'currency': data.symbol === 'xrp' ? 'drops' : data.symbol.replace(/XRP./gi, '').toUpperCase()
         }
       },
       'destination': {
         'address': data.target,
         'amount': {
           'value': data.amount,
-          'currency': data.mode === 'xrp' ? 'drops' : data.mode.toUpperCase()
+          'currency': data.symbol === 'xrp' ? 'drops' : data.symbol.replace(/XRP./gi, '').toUpperCase()
         }
       }
     };
@@ -71,7 +71,7 @@ let wrapper = {
       privateKey: data.keys.privateKey,
       publicKey: data.keys.publicKey
     };
-    const tx = api.preparePayment(address, payment, instructions)
+    api.preparePayment(address, payment, instructions)
       .then(prepared => api.sign(prepared.txJSON, keypair))
       .then(signed2 => {
         const sendTx = {
