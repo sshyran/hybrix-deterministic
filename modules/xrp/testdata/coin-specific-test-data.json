@@ -1,5 +1,0 @@
-{
-  "name": "Coin specific test data",
-  "description": "Some projects such as Ripple require that an account is funded in order to be able to use the API. In these cases, use coin specific test data to override any variables to circumvent this so that the tests may keep working.",
-  "unspent": {"lastLedgerSequencePlus":46084264,"sequence":759}
-}
