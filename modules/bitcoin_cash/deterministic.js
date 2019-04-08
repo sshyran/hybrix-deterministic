@@ -85,6 +85,8 @@ let wrapper = (
               const transactionWithMsgOrDefault = hasValidMessage
                 ? transaction.addData(data.msg)
                 : transaction;
+              console.log('transactionWithMsgOrDefault = ', JSON.stringify(transactionWithMsgOrDefault));
+              console.log('transactionWithMsgOrDefault = ', JSON.stringify(transactionWithMsgOrDefault).length);
               const signedTransaction = transactionWithMsgOrDefault
                 .fee(DEFAULT_FEE)
                 .sign(data.keys.privateKey)
