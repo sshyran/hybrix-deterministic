@@ -68,21 +68,29 @@ let wrapper = (
         const targetAddr = data.target;
         const toAddress = bchaddr.isLegacyAddress(targetAddr) ? bchaddr.toCashAddress(targetAddr) : targetAddr;
         const utxoUrl = `https://rest.bitcoin.com/v2/address/utxo/${data.source}`;
+        const DEFAULT_FEE = 5430;
 
         fetch(utxoUrl)
           .then(res => res.json()
             .then(utxoData => {
+              const hasValidMessage = data.msg !== undefined &&
+                    data.msg !== null &&
+                    data !== '';
               const utxos = utxoData.utxos
                 .map(mkUtxo(utxoData));
-
               const transaction = new lib.Transaction()
                 .from(utxos)
                 .to(toAddress, Number(data.amount))
-                .change(data.source)
-                .fee(5430)
-                .sign(data.keys.privateKey);
+                .change(data.source);
+              const transactionWithMsgOrDefault = hasValidMessage
+                ? transaction.addData(data.msg)
+                : transaction;
+              const signedTransaction = transactionWithMsgOrDefault
+                .fee(DEFAULT_FEE)
+                .sign(data.keys.privateKey)
+                .serialize();
 
-              cb(transaction.serialize());
+              cb(signedTransaction);
             })
             .catch(err))
           .catch(err);
