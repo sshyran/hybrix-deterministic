@@ -2,9 +2,6 @@ const lib = require('bitcore-lib-cash');
 const cashaddrjs = require('cashaddrjs');
 const bchaddr = require('bchaddrjs');
 
-window.bch = lib;
-window.cashAddr = cashaddrjs;
-
 function mkPrivateKey (seed) {
   const seedBuffer = Buffer.from(seed, 'utf8');
   const hash = nacl.to_hex(nacl.crypto_hash_sha256(seedBuffer));
@@ -68,14 +65,14 @@ let wrapper = (
         const targetAddr = data.target;
         const toAddress = bchaddr.isLegacyAddress(targetAddr) ? bchaddr.toCashAddress(targetAddr) : targetAddr;
         const utxoUrl = `https://rest.bitcoin.com/v2/address/utxo/${data.source}`;
-        const DEFAULT_FEE = 5430;
 
         fetch(utxoUrl)
           .then(res => res.json()
             .then(utxoData => {
               const hasValidMessage = data.msg !== undefined &&
-                    data.msg !== null &&
+                        data.msg !== null &&
                     data !== '';
+              const fee = Number(data.fee) * (Math.pow(10, data.factor));
               const utxos = utxoData.utxos
                 .map(mkUtxo(utxoData));
               const transaction = new lib.Transaction()
@@ -85,10 +82,9 @@ let wrapper = (
               const transactionWithMsgOrDefault = hasValidMessage
                 ? transaction.addData(data.msg)
                 : transaction;
-              console.log('transactionWithMsgOrDefault = ', JSON.stringify(transactionWithMsgOrDefault));
-              console.log('transactionWithMsgOrDefault = ', JSON.stringify(transactionWithMsgOrDefault).length);
+
               const signedTransaction = transactionWithMsgOrDefault
-                .fee(DEFAULT_FEE)
+                .fee(fee)
                 .sign(data.keys.privateKey)
                 .serialize();
 
