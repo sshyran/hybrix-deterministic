@@ -75,14 +75,6 @@ const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
 
   const mode = details.mode;
 
-  // Some projects such as Stellar require that an account is funded in order to be able to use the API.
-  // In these cases, use coin specific test data to override any variables to circumvent this so that the tests may keep working.
-  const coinSpecificTestDataFilename = `../modules/${mode}/testdata/coin-specific-test-data.json`;
-  if (fs.existsSync(coinSpecificTestDataFilename)) {
-    coinSpecificTestData = JSON.parse(fs.readFileSync(coinSpecificTestDataFilename).toString());
-    console.log(` [.] Using coin specific test data from file '${coinSpecificTestDataFilename}'`);
-  }
-
   const subMode = mode.split('.')[1];
   keys.mode = subMode;
   const address = window.deterministic.address(keys, showAddress(dataCallback, errorCallback, keys, details, publicKey), errorCallback);
@@ -131,9 +123,11 @@ function getKeysAndAddress (details, dataCallback, errorCallback) {
 }
 
 function outputResults (result) {
+  coinSpecificTestData = result.test;
+
   if (typeof result.sample === 'object') {
     console.log(' [.] Sample address     : ' + result.sample.address);
-    console.log(' [.] Sample transaction : ' + result.sample.address);
+    console.log(' [.] Sample transaction : ' + result.sample.transaction);
   } else {
     console.log(' [!] No sample available.');
   }
@@ -200,7 +194,7 @@ hybrix.sequential(
     {host: 'http://localhost:1111/'}, 'addHost',
     {
       sample: {data: {query: '/asset/' + ops.symbol + '/sample'}, step: 'rout'},
-
+      test: {data: {query: '/asset/' + ops.symbol + '/test'}, step: 'rout'},
       contract: {data: {query: '/asset/' + ops.symbol + '/contract'}, step: 'rout'},
       fee: {data: {query: '/asset/' + ops.symbol + '/fee'}, step: 'rout'},
       factor: {data: {query: '/asset/' + ops.symbol + '/factor'}, step: 'rout'},
