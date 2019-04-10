@@ -7,23 +7,23 @@
 
 const randomBytes = crypto.randomBytes;
 if (typeof window === 'object') {
-  const wCrypto = window.crypto || {}
+  const wCrypto = window.crypto || {};
   if (!wCrypto.getRandomValues) {
     wCrypto.getRandomValues = function getRandomValues (arr) {
-      const bytes = randomBytes(arr.length)
-      for (var i = 0; i < bytes.length; i++) {
-        arr[i] = bytes[i]
+      const bytes = randomBytes(arr.length);
+      for (let i = 0; i < bytes.length; i++) {
+        arr[i] = bytes[i];
       }
-    }
+    };
   }
 }
 
 // inclusion of necessary requires
-var bitsharesjs = {
-  bitshares : require('bitsharesjs'),
-  base58 : require('bs58')
-}
+let bitsharesjs = {
+  bitshares: require('bitsharesjs'),
+  base58: require('bs58')
+};
 
-//bitsharesjs.Apis = require('bitsharesjs-ws').Apis;
+// bitsharesjs.Apis = require('bitsharesjs-ws').Apis;
 
 module.exports = bitsharesjs;

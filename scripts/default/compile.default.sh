@@ -14,22 +14,30 @@ DEFAULT="$DETERMINISTIC/scripts/default"
 
 if [ -e "$MODULE/webpack.config.js" ]; then
     BUNDLE="$MODULE"
-    "$DETERMINISTIC/node_modules/webpack/bin/webpack.js" --config "$BUNDLE/webpack.config.js"
+    "$DETERMINISTIC/node_modules/webpack/bin/webpack.js" --config "$BUNDLE/webpack.config.js" --bail --mode production
 else
     BUNDLE="$DEFAULT"
-    "$DETERMINISTIC/node_modules/webpack/bin/webpack.js" --config "$BUNDLE/webpack.config.js"
+    "$DETERMINISTIC/node_modules/webpack/bin/webpack.js" --config "$BUNDLE/webpack.config.js" --bail --mode production
 fi
 
-# define undefined globals explicitly
-sh "$DETERMINISTIC/scripts/deglobalify/deglobalify.sh" "$BUNDLE/bundle.js" > "$BUNDLE/bundle.noundefs.js"
+if [ $? -eq 0 ]; then
 
-# lmza compression
-$DETERMINISTIC/scripts/lzma/lzmapack.js "$BUNDLE/bundle.noundefs.js"
-mv "$BUNDLE/bundle.noundefs.js.lzma" "$MODULE/deterministic.js.lzma"
 
-# clean up
-rm "$BUNDLE/bundle.js"
-rm "$BUNDLE/bundle.noundefs.js"
+    # define undefined globals explicitly
+    sh "$DETERMINISTIC/scripts/deglobalify/deglobalify.sh" "$BUNDLE/bundle.js" > "$BUNDLE/bundle.noundefs.js"
 
-export PATH="$OLDPATH"
-cd "$WHEREAMI"
+    # lmza compression
+    $DETERMINISTIC/scripts/lzma/lzmapack.js "$BUNDLE/bundle.noundefs.js"
+    mv "$BUNDLE/bundle.noundefs.js.lzma" "$MODULE/deterministic.js.lzma"
+
+    # clean up
+    rm "$BUNDLE/bundle.js"
+    rm "$BUNDLE/bundle.noundefs.js"
+    export PATH="$OLDPATH"
+    cd "$WHEREAMI"
+
+else
+    export PATH="$OLDPATH"
+    cd "$WHEREAMI"
+    exit 1
+fi

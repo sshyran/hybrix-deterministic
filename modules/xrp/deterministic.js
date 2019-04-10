@@ -11,15 +11,10 @@ let wrapper = {
   // create deterministic public and private keys based on a seed
   keys: data => {
     let api2 = apiFactory({
-      // We probably have your favorite alphabet, if not, contact us
       defaultAlphabet: 'ripple',
-      // But we insist you bring your own hash to the party :)
       sha256: bytes => createHash('sha256').update(Buffer.from(bytes)).digest(),
-      // We'll endow your api with encode|decode* for you
       codecMethods: {
-        // public keys
         AccountID: {version: 0x00},
-        // secrets
         Seed: {version: 0x21}
       }
     });

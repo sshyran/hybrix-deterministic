@@ -11,6 +11,11 @@ const TransactionUtils = require('@tronscan/client/src/utils/transactionBuilder'
 let wrapper = (
   function () {
     let functions = {
+
+      importKeys: function (data) {
+        return {privateKey: data.privateKey};
+      },
+      
       // create deterministic public and private keys based on a seed (must be 64 chars in length!)
       keys: data => {
         let privKey = hex2base32.base32ToHex(data.seed).substr(0, 64);
@@ -25,6 +30,7 @@ let wrapper = (
         let privKeyBase64 = buffer.toString('base64');
         return CryptoUtils.getBase58CheckAddressFromPriKeyBase64String(privKeyBase64);
       },
+      
       // return public key
       publickey: function (data) {
         let buffer = Buffer.from(data.privateKey, 'hex');
