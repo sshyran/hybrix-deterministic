@@ -1,0 +1,16 @@
+{
+  "name": "bitcoin_cash",
+  "version": "1.0.0",
+  "description": "",
+  "main": "deterministic.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bchaddrjs": "^0.3.2",
+    "bitcore-lib-cash": "^8.1.1",
+    "cashaddrjs": "^0.3.3"
+  }
+}
