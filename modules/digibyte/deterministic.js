@@ -6,84 +6,79 @@
 
 // inclusion of necessary requires
 
-//Decimal = require('../../common/crypto/decimal-light'); Decimal.set({ precision: 64 });
+// Decimal = require('../../common/crypto/decimal-light'); Decimal.set({ precision: 64 });
 
 // shim for randomBytes to avoid require('crypto') incompatibilities
 // solves bug: "There was an error collecting entropy from the browser
 const randomBytes = crypto.randomBytes;
 if (typeof window === 'object') {
-  const wCrypto = window.crypto || {}
+  const wCrypto = window.crypto || {};
   if (!wCrypto.getRandomValues) {
     wCrypto.getRandomValues = function getRandomValues (arr) {
-      const bytes = randomBytes(arr.length)
-      for (var i = 0; i < bytes.length; i++) {
-        arr[i] = bytes[i]
+      const bytes = randomBytes(arr.length);
+      for (let i = 0; i < bytes.length; i++) {
+        arr[i] = bytes[i];
       }
-    }
+    };
   }
 }
 
-var wrapperlib = require('./wrapperlib');
+let wrapperlib = require('./wrapperlib');
 
-var wrapper = (
-  function() {
-    var base58 = require('bs58');
-    var ecurve = require('ecurve');
-    var BigInteger = require('bigi');
-    // DISABLED INSIDE wrapper FUNCTION: var wrapperlib = require('bitcoinjs-lib');
-
-    var functions = {
+let wrapper = (
+  function () {
+    let functions = {
       // create deterministic public and private keys based on a seed
-      keys : function(data) {
-        var seed = new Buffer(data.seed);
-        var hash = wrapperlib.crypto.Hash.sha256(seed);
-        var bn   = wrapperlib.crypto.BN.fromBuffer(hash);
+      keys: function (data) {
+        let seed = Buffer.from(data.seed);
+        let hash = wrapperlib.crypto.Hash.sha256(seed);
+        let bn = wrapperlib.crypto.BN.fromBuffer(hash);
 
-        var privKey = new wrapperlib.PrivateKey(bn, data.mode);
-        var wif     = privKey.toWIF();
+        let privKey = new wrapperlib.PrivateKey(bn, data.mode);
+        let wif = privKey.toWIF();
 
         return { WIF: wif };
       },
 
       // generate a unique wallet address from a given public key
-      address : function(data) {
-        var privKey = wrapperlib.PrivateKey(data.WIF, data.mode);
-        var addr    = privKey.toAddress();
+      address: function (data) {
+        let privKey = wrapperlib.PrivateKey(data.WIF, data.mode);
+        let addr = privKey.toAddress();
 
         if (!wrapperlib.Address.isValid(addr, data.mode)) {
-          throw new Error("Can't generate address from private key. "
-                             + "Generated address " + addr
-                             + "is not valid for " + data.mode);
+          throw new Error("Can't generate address from private key. " +
+                             'Generated address ' + addr +
+                             'is not valid for ' + data.mode);
         }
 
         return addr.toString();
       },
 
       // return public key
-      publickey : function(data) {
-        var privKey = wrapperlib.PrivateKey(data.WIF, data.mode);
+      publickey: function (data) {
+        let privKey = wrapperlib.PrivateKey(data.WIF, data.mode);
         return new wrapperlib.PublicKey(privKey).toString('hex');
       },
 
       // return private key
-      privatekey : function(data) {
+      privatekey: function (data) {
         return data.WIF;
       },
 
-      transaction : function(data) {
-        var privKey       = wrapperlib.PrivateKey(data.keys.WIF, data.mode);
-        var recipientAddr = wrapperlib.Address(data.target, data.mode);
-        var changeAddr    = wrapperlib.Address(data.source, data.mode);
+      transaction: function (data) {
+        let privKey = wrapperlib.PrivateKey(data.keys.WIF, data.mode);
+        let recipientAddr = wrapperlib.Address(data.target, data.mode);
+        let changeAddr = wrapperlib.Address(data.source, data.mode);
 
-        var tx = new wrapperlib.Transaction()
-          .from(data.unspent.unspents.map(function(utxo){
-                  return { txId:        utxo.txid,
-                           outputIndex: utxo.txn,
-                           address:     utxo.address,
-                           script:      utxo.script,
-                           satoshis:    parseInt(utxo.amount)
-                         };
-                }))
+        let tx = new wrapperlib.Transaction()
+          .from(data.unspent.unspents.map(function (utxo) {
+            return { txId: utxo.txid,
+              outputIndex: utxo.txn,
+              address: utxo.address,
+              script: utxo.script,
+              satoshis: parseInt(utxo.amount)
+            };
+          }))
           .to(recipientAddr, parseInt(data.amount))
           .fee(parseInt(data.fee))
           .change(changeAddr)
@@ -91,7 +86,7 @@ var wrapper = (
 
         return tx.serialize();
       }
-    }
+    };
     return functions;
   }
 )();

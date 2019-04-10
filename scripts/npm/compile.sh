@@ -52,7 +52,13 @@ for D in *; do
             else
                 sh "$DETERMINISTIC/scripts/default/compile.default.sh" "$D"
             fi
-            echo "[.] Compiling completed"
+            if [ $? -eq 0 ]; then
+                echo "[.] Compiling completed"
+            else
+                echo "[.] Compiling failed"
+               exit 1;
+            fi
+
             echo "[.] Move to dist"
             mv "deterministic.js.lzma" "$DETERMINISTIC/dist/$D/deterministic.js.lzma"
         else

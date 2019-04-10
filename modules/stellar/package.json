@@ -1,0 +1,14 @@
+{
+  "name": "stellar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "deterministic.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "stellar-sdk": "^0.11.0"
+  }
+}
