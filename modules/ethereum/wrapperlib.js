@@ -11,20 +11,20 @@ if (typeof window === 'object') {
   const wCrypto = window.crypto || {};
   if (!wCrypto.getRandomValues) {
     wCrypto.getRandomValues = function getRandomValues (arr) {
-      const bytes = randomBytes(arr.length)
-      for (var i = 0; i < bytes.length; i++) {
-        arr[i] = bytes[i]
+      const bytes = randomBytes(arr.length);
+      for (let i = 0; i < bytes.length; i++) {
+        arr[i] = bytes[i];
       }
-    }
+    };
   }
 }
 
 // inclusion of necessary requires
-var ethereumjs = {
-  ethUtil : require('ethereumjs-util'),
-  ethTx   : require('ethereumjs-tx'),
-  ethABI  : require('ethereumjs-abi'),
-  hex2dec : require('../../common/crypto/hex2dec')
-}
+let ethereumjs = {
+  ethUtil: require('ethereumjs-util'),
+  EthTx: require('ethereumjs-tx'),
+  ethABI: require('ethereumjs-abi'),
+  hex2dec: require('../../common/crypto/hex2dec')
+};
 
 module.exports = ethereumjs;

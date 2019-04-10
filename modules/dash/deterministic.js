@@ -1,7 +1,7 @@
 // (C) 2018 Internet of Coins / Gijs-Jan van Dompseler / Joachim de Koning
 // Deterministic encryption wrapper for Dash
 
-wrapperlib = require('./wrapperlib');
+let wrapperlib = require('./wrapperlib');
 
 let wrapper = (
   function () {

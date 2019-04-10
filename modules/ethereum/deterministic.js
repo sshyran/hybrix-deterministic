@@ -52,9 +52,10 @@ let wrapper = (
 
       // create and sign a transaction
       transaction: function (data) {
+        let txParams;
         if (data.mode !== 'token') {
           // Base ETH mode
-          var txParams = { // optional-> data: payloadData
+          txParams = { // optional-> data: payloadData
             nonce: parseLargeIntToHex(data.unspent.nonce), // nonce
             gasPrice: parseLargeIntToHex(data.fee / 21000), // we use toString(16) here to specify HEX radix
             gasLimit: parseLargeIntToHex(21000), //  but don't use it elsewhere
@@ -65,7 +66,7 @@ let wrapper = (
           let tokenfeeMultiply = 16; // [!] must be same as the value in back-end module
           // ERC20-compatible token mode
           let encoded = encode({ 'func': 'transfer(address,uint256):(bool)', 'vars': ['target', 'amount'], 'target': data.target, 'amount': parseLargeIntToHex(data.amount) }); // returns the encoded binary (as a Buffer) data to be sent
-          var txParams = {
+          txParams = {
             nonce: parseLargeIntToHex(data.unspent.nonce), // nonce
             gasPrice: parseLargeIntToHex(new Decimal(String(data.fee)).dividedBy(21000 * tokenfeeMultiply).times(2).toString()), // must be 2x normal tx!
             gasLimit: parseLargeIntToHex(new Decimal(String(21000 * tokenfeeMultiply)).dividedBy(2).toString()), // should not exceed 300000 !
@@ -78,7 +79,7 @@ let wrapper = (
         // DEBUG: return JSON.stringify(txParams);
 
         // Transaction is created
-        let tx = new wrapperlib.ethTx(txParams);
+        let tx = new wrapperlib.EthTx(txParams);
 
         // Transaction is signed
         tx.sign(data.keys.privateKey);

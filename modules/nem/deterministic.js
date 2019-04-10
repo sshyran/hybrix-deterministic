@@ -27,55 +27,56 @@ let wrapper = (
       return fee * Math.pow(10, factor);
     };
 
-    let getMosaicDefinition = function (namespace, mosaic) {
-      // Usage examples:
-      // // var namespace = "11123.kopioey";
-      // // var mosaic = "kopioeycoin";
-      // // var namespace = "ap-test1";
-      // // var mosaic = "ap-test-mosaic-5";
-      // var namespace = "apple";
-      // var mosaic = "gold_iphone";
-      // getMosaicDefinition(namespace, mosaic);
-      // or, alternatively, http://127.0.0.1:7890/namespace/mosaic/definition/page?namespace=makoto.metal.coins can be called and filtered
-      // (https://nemproject.github.io/#retrieving-mosaic-definitions)
+    // Commented out function to satisfy linter //
+    // let getMosaicDefinition = function (namespace, mosaic) {
+    //   // Usage examples:
+    //   // // var namespace = "11123.kopioey";
+    //   // // var mosaic = "kopioeycoin";
+    //   // // var namespace = "ap-test1";
+    //   // // var mosaic = "ap-test-mosaic-5";
+    //   // var namespace = "apple";
+    //   // var mosaic = "gold_iphone";
+    //   // getMosaicDefinition(namespace, mosaic);
+    //   // or, alternatively, http://127.0.0.1:7890/namespace/mosaic/definition/page?namespace=makoto.metal.coins can be called and filtered
+    //   // (https://nemproject.github.io/#retrieving-mosaic-definitions)
 
-      let mosaicAttachment = wrapperlib.nem.model.objects.create('mosaicAttachment')(namespace, mosaic, 0);
+    //   let mosaicAttachment = wrapperlib.nem.model.objects.create('mosaicAttachment')(namespace, mosaic, 0);
 
-      // Create variable to store our mosaic definitions, needed to calculate fees properly (already contains xem definition)
-      let mosaicDefinitionMetaDataPair = wrapperlib.nem.model.objects.get('mosaicDefinitionMetaDataPair');
+    //   // Create variable to store our mosaic definitions, needed to calculate fees properly (already contains xem definition)
+    //   let mosaicDefinitionMetaDataPair = wrapperlib.nem.model.objects.get('mosaicDefinitionMetaDataPair');
 
-      // Create an NIS endpoint object
-      let endpoint = wrapperlib.nem.model.objects.create('endpoint')(wrapperlib.nem.model.nodes.defaultTestnet,
-        wrapperlib.nem.model.nodes.defaultPort);
+    //   // Create an NIS endpoint object
+    //   let endpoint = wrapperlib.nem.model.objects.create('endpoint')(wrapperlib.nem.model.nodes.defaultTestnet,
+    //     wrapperlib.nem.model.nodes.defaultPort);
 
-      wrapperlib.nem.com.requests.namespace.mosaicDefinitions(endpoint, mosaicAttachment.mosaicId.namespaceId).then(
-        function (res) {
-          // DEBUG: console.log("Mosaics in a namespace '", mosaicAttachment.mosaicId.namespaceId, "': ", JSON.stringify(res, null, 2));
+    //   wrapperlib.nem.com.requests.namespace.mosaicDefinitions(endpoint, mosaicAttachment.mosaicId.namespaceId).then(
+    //     function (res) {
+    //       // DEBUG: console.log("Mosaics in a namespace '", mosaicAttachment.mosaicId.namespaceId, "': ", JSON.stringify(res, null, 2));
 
-          // Look for the mosaic definition(s) we want in the request response
-          let neededDefinition = wrapperlib.nem.utils.helpers.searchMosaicDefinitionArray(res.data, [mosaic]);
+    //       // Look for the mosaic definition(s) we want in the request response
+    //       let neededDefinition = wrapperlib.nem.utils.helpers.searchMosaicDefinitionArray(res.data, [mosaic]);
 
-          // Get full name of mosaic to use as object key
-          let fullMosaicName = wrapperlib.nem.utils.format.mosaicIdToName(mosaicAttachment.mosaicId);
-          // DEBUG: console.log("Full mosaic name: ", fullMosaicName);
+    //       // Get full name of mosaic to use as object key
+    //       let fullMosaicName = wrapperlib.nem.utils.format.mosaicIdToName(mosaicAttachment.mosaicId);
+    //       // DEBUG: console.log("Full mosaic name: ", fullMosaicName);
 
-          // Check if the mosaic was found
-          if (undefined === neededDefinition[fullMosaicName]) {
-            console.error('Mosaic not found !');
-            return;
-          }
+    //       // Check if the mosaic was found
+    //       if (undefined === neededDefinition[fullMosaicName]) {
+    //         console.error('Mosaic not found !');
+    //         return;
+    //       }
 
-          // Set mosaic definition into mosaicDefinitionMetaDataPair
-          mosaicDefinitionMetaDataPair[fullMosaicName] = {};
-          mosaicDefinitionMetaDataPair[fullMosaicName].mosaicDefinition = neededDefinition[fullMosaicName];
+    //       // Set mosaic definition into mosaicDefinitionMetaDataPair
+    //       mosaicDefinitionMetaDataPair[fullMosaicName] = {};
+    //       mosaicDefinitionMetaDataPair[fullMosaicName].mosaicDefinition = neededDefinition[fullMosaicName];
 
-          // DEBUG: console.log("Mosaic definition: ", JSON.stringify(neededDefinition[fullMosaicName], null, 2));
-        },
-        function (err) {
-          console.error(err);
-        }
-      );
-    };
+    //       // DEBUG: console.log("Mosaic definition: ", JSON.stringify(neededDefinition[fullMosaicName], null, 2));
+    //     },
+    //     function (err) {
+    //       console.error(err);
+    //     }
+    //   );
+    // };
 
     let txEntityRegular = function (network, common, transferTransaction) {
       let transactionEntity = wrapperlib.nem.model.transactions.prepare('transferTransaction')(common, transferTransaction, network.id);

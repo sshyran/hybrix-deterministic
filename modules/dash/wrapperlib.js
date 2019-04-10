@@ -2,10 +2,9 @@
 // wrapperlib to include libraries for incorporation into the virtual DOM
 //
 
-
 // inclusion of necessary requires
-var dashcorelib = {
-  dashcore : require('./dashcore-lib/index.js')
-}
+let dashcorelib = {
+  dashcore: require('./dashcore-lib/index.js')
+};
 
 module.exports = dashcorelib;
