@@ -7,40 +7,34 @@
 
 let wrapperlib = require('./ark-js-mod/index');
 
-let wrapper = (
-  function () {
-    let functions = {
-      // create deterministic public and private keys based on a seed
-      keys: function (data) {
-        // return object { publicKey:'', privateKey:'' }
-        return wrapperlib.crypto.getKeys(data.seed);
-      },
+let wrapper = {
+  // create deterministic public and private keys based on a seed
+  keys: data => {
+    // return object { publicKey:'', privateKey:'' }
+    return wrapperlib.crypto.getKeys(data.seed);
+  },
 
-      // generate a unique wallet address from a given public key
-      address: function (data) {
-        return wrapperlib.crypto.getAddress(data.publicKey);
-      },
+  // generate a unique wallet address from a given public key
+  address: data => {
+    return wrapperlib.crypto.getAddress(data.publicKey);
+  },
 
-      // return public key
-      publickey: function (data) {
-        return data.publicKey;
-      },
+  // return public key
+  publickey: data => {
+    return data.publicKey;
+  },
 
-      // return private key
-      privatekey: function (data) {
-        return data.d.toBuffer().toString('hex');
-      },
+  // return private key
+  privatekey: data => {
+    return data.d.toBuffer().toString('hex');
+  },
 
-      transaction: function (data) {
-        // return deterministic transaction data
-        return JSON.stringify(wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), null, data.seed));
-        // for more information see: https://github.com/corsaro1/lisk_broadcast
-      }
-
-    };
-    return functions;
+  transaction: data => {
+    // return deterministic transaction data
+    return JSON.stringify(wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), null, data.seed));
+    // for more information see: https://github.com/corsaro1/lisk_broadcast
   }
-)();
+};
 
 // export the functionality to a pre-prepared var
 window.deterministic = wrapper;

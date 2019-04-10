@@ -89,7 +89,7 @@ let wrapper = (
     let functions = {
 
       // create deterministic public and private keys based on a seed
-      keys: function (data) {
+      keys: data => {
         let privateKeyObj = wrapperlib.bitshares.PrivateKey.fromSeed(wrapperlib.bitshares.key.normalize_brainKey(data.seed));
         let privateKey = privateKeyObj.toWif();
         let publicKey = privateKeyObj.toPublicKey().toString();
@@ -99,12 +99,12 @@ let wrapper = (
       },
 
       // generate a unique wallet address from a given public key
-      address: function (keys) {
+      address: keys => {
         return 'IoC' + keys.publicKey.substr(3); // Replace GPH with IoC (later to be replaced with BTS)
       },
 
       // Check if the address is valid and return alternative address
-      validate: function (address, callback) {
+      validate: (address, callback) => {
         let dataCallback = function (data) {
           if (data.result && data.result.id) {
             this.callback({error: 0, alternative_address: data.result.id, valid: true});
@@ -128,7 +128,7 @@ Error Data: {"id":2,"jsonrpc":"2.0","result":null}
 */
       },
 
-      generate: function (data, callback) {
+      generate: (data, callback) => {
         let publickKey = 'BTS' + data.keys.publicKey.substr(3); // use BTS prefix foraccount key
         let address = data.address; //  use IoC prefix for account name
 
@@ -188,7 +188,7 @@ Error Data: {"id":2,"jsonrpc":"2.0","result":null}
       },
 
       // create and sign a transaction
-      transaction: function (data, callback) {
+      transaction: (data, callback) => {
         // data.unspent = {"id":3,"jsonrpc":"2.0","result":[["1.2.155481","1.2.155481"]]}} //  internet-of-coins
         if (typeof data.unspent !== 'undefined' && typeof data.unspent[0] !== 'undefined' && typeof data.unspent[0][0] !== 'undefined') {
           let source = data.unspent.source;

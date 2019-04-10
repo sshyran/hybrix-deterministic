@@ -5,7 +5,7 @@
 //
 
 // inclusion of necessary requires
-
+let wrapperlib = require('./wrapperlib');
 // Decimal = require('../../common/crypto/decimal-light'); Decimal.set({ precision: 64 });
 
 // shim for randomBytes to avoid require('crypto') incompatibilities
@@ -22,8 +22,6 @@ if (typeof window === 'object') {
     };
   }
 }
-
-let wrapperlib = require('./wrapperlib');
 
 let wrapper = (
   function () {
