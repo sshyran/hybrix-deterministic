@@ -50,15 +50,19 @@ explorers) Handling queries for balance, unspents and pushing transactions.
 
 A library provided by the developers of the crypto currency. This can
 be a npm module or  a (minified) web js library. Search online for
-" $MY_ASSET_NAME javascript library" this will very likely guide you
+"$MY_ASSET_NAME javascript library" this will very likely guide you
 to a github repository or npm module which you can download.
 
 To install npm modules: please use supplied npm:
 
 ```
-cd $HYBRIXD/deterministic
-node_binaries/bin/npm i $MY_ASSETS_NPM_MODULE
+cd $HYBRIXD/deterministic/modules/$YOUR_ASSET
+$HYBRIXD/deterministic node_binaries/bin/npm i $MY_ASSETS_NPM_MODULE
 ```
+
+Each asset module will have its own `package.json` and `node_modules`
+folder. Only dev dependencies(webpack, eslint) are stored in `$HYBRIXD/deterministic/node_modules`
+
 
 To then include the npm module in your `deterministic.js`:
 
@@ -79,8 +83,8 @@ var myAssetLib = require("$MY_ASSET_LIBRARY/$SOME_FILE")
 
 **Deterministic.js Template**
 
-`deterministic.js` must provide three functions: `keys`, `address` and
-`transaction`.
+`deterministic.js` must provide three functions: `keys`, `importKeys`,
+`address` and `transaction`.
 It can optionally provide a `validate` and `generate` function.
 
 
@@ -172,6 +176,7 @@ format:
       unspent:,
       target,
       amount
+      message [optional]
 }
 ```
 
@@ -199,7 +204,7 @@ by running:
 
 `$HYBRIXD/deterministic/test/run test.js --symbol $YOUR_ASSET_NAME`
 
-Note that this will not incoorporate any custom `precompile.sh` and
+Note that this will not incorporate any custom `precompile.sh` and
 `compile.sh` steps.
 
 **Pipeline**
