@@ -1,0 +1,14 @@
+{
+  "name": "waves",
+  "version": "1.0.0",
+  "description": "",
+  "main": "deterministic.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "waves-transactions": "^3.0.13"
+  }
+}

@@ -5,39 +5,39 @@
 // [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybrixd to the browser!
 //
 
-var wrapperlib = require('./ark-js-mod/index');
+let wrapperlib = require('./ark-js-mod/index');
 
-var wrapper = (
-  function() {
-    var functions = {
+let wrapper = (
+  function () {
+    let functions = {
       // create deterministic public and private keys based on a seed
-      keys : function(data) {
+      keys: function (data) {
         // return object { publicKey:'', privateKey:'' }
         return wrapperlib.crypto.getKeys(data.seed);
       },
 
       // generate a unique wallet address from a given public key
-      address : function(data) {
+      address: function (data) {
         return wrapperlib.crypto.getAddress(data.publicKey);
       },
 
       // return public key
-      publickey : function(data) {
+      publickey: function (data) {
         return data.publicKey;
       },
 
       // return private key
-      privatekey : function(data) {
-        return data.d.toBuffer().toString("hex");
+      privatekey: function (data) {
+        return data.d.toBuffer().toString('hex');
       },
 
-      transaction : function(data) {
+      transaction: function (data) {
         // return deterministic transaction data
-        return JSON.stringify( wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), null, data.seed) );
+        return JSON.stringify(wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), null, data.seed));
         // for more information see: https://github.com/corsaro1/lisk_broadcast
       }
 
-    }
+    };
     return functions;
   }
 )();

@@ -1,0 +1,16 @@
+{
+  "name": "dex_idex",
+  "version": "1.0.0",
+  "main": "deterministic.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hawk": "*",
+    "stringstream": "*"
+  },
+  "devDependencies": {},
+  "description": ""
+}

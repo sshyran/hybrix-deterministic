@@ -24,10 +24,10 @@ sed -i -e "s/$A/$B/g" "$MODULE/wrapperlib.js"
 
 if [ -e "$MODULE/webpack.config.js" ]; then
     BUNDLE="$MODULE"
-    "$DETERMINISTIC/node_modules/webpack/bin/webpack.js" --config "$MODULE/webpack.config.js"
+    "$DETERMINISTIC/node_modules/webpack/bin/webpack.js" --config "$MODULE/webpack.config.js" --bail --mode production
 else
     BUNDLE="$DEFAULT"
-    "$DETERMINISTIC/node_modules/webpack/bin/webpack.js" --config "$BUNDLE/webpack.config.js"
+    "$DETERMINISTIC/node_modules/webpack/bin/webpack.js" --config "$BUNDLE/webpack.config.js" --bail --mode production
 fi
 # define undefined globals expliocitly
 sh "$DETERMINISTIC/scripts/deglobalify/deglobalify.sh" "$BUNDLE/bundle.js" > "$BUNDLE/bundle.noundefs.js"

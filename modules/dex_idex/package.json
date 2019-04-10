@@ -1,0 +1,19 @@
+{
+  "name": "dex_idex",
+  "version": "1.0.0",
+  "main": "deterministic.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ethereumjs-abi": "^0.6.5",
+    "ethereumjs-tx": "^1.3.7",
+    "ethereumjs-util": "^5.2.0",
+    "lodash": "^3.10.1",
+    "web3-utils": "^1.0.0-beta.36"
+  },
+  "devDependencies": {},
+  "description": ""
+}
