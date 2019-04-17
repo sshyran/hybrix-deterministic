@@ -3,8 +3,6 @@ const cashaddrjs = require('cashaddrjs');
 const bchaddr = require('bchaddrjs');
 const Decimal = require('decimal.js-light');
 
-window.bigi = Decimal;
-
 function mkPrivateKey (seed) {
   const seedBuffer = Buffer.from(seed, 'utf8');
   const hash = nacl.to_hex(nacl.crypto_hash_sha256(seedBuffer));
@@ -54,24 +52,20 @@ let wrapper = (
       },
 
       transaction: (data, cb, err) => {
-        console.log('data = ', data);
         const targetAddr = data.target;
         const toAddress = bchaddr.isLegacyAddress(targetAddr) ? bchaddr.toCashAddress(targetAddr) : targetAddr;
 
         const hasValidMessage = data.msg !== undefined &&
-                        data.msg !== null &&
-                    data !== '';
+              data.msg !== null &&
+              data !== '';
         const amount = Number(data.amount);
-        console.log('amount = ', amount);
         const factor = Math.pow(10, Number(data.factor));
         const fee = new Decimal(data.fee)
           .times(
             new Decimal(String(factor))
           )
           .toNumber();
-
         const utxos = data.unspent.unspents.map(mkUtxo(data.source, data.factor), data);
-        console.log('utxos = ', utxos);
         const transaction = new lib.Transaction()
           .from(utxos)
           .to(toAddress, amount)
@@ -84,7 +78,6 @@ let wrapper = (
           .fee(fee)
           .sign(data.keys.privateKey)
           .serialize();
-        console.log('signedTransaction = ', signedTransaction);
 
         cb(signedTransaction);
       }
@@ -97,7 +90,9 @@ function mkUtxo (addr, factor) {
     return {
       address: addr,
       outputIndex: u.txn,
-      satoshis: Number(u.amount) * Math.pow(10, Number(factor)),
+      satoshis: new Decimal(u.amount)
+        .times((new Decimal('10').toPower(factor)))
+        .toNumber(),
       script: u.script,
       txId: u.txid
     };
