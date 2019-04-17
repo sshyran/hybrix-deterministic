@@ -1,6 +1,9 @@
 const lib = require('bitcore-lib-cash');
 const cashaddrjs = require('cashaddrjs');
 const bchaddr = require('bchaddrjs');
+const Decimal = require('decimal.js-light');
+
+window.bigi = Decimal;
 
 function mkPrivateKey (seed) {
   const seedBuffer = Buffer.from(seed, 'utf8');
@@ -16,17 +19,6 @@ function mkAddress (pk) {
   const hash = new Uint8Array(address.hashBuffer);
 
   return cashaddrjs.encode('bitcoincash', type, hash);
-}
-
-function mkUtxo (utxoData) {
-  return function (utxo, i) {
-    const txData = {
-      address: utxoData.cashAddress,
-      outputIndex: i,
-      script: utxoData.scriptPubKey
-    };
-    return Object.assign(utxo, txData);
-  };
 }
 
 let wrapper = (
@@ -62,39 +54,54 @@ let wrapper = (
       },
 
       transaction: (data, cb, err) => {
+        console.log('data = ', data);
         const targetAddr = data.target;
         const toAddress = bchaddr.isLegacyAddress(targetAddr) ? bchaddr.toCashAddress(targetAddr) : targetAddr;
-        const utxoUrl = `https://rest.bitcoin.com/v2/address/utxo/${data.source}`;
 
-        fetch(utxoUrl)
-          .then(res => res.json()
-            .then(utxoData => {
-              const hasValidMessage = data.msg !== undefined &&
+        const hasValidMessage = data.msg !== undefined &&
                         data.msg !== null &&
                     data !== '';
-              const fee = Number(data.fee) * (Math.pow(10, data.factor));
-              const utxos = utxoData.utxos
-                .map(mkUtxo(utxoData));
-              const transaction = new lib.Transaction()
-                .from(utxos)
-                .to(toAddress, Number(data.amount))
-                .change(data.source);
-              const transactionWithMsgOrDefault = hasValidMessage
-                ? transaction.addData(data.msg)
-                : transaction;
+        const amount = Number(data.amount);
+        console.log('amount = ', amount);
+        const factor = Math.pow(10, Number(data.factor));
+        const fee = new Decimal(data.fee)
+          .times(
+            new Decimal(String(factor))
+          )
+          .toNumber();
 
-              const signedTransaction = transactionWithMsgOrDefault
-                .fee(fee)
-                .sign(data.keys.privateKey)
-                .serialize();
+        const utxos = data.unspent.unspents.map(mkUtxo(data.source, data.factor), data);
+        console.log('utxos = ', utxos);
+        const transaction = new lib.Transaction()
+          .from(utxos)
+          .to(toAddress, amount)
+          .change(data.source);
+        const transactionWithMsgOrDefault = hasValidMessage
+          ? transaction.addData(data.msg)
+          : transaction;
 
-              cb(signedTransaction);
-            })
-            .catch(err))
-          .catch(err);
+        const signedTransaction = transactionWithMsgOrDefault
+          .fee(fee)
+          .sign(data.keys.privateKey)
+          .serialize();
+        console.log('signedTransaction = ', signedTransaction);
+
+        cb(signedTransaction);
       }
     };
   }
 )();
+
+function mkUtxo (addr, factor) {
+  return function (u) {
+    return {
+      address: addr,
+      outputIndex: u.txn,
+      satoshis: Number(u.amount) * Math.pow(10, Number(factor)),
+      script: u.script,
+      txId: u.txid
+    };
+  };
+}
 
 window.deterministic = wrapper;
