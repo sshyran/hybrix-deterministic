@@ -18,6 +18,17 @@ let wrapper = (
         return {public: data.privateKey, private: data.privateKey};
       },
 
+      sumKeys: data => {
+        const result = {};
+        if (data.hasOwnProperty('privateKeys')) {
+          result.privateKey = data.privateKeys.reduce((sum, value) => sum + value, 0);
+        }
+        if (data.hasOwnProperty('publicKeys')) {
+          result.publicKey = data.publicKeys.reduce((sum, value) => sum + value, 0);
+        }
+        return result;
+      },
+
       // generate a unique wallet address from a given public key
       address: data => {
         return wrapperlib.address(data);
