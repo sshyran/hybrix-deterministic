@@ -5,6 +5,8 @@
 
 const StellarSdk = require('stellar-sdk');
 
+window.stellar = StellarSdk;
+
 const wrapper = (
   function () {
     const functions = {
@@ -45,10 +47,16 @@ const wrapper = (
           errorCallback(message);
         }
 
+        const hasValidMessage = data.message !== undefined && data.message !== null && data.message !== '';
+
         const source = new StellarSdk.Account(data.source, sequence);
         StellarSdk.Network.usePublicNetwork();
 
-        const transaction = new StellarSdk.TransactionBuilder(source)
+        const transactionWithMaybeMessage = hasValidMessage
+          ? new StellarSdk.TransactionBuilder(source, {memo: StellarSdk.Memo.text(data.message)})
+          : new StellarSdk.TransactionBuilder(source);
+
+        const transaction = transactionWithMaybeMessage
           .addOperation(StellarSdk.Operation.payment({
             destination: data.target,
             amount: String(data.amount),
