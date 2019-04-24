@@ -52,6 +52,7 @@ let wrapper = (
 
       // create and sign a transaction
       transaction: function (data) {
+        const hasValidMessage = typeof data.message !== 'undefined' && data.message !== null && data.message !== '';
         let txParams;
         if (data.mode !== 'token') {
           // Base ETH mode
@@ -62,10 +63,14 @@ let wrapper = (
             to: data.target, // send it to ...
             value: parseLargeIntToHex(data.amount) // the amount to send
           };
+
+          if (hasValidMessage) {
+            txParams.data = data.message;
+          }
         } else {
           let tokenfeeMultiply = 16; // [!] must be same as the value in back-end module
           // ERC20-compatible token mode
-          let encoded = encode({ 'func': 'transfer(address,uint256):(bool)', 'vars': ['target', 'amount'], 'target': data.target, 'amount': parseLargeIntToHex(data.amount) }); // returns the encoded binary (as a Buffer) data to be sent
+          const encoded = encode({ 'func': 'transfer(address,uint256):(bool)', 'vars': ['target', 'amount'], 'target': data.target, 'amount': parseLargeIntToHex(data.amount) }); // returns the encoded binary (as a Buffer) data to be sent
           txParams = {
             nonce: parseLargeIntToHex(data.unspent.nonce), // nonce
             gasPrice: parseLargeIntToHex(new Decimal(String(data.fee)).dividedBy(21000 * tokenfeeMultiply).times(2).toString()), // must be 2x normal tx!
@@ -79,12 +84,12 @@ let wrapper = (
         // DEBUG: return JSON.stringify(txParams);
 
         // Transaction is created
-        let tx = new wrapperlib.EthTx(txParams);
+        const tx = new wrapperlib.EthTx(txParams);
 
         // Transaction is signed
         tx.sign(data.keys.privateKey);
-        let serializedTx = tx.serialize();
-        let rawTx = '0x' + serializedTx.toString('hex');
+        const serializedTx = tx.serialize();
+        const rawTx = '0x' + serializedTx.toString('hex');
         return String(rawTx);
       },
       // encode ABI smart contract calls
