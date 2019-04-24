@@ -7,6 +7,7 @@
 const stdio = require('stdio');
 const fs = require('fs');
 const CommonUtils = require('../common/index');
+const Decimal = require('../common/crypto/decimal-light');
 
 const ops = stdio.getopt({
   'symbol': {key: 's', args: 1, description: 'Select a symbol to run test.'},
@@ -46,7 +47,7 @@ if (fs.existsSync(recipePath + 'asset.' + ops.symbol + '.json')) {
   console.log(' [!] No Recipe file found. ($HYBRIXD/node/recipes/asset.' + ops.symbol + '.json or $HYBRIXD/node/recipes/token.' + ops.symbol + '.json)');
 }
 
-const amount = ops.amount || '100';
+const amount = ops.amount || '1000';
 let unspent;
 
 if (typeof ops.unspent === 'string') {
@@ -143,6 +144,12 @@ function outputResults (result) {
   }
 }
 
+let toIntLocal = function (input, factor) {
+  let f = Number(factor);
+  let x = new Decimal(String(input));
+  return x.times('1' + (f > 1 ? '0'.repeat(f) : '')).toString();
+};
+
 function createTransaction (data, dataCallback, errorCallback) {
   let actualUnspent;
   if (typeof unspent !== 'undefined') {
@@ -158,7 +165,7 @@ function createTransaction (data, dataCallback, errorCallback) {
   const tx = {
     symbol: data.result.details.symbol,
     amount: amount,
-    fee: typeof fee === 'undefined' ? data.result.details.fee : fee,
+    fee: toIntLocal(typeof fee === 'undefined' ? data.result.details.fee : fee, data.result.details['fee-factor']),
     keys: data.result.keys,
     source: data.result.address,
     target: target || data.result.address,
@@ -238,7 +245,7 @@ hybrix.sequential(
     result => {
       return {data: result, func: createTransaction};
     }, 'call',
-    result => { return {hash: {data: {data: 'hello world'}, step: 'hash'}, signedTrxData: {data: result, step: 'id'}}; }, 'parallel',
+    result => { return {hash: {data: {data: result}, step: 'hash'}, signedTrxData: {data: result, step: 'id'}}; }, 'parallel',
 
     outputAndCheckHash,
 
