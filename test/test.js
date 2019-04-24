@@ -188,6 +188,21 @@ function optionalPushToTargetChain (signedTrxData) {
     : {result: {data: {signedTrxData}, step: 'id'}};
 }
 
+function outputAndCheckHash (signedTrxDataAndHash) {
+  console.log(' [.] Transaction        :', signedTrxDataAndHash.signedTrxData);
+  console.log(' [.] Transaction Hash   :', signedTrxDataAndHash.hash);
+
+  if (coinSpecificTestData.hasOwnProperty('hash')) {
+    if (signedTrxDataAndHash.hash === coinSpecificTestData.hash) {
+      console.log(' [v] Test Hash          :', coinSpecificTestData.hash, '[MATCH]');
+    } else {
+      console.log(' [!] Test Hash          :', coinSpecificTestData.hash, '[NO MATCH!]');
+    }
+  } else {
+    console.log(' [i] Test Hash          :', 'NOT AVAILABLE');
+  }
+}
+
 hybrix.sequential(
   [
     'init',
@@ -223,12 +238,16 @@ hybrix.sequential(
     result => {
       return {data: result, func: createTransaction};
     }, 'call',
+    result => { return {hash: {data: {data: 'hello world'}, step: 'hash'}, signedTrxData: {data: result, step: 'id'}}; }, 'parallel',
+
+    outputAndCheckHash,
+
     // When the optional --push flag is specified, the transaction is pushed to the target chain.
     // Restrictions such as transaction cost and funding requirements may apply.
-    signedTrxData => optionalPushToTargetChain(signedTrxData), 'parallel'
+    optionalPushToTargetChain
+
   ],
   result => {
-    console.log(' [.] Transaction        :', JSON.stringify(result));
     console.log(`\n [OK] Successfully ran test for symbol ${ops.symbol}\n`);
   },
   error => {
