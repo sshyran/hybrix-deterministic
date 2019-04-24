@@ -67,9 +67,11 @@ const showAddress = (dataCallback, errorCallback, keys, details, publicKey) => (
   dataCallback({address, keys, details, publicKey});
 };
 
-const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
+const showKeysGetAddress = (dataCallback, errorCallback, details) => (keys, seed) => {
   console.log(' [.] Keys               :', keys);
   const publicKey = window.deterministic.publickey(keys);
+  console.log(' [.] Seed               :', seed);
+
   console.log(' [.] Public Key         :', publicKey);
   const privateKey = window.deterministic.privatekey(keys);
   console.log(' [.] Private Key        :', privateKey);
@@ -78,6 +80,7 @@ const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
 
   const subMode = mode.split('.')[1];
   keys.mode = subMode;
+  keys.seed = seed;
   const address = window.deterministic.address(keys, showAddress(dataCallback, errorCallback, keys, details, publicKey), errorCallback);
   if (typeof address !== 'undefined') {
     showAddress(dataCallback, errorCallback, keys, details, publicKey)(address);
@@ -119,7 +122,7 @@ function getKeysAndAddress (details, dataCallback, errorCallback) {
   console.log(' [.] Seed               :', seed);
   const keys = window.deterministic.keys({seed, mode: subMode}, showKeysGetAddress(dataCallback, errorCallback, details), errorCallback);
   if (typeof keys !== 'undefined') {
-    showKeysGetAddress(dataCallback, errorCallback, details)(keys);
+    showKeysGetAddress(dataCallback, errorCallback, details)(keys, seed);
   }
 }
 
@@ -172,7 +175,9 @@ function createTransaction (data, dataCallback, errorCallback) {
     contract: data.result.details.contract,
     mode: data.result.details.mode,
     unspent: actualUnspent,
-    factor: data.result.details.factor
+    factor: data.result.details.factor,
+    time: coinSpecificTestData.time,
+    seed: data.result.keys.seed
   };
 
   const result = window.deterministic.transaction(tx, dataCallback, errorCallback);
@@ -202,6 +207,8 @@ function outputAndCheckHash (signedTrxDataAndHash) {
   if (coinSpecificTestData.hasOwnProperty('hash')) {
     if (signedTrxDataAndHash.hash === coinSpecificTestData.hash) {
       console.log(' [v] Test Hash          :', coinSpecificTestData.hash, '[MATCH]');
+    } else if (coinSpecificTestData.hash === 'dynamic') {
+      console.log(' [i] Test Hash          :', 'dynamic');
     } else {
       console.log(' [!] Test Hash          :', coinSpecificTestData.hash, '[NO MATCH!]');
     }

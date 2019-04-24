@@ -49,9 +49,9 @@ let wrapper = (
             feeAssetId: '', // defaults to WAVES
             fee: parseInt(data.fee), // is optional
             // 140 bytes of data (it's allowed to use Uint8Array here)
-            attachment: messageOrEmpty
+            attachment: messageOrEmpty,
             // feeAssetId: undefined
-            // timestamp: 1536917842558, //Timestamp is optional but it was overrided, in case timestamp is not provided it will fallback to Date.now()
+            timestamp: data.time // Timestamp is optional but it was overrided, in case timestamp is not provided it will fallback to Date.now()
           }, seed);
         } else {
           signedTx = transfer({
@@ -63,9 +63,9 @@ let wrapper = (
             feeAssetId: '', // defaults to WAVES
             fee: parseInt(data.fee), // is optional
             // 140 bytes of data (it's allowed to use Uint8Array here)
-            attachment: messageOrEmpty
+            attachment: messageOrEmpty,
             // feeAssetId: undefined
-            // timestamp: 1536917842558, //Timestamp is optional but it was overrided, in case timestamp is not provided it will fallback to Date.now()
+            timestamp: data.time // Timestamp is optional but it was overrided, in case timestamp is not provided it will fallback to Date.now()
           }, seed);
         }
         signedTx.attachment = messageOrEmpty;
