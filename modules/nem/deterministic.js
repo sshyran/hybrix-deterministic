@@ -177,18 +177,20 @@ let wrapper = (
         let network = wrapperlib.nem.model.network.data['mainnet'];
         let common = wrapperlib.nem.model.objects.get('common');
         common.privateKey = data.keys.privateKey;
+        const hasValidMessage = typeof data.message !== 'undefined' && data.message !== null && data.message !== '';
+        const message = hasValidMessage ? data.message : '';
 
         let transactionEntity;
         if (data.mode !== 'mosaic') {
           // calculating fee here is automatically done by nem.model.objects.create
           let amount = fromUnits(data.amount, data.factor);
-          let transferTransaction = wrapperlib.nem.model.objects.create('transferTransaction')(data.target, amount, '');
+          let transferTransaction = wrapperlib.nem.model.objects.create('transferTransaction')(data.target, amount, message);
           transactionEntity = txEntityRegular(network, common, transferTransaction);
           // DEBUG: return '## '+amount+' # '+JSON.stringify(transferTransaction);
         } else {
           // amount for sending tokens is always 1 (TODO: or perhaps a divider of 1/1000000)
           let amount = 1;
-          let transferTransaction = wrapperlib.nem.model.objects.create('transferTransaction')(data.target, amount, '');
+          let transferTransaction = wrapperlib.nem.model.objects.create('transferTransaction')(data.target, amount, message);
           transactionEntity = txEntityMosaic(network, common, transferTransaction, data);
           // DEBUG: return '## '+amount+' # '+JSON.stringify(transferTransaction)+'                                                                                                                                '+'### '+ JSON.stringify(transactionEntity);
         }
