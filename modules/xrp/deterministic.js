@@ -23,7 +23,7 @@ let wrapper = {
     let secret = Buffer.from(hash.substr(0, 32), 'hex');
     // It can encode a Buffer
     let encoded = api2.encodeSeed(secret);
-    return rippleKeyPairs.deriveKeypair(encoded);// encoded
+    return rippleKeyPairs.deriveKeypair(encoded);
   },
 
   // generate a unique wallet address from a given public key
