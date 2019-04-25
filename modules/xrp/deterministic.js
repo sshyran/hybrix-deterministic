@@ -23,7 +23,7 @@ let wrapper = {
     let secret = Buffer.from(hash.substr(0, 32), 'hex');
     // It can encode a Buffer
     let encoded = api2.encodeSeed(secret);
-    return rippleKeyPairs.deriveKeypair(encoded);// encoded
+    return rippleKeyPairs.deriveKeypair(encoded);
   },
 
   // generate a unique wallet address from a given public key
@@ -41,26 +41,31 @@ let wrapper = {
   // generate a transaction
   transaction: (data, callback) => {
     const address = data.source;
+    const currency = data.symbol === 'xrp' ? 'drops' : data.symbol.replace(/XRP./gi, '').toUpperCase();
+    const hasValidMessage = data.message !== undefined && data.message !== null && data.message !== '';
+    const memos = hasValidMessage ? [{data: data.message}] : [];
     const payment = {
-      'source': {
-        'address': address,
-        'maxAmount': {
-          'value': data.amount,
-          'currency': data.symbol === 'xrp' ? 'drops' : data.symbol.replace(/XRP./gi, '').toUpperCase()
+      source: {
+        address: address,
+        maxAmount: {
+          value: data.amount,
+          currency
         }
       },
-      'destination': {
-        'address': data.target,
-        'amount': {
-          'value': data.amount,
-          'currency': data.symbol === 'xrp' ? 'drops' : data.symbol.replace(/XRP./gi, '').toUpperCase()
+      destination: {
+        address: data.target,
+        amount: {
+          value: data.amount,
+          currency
         }
-      }
+      },
+      memos
     };
+
     const instructions = {
-      'fee': data.fee,
-      'sequence': parseInt(data.unspent.sequence),
-      'maxLedgerVersion': parseInt(data.unspent.lastLedgerSequencePlus)
+      fee: data.fee,
+      sequence: parseInt(data.unspent.sequence),
+      maxLedgerVersion: parseInt(data.unspent.lastLedgerSequencePlus)
     };
     const keypair = {
       privateKey: data.keys.privateKey,
