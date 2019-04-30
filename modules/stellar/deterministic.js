@@ -20,6 +20,14 @@ const wrapper = (
         return {publicKey: keyPair.publicKey(), privateKey: keyPair.secret()};
       },
 
+      importPublic: function (data) {
+        return {publicKey: data.publicKey};
+      },
+
+      // TODO importPrivate
+
+      // TODO sumKeys
+
       // generate a unique wallet address from a given public key
       address: function (data) {
         return data.publicKey;

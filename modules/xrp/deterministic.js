@@ -26,6 +26,14 @@ let wrapper = {
     return rippleKeyPairs.deriveKeypair(encoded);
   },
 
+  importPublic: function (data) {
+    return {publicKey: data.publicKey};
+  },
+
+  // TODO importPrivate
+
+  // TODO sumKeys
+
   // generate a unique wallet address from a given public key
   address: data => {
     const address = rippleKeyPairs.deriveAddress(data.publicKey);

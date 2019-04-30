@@ -87,6 +87,9 @@ function httpCall (request, dataCallback, errorCallback) {
 let wrapper = (
   function () {
     let functions = {
+      // TODO importPrivate
+      // TODO importPublic
+      // TODO sumKeys
 
       // create deterministic public and private keys based on a seed
       keys: data => {

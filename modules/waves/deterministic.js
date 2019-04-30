@@ -18,6 +18,10 @@ let wrapper = (
         return uglyClone(Waves.Seed.fromExistingPhrase(data.seed));
       },
 
+      // TODO importPublic
+      // TODO importPrivate
+      // TODO sumKeys
+
       // return public address
       address: function (data) {
         return uglyClone(data.address);

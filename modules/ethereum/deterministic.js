@@ -28,8 +28,10 @@ let wrapper = (
         let privateKey = wrapperlib.ethUtil.sha256(data.seed);
         return {privateKey: privateKey};
       },
+      // TODO importPublic
+      // TODO sumKeys
 
-      importKeys: function (data) {
+      importPrivate: function (data) {
         return {privateKey: Buffer.from(data.privateKey, 'hex')};
       },
 

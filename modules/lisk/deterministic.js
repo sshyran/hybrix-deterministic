@@ -34,6 +34,10 @@ let wrapper = (
         return output;
       },
 
+      // TODO importPublic
+      // TODO importPrivate
+      // TODO sumKeys
+
       // return public key
       publickey: function (data) {
         return data.publicKey;

@@ -134,7 +134,13 @@ let wrapper = (
         return {privateKey: privateKey};
       },
 
-      importKeys: function (data) {
+      // TODO sumKeys
+
+      importPublic: function (data) {
+        return {publicKey: data.publicKey};
+      },
+
+      importPrivate: function (data) {
         return {privateKey: data.privateKey};
       },
 
@@ -151,9 +157,14 @@ let wrapper = (
       // generate a unique wallet address from a given public key
       address: function (data) {
         let network = wrapperlib.nem.model.network.data['mainnet']; // mainnet or testnet
-        let privKey = data.privateKey;
-        let pubKey = wrapperlib.nem.crypto.keyPair.create(privKey).publicKey;
-        let addr = wrapperlib.nem.model.address.toAddress(pubKey.toString(), network.id);
+        let addr;
+        if (data.hasOwnProperty('privateKey')) {
+          let privKey = data.privateKey;
+          let pubKey = wrapperlib.nem.crypto.keyPair.create(privKey).publicKey;
+          addr = wrapperlib.nem.model.address.toAddress(pubKey.toString(), network.id);
+        } else if (data.hasOwnProperty('publicKey')) {
+          addr = wrapperlib.nem.model.address.toAddress(data.publicKey, network.id);
+        }
 
         if (!wrapperlib.nem.model.address.isValid(addr)) {
           throw new Error("Can't generate address from private key. " +

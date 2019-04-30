@@ -26,6 +26,14 @@ if (typeof window === 'object') {
 let wrapper = (
   function () {
     let functions = {
+
+      importPrivate: function (data) {
+        return {WIF: data.privateKey};
+      },
+
+      // TODO importPublic
+      // TODO sumKeys
+
       // create deterministic public and private keys based on a seed
       keys: function (data) {
         let seed = Buffer.from(data.seed);
