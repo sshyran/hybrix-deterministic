@@ -162,6 +162,9 @@ let wrapper = (
           let privKey = data.privateKey;
           let pubKey = wrapperlib.nem.crypto.keyPair.create(privKey).publicKey;
           addr = wrapperlib.nem.model.address.toAddress(pubKey.toString(), network.id);
+          if (!wrapperlib.nem.crypto.helpers.checkAddress(privKey, network.id, addr)) {
+            throw new Error("Private key doesn't correspond to the expected address " + addr);
+          }
         } else if (data.hasOwnProperty('publicKey')) {
           addr = wrapperlib.nem.model.address.toAddress(data.publicKey, network.id);
         }
@@ -175,9 +178,6 @@ let wrapper = (
           throw new Error("Can't generate address from private key. " +
                              'Generated address ' + addr +
                              'is not valid for ' + network);
-        }
-        if (!wrapperlib.nem.crypto.helpers.checkAddress(privKey, network.id, addr)) {
-          throw new Error("Private key doesn't correspond to the expected address " + addr);
         }
 
         addr = addr.replace(/(.{6})/g, '$1-'); // prettify for human readability
