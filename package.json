@@ -8,7 +8,6 @@
     "test": "tests"
   },
   "dependencies": {
-    "decimal.js-light": "^2.5.0",
     "stdio": "^0.2.7",
     "window": "^4.2.5"
   },
