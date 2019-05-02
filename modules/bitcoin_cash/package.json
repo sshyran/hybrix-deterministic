@@ -11,6 +11,7 @@
   "dependencies": {
     "bchaddrjs": "^0.3.2",
     "bitcore-lib-cash": "^8.1.1",
-    "cashaddrjs": "^0.3.3"
+    "cashaddrjs": "^0.3.3",
+    "decimal.js-light": "^2.5.0"
   }
 }
