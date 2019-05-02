@@ -91,7 +91,6 @@ function mkUtxo (addr, factor) {
       address: addr,
       outputIndex: u.txn,
       satoshis: new Decimal(u.amount)
-        .times((new Decimal('10').toPower(factor)))
         .toNumber(),
       script: u.script,
       txId: u.txid
