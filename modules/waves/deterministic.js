@@ -18,6 +18,10 @@ let wrapper = (
         return uglyClone(Waves.Seed.fromExistingPhrase(data.seed));
       },
 
+      // TODO importPublic
+      // TODO importPrivate
+      // TODO sumKeys
+
       // return public address
       address: function (data) {
         return uglyClone(data.address);
@@ -34,8 +38,10 @@ let wrapper = (
       },
 
       transaction: function (data, callback) {
-        let seed = data.seed;
+        const seed = data.seed;
         let signedTx;
+        const hasValidMessage = typeof data.message !== 'undefined' && data.message !== null && data.message !== '';
+        const messageOrEmpty = hasValidMessage ? data.message : '';
 
         if (data.mode !== 'token') {
           signedTx = transfer({
@@ -47,9 +53,9 @@ let wrapper = (
             feeAssetId: '', // defaults to WAVES
             fee: parseInt(data.fee), // is optional
             // 140 bytes of data (it's allowed to use Uint8Array here)
-            attachment: '' // FUTURE: add a message?
+            attachment: messageOrEmpty,
             // feeAssetId: undefined
-            // timestamp: 1536917842558, //Timestamp is optional but it was overrided, in case timestamp is not provided it will fallback to Date.now()
+            timestamp: data.time // Timestamp is optional but it was overrided, in case timestamp is not provided it will fallback to Date.now()
           }, seed);
         } else {
           signedTx = transfer({
@@ -61,14 +67,12 @@ let wrapper = (
             feeAssetId: '', // defaults to WAVES
             fee: parseInt(data.fee), // is optional
             // 140 bytes of data (it's allowed to use Uint8Array here)
-            attachment: '' // FUTURE: add a message?
+            attachment: messageOrEmpty,
             // feeAssetId: undefined
-            // timestamp: 1536917842558, //Timestamp is optional but it was overrided, in case timestamp is not provided it will fallback to Date.now()
+            timestamp: data.time // Timestamp is optional but it was overrided, in case timestamp is not provided it will fallback to Date.now()
           }, seed);
         }
-
-        signedTx.attachment = '';
-
+        signedTx.attachment = messageOrEmpty;
         callback(JSON.stringify(signedTx));
         // return JSON.stringify(signedTx);
       }

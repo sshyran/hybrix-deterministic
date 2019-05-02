@@ -16,13 +16,21 @@ let wrapper = (
         };
       },
 
-      importKeys: function (data) {
+      importPrivate: function (data) {
         let publicKey = wrapperlib.secretPhraseToPublicKey(data.privateKey);
         return {
           publicKey: publicKey,
           secretPhrase: data.privateKey
         };
       },
+
+      importPublic: function (data) {
+        return {
+          publicKey: data.publicKey
+        };
+      },
+
+      // TODO sumKeys
 
       // generate a unique wallet address from a given public key
       address: function (data) {

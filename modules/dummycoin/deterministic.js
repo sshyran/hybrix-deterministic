@@ -14,8 +14,12 @@ let wrapper = (
         return wrapperlib.keys(data);
       },
 
-      importKeys: data => {
+      importPrivate: data => {
         return {public: '_dummypublickey_', private: data.privateKey};
+      },
+
+      importPublic: data => {
+        return {public: data.publicKey};
       },
 
       // generate a unique wallet address from a given public key

@@ -31,8 +31,10 @@ let wrapper = (
     }
 
     let functions = {
+      // TODO importPublic
+      // TODO sumKeys
 
-      importKeys: function (data) {
+      importPrivate: function (data) {
         return {WIF: data.privateKey};
       },
 

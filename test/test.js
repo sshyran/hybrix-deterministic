@@ -7,6 +7,7 @@
 const stdio = require('stdio');
 const fs = require('fs');
 const CommonUtils = require('../common/index');
+const Decimal = require('../common/crypto/decimal-light');
 
 const ops = stdio.getopt({
   'symbol': {key: 's', args: 1, description: 'Select a symbol to run test.'},
@@ -46,7 +47,7 @@ if (fs.existsSync(recipePath + 'asset.' + ops.symbol + '.json')) {
   console.log(' [!] No Recipe file found. ($HYBRIXD/node/recipes/asset.' + ops.symbol + '.json or $HYBRIXD/node/recipes/token.' + ops.symbol + '.json)');
 }
 
-const amount = ops.amount || '100';
+const amount = ops.amount || '1000';
 let unspent;
 
 if (typeof ops.unspent === 'string') {
@@ -66,9 +67,11 @@ const showAddress = (dataCallback, errorCallback, keys, details, publicKey) => (
   dataCallback({address, keys, details, publicKey});
 };
 
-const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
+const showKeysGetAddress = (dataCallback, errorCallback, details) => (keys, seed) => {
   console.log(' [.] Keys               :', keys);
   const publicKey = window.deterministic.publickey(keys);
+  console.log(' [.] Seed               :', seed);
+
   console.log(' [.] Public Key         :', publicKey);
   const privateKey = window.deterministic.privatekey(keys);
   console.log(' [.] Private Key        :', privateKey);
@@ -77,6 +80,7 @@ const showKeysGetAddress = (dataCallback, errorCallback, details) => keys => {
 
   const subMode = mode.split('.')[1];
   keys.mode = subMode;
+  keys.seed = seed;
   const address = window.deterministic.address(keys, showAddress(dataCallback, errorCallback, keys, details, publicKey), errorCallback);
   if (typeof address !== 'undefined') {
     showAddress(dataCallback, errorCallback, keys, details, publicKey)(address);
@@ -118,7 +122,7 @@ function getKeysAndAddress (details, dataCallback, errorCallback) {
   console.log(' [.] Seed               :', seed);
   const keys = window.deterministic.keys({seed, mode: subMode}, showKeysGetAddress(dataCallback, errorCallback, details), errorCallback);
   if (typeof keys !== 'undefined') {
-    showKeysGetAddress(dataCallback, errorCallback, details)(keys);
+    showKeysGetAddress(dataCallback, errorCallback, details)(keys, seed);
   }
 }
 
@@ -143,6 +147,12 @@ function outputResults (result) {
   }
 }
 
+let toIntLocal = function (input, factor) {
+  let f = Number(factor);
+  let x = new Decimal(String(input));
+  return x.times('1' + (f > 1 ? '0'.repeat(f) : '')).toString();
+};
+
 function createTransaction (data, dataCallback, errorCallback) {
   let actualUnspent;
   if (typeof unspent !== 'undefined') {
@@ -158,14 +168,16 @@ function createTransaction (data, dataCallback, errorCallback) {
   const tx = {
     symbol: data.result.details.symbol,
     amount: amount,
-    fee: typeof fee === 'undefined' ? data.result.details.fee : fee,
+    fee: toIntLocal(typeof fee === 'undefined' ? data.result.details.fee : fee, data.result.details['fee-factor']),
     keys: data.result.keys,
     source: data.result.address,
     target: target || data.result.address,
     contract: data.result.details.contract,
     mode: data.result.details.mode,
     unspent: actualUnspent,
-    factor: data.result.details.factor
+    factor: data.result.details.factor,
+    time: coinSpecificTestData.time,
+    seed: data.result.keys.seed
   };
 
   const result = window.deterministic.transaction(tx, dataCallback, errorCallback);
@@ -186,6 +198,23 @@ function optionalPushToTargetChain (signedTrxData) {
   return ops.push
     ? {result: {data: {query: `/asset/${ops.symbol}/push/${signedTrxData}`}, step: 'rout'}}
     : {result: {data: {signedTrxData}, step: 'id'}};
+}
+
+function outputAndCheckHash (signedTrxDataAndHash) {
+  console.log(' [.] Transaction        :', signedTrxDataAndHash.signedTrxData);
+  console.log(' [.] Transaction Hash   :', signedTrxDataAndHash.hash);
+
+  if (coinSpecificTestData.hasOwnProperty('hash')) {
+    if (signedTrxDataAndHash.hash === coinSpecificTestData.hash) {
+      console.log(' [v] Test Hash          :', coinSpecificTestData.hash, '[MATCH]');
+    } else if (coinSpecificTestData.hash === 'dynamic') {
+      console.log(' [i] Test Hash          :', 'dynamic');
+    } else {
+      console.log(' [!] Test Hash          :', coinSpecificTestData.hash, '[NO MATCH!]');
+    }
+  } else {
+    console.log(' [i] Test Hash          :', 'NOT AVAILABLE');
+  }
 }
 
 hybrix.sequential(
@@ -223,12 +252,16 @@ hybrix.sequential(
     result => {
       return {data: result, func: createTransaction};
     }, 'call',
+    result => { return {hash: {data: {data: result}, step: 'hash'}, signedTrxData: {data: result, step: 'id'}}; }, 'parallel',
+
+    outputAndCheckHash,
+
     // When the optional --push flag is specified, the transaction is pushed to the target chain.
     // Restrictions such as transaction cost and funding requirements may apply.
-    signedTrxData => optionalPushToTargetChain(signedTrxData), 'parallel'
+    optionalPushToTargetChain
+
   ],
   result => {
-    console.log(' [.] Transaction        :', JSON.stringify(result));
     console.log(`\n [OK] Successfully ran test for symbol ${ops.symbol}\n`);
   },
   error => {

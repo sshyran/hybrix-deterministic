@@ -12,7 +12,7 @@ let dummylib = {
 
   // generate a unique wallet address from a given public key
   address: data => {
-    if (typeof data === 'object' && data.public === '_dummypublickey_' && data.private === '_dummyprivatekey_') {
+    if (typeof data === 'object' && data.public === '_dummypublickey_') {
       return '_dummyaddress_';
     } else {
       throw 'Expected correct keys.';

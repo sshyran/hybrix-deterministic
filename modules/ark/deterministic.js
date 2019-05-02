@@ -14,6 +14,10 @@ let wrapper = {
     return wrapperlib.crypto.getKeys(data.seed);
   },
 
+  // TODO importPrivate
+  // TODO importPublic
+  // TODO sumKeys
+
   // generate a unique wallet address from a given public key
   address: data => {
     return wrapperlib.crypto.getAddress(data.publicKey);

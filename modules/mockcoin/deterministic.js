@@ -1,8 +1,4 @@
-// (C) 2015 Internet of Coins / Metasync / Joachim de Koning
-// hybrixd module - dummycoin/deterministic.js
-// Deterministic encryption wrapper for Dummy test coin
-//
-// [!] Browserify this and save to deterministic.js.lzma to enable sending it from hybrixd to the browser!
+// (C) 2019 Internet of Coins / Rouke Pouw
 //
 let wrapperlib = require('./wrapperlib');
 
@@ -16,6 +12,17 @@ let wrapper = (
 
       importKeys: data => {
         return {public: data.privateKey, private: data.privateKey};
+      },
+
+      importPublic: data => {
+        return {public: data.publicKey};
+      },
+
+      sumKeys: data => {
+        const result = {};
+        result.public = data.keys.reduce((sum, keyPair) => sum + Number(keyPair.public), 0) % 1000;
+        result.private = data.keys.reduce((sum, keyPair) => sum + Number(keyPair.private), 0) % 1000;
+        return result;
       },
 
       // generate a unique wallet address from a given public key

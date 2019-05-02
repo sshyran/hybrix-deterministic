@@ -34,6 +34,10 @@ let wrapper = (
         return output;
       },
 
+      // TODO importPublic
+      // TODO importPrivate
+      // TODO sumKeys
+
       // return public key
       publickey: function (data) {
         return data.publicKey;
@@ -46,7 +50,8 @@ let wrapper = (
 
       transaction: function (data) {
         // return deterministic transaction data
-        let tx = wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), data.seed);
+        const timeOffset = data.hasOwnProperty('time') ? (data.time - Date.now()) : undefined;
+        let tx = wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), data.seed, undefined, timeOffset);
         if (data.mode === 'lisk') { // added to match new lisk API, rise and shift still using old
           tx.amount = String(tx.amount);
           tx.fee = String(tx.fee);
