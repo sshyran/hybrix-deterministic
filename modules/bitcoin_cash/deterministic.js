@@ -22,15 +22,13 @@ function mkAddress (pk) {
 let wrapper = (
   function () {
     return {
-      importKeys: data => {
-        console.log('data = ', data);
-        // return {WIF: data.privateKey};
+      importPrivate: data => {
+        return {privateKey: data.privateKey};
       },
 
       // create deterministic public and private keys based on a seed
       keys: data => {
         const pk = mkPrivateKey(data.seed);
-
         return {
           privateKey: pk
         };
@@ -43,7 +41,7 @@ let wrapper = (
 
       // return public key
       publickey: data => {
-        return null;
+        return mkAddress(data.privateKey);
       },
 
       // return private key
