@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bs58check": "^2.1.2",
     "zcash-bitcore-lib": "^0.13.20-rc3"
   }
 }
