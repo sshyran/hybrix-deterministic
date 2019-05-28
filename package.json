@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "dependencies": {
+    "acorn-jsx": "^5.0.1",
     "stdio": "^0.2.7",
     "window": "^4.2.5"
   },

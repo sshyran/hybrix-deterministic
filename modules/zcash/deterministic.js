@@ -1,75 +1,71 @@
-// (C) 2018 Internet of Coins
+// (C) 2019 Internet of Coins
 // hybrixd module - electrum/deterministic_source.js
 // Deterministic encryption wrapper for ZCash
 
-let wrapperlib = require('./wrapperlib');
+const bitcore = require('bitcore-lib-zcash');
+const livenet = bitcore.Networks.livenet;
 
-let wrapper = (
-  function () {
-    let functions = {
-      // create deterministic public and private keys based on a seed
-      keys: function (data) {
-        let seed = Buffer.from(data.seed);
-        let hash = wrapperlib.zcash.crypto.Hash.sha256(seed);
-        let bn = wrapperlib.zcash.crypto.BN.fromBuffer(hash);
+const wrapper = {
 
-        let privKey = new wrapperlib.zcash.PrivateKey(bn, data.mode);
-        let wif = privKey.toWIF();
+  // create deterministic public and private keys based on a seed
+  keys: function (data) {
+    const buffer = Buffer.from(data.seed, 'utf8');
+    const seedBuffer = bitcore.crypto.Hash.sha256(buffer);
+    const bn = bitcore.crypto.BN.fromBuffer(seedBuffer);
+    const privKey = new bitcore.PrivateKey(bn);
+    const pubKey = privKey.toPublicKey();
+    const wif = privKey.toWIF();
 
-        return { WIF: wif };
-      },
+    return { privKey: privKey, pubKey: pubKey, WIF: wif };
+  },
 
-      // generate a unique wallet address from a given public key
-      address: function (data) {
-        let privKey = wrapperlib.zcash.PrivateKey(data.WIF, data.mode);
-        let addr = privKey.toAddress();
+  // generate a unique wallet address from a given public key
+  address: function (data) {
+    let privKey = bitcore.PrivateKey.fromWIF(data.WIF);
+    let publicKey = privKey.toPublicKey();
+    let addressObject = publicKey.toAddress(livenet);
+    let address = new bitcore.Address(addressObject).toString();
+    return address;
+  },
 
-        if (!wrapperlib.zcash.Address.isValid(addr, data.mode)) {
-          throw new Error("Can't generate address from private key. " +
-                             'Generated address ' + addr +
-                             'is not valid for ' + data.mode);
-        }
+  // return public key
+  publickey: function (data) {
+    return data.pubKey.toString();
+  },
 
-        return addr.toString();
-      },
+  // return private key
+  privatekey: function (data) {
+    return data.privKey.toString();
+  },
 
-      // return public key
-      publickey: function (data) {
-        let privKey = wrapperlib.zcash.PrivateKey(data.WIF, data.mode);
-        return new wrapperlib.zcash.PublicKey(privKey).toString('hex');
-      },
+  transaction: function (data) {
+    let fee = parseFloat(data.fee) * 100000000;
+    const hasValidMessage = data.message !== undefined && data.message !== null && data.message !== '';
+    const memos = hasValidMessage ? [{data: data.message}] : null;
 
-      // return private key
-      privatekey: function (data) {
-        return data.WIF;
-      },
+    let tx = new bitcore.Transaction()
+      .from(data.unspent.unspents.map(function (utxo) {
+        return {
+          txId: utxo.txid,
+          outputIndex: parseInt(utxo.txn),
+          address: data.source,
+          script: utxo.script,
+          satoshis: parseInt(utxo.amount)
+        };
+      }))
+      .to(data.target, parseInt(data.amount))
+      .change(data.source)
+      .fee(fee);
 
-      transaction: function (data) {
-        let privKey = wrapperlib.zcash.PrivateKey(data.keys.WIF, data.mode);
-        let recipientAddr = wrapperlib.zcash.Address(data.target, data.mode);
-        let changeAddr = wrapperlib.zcash.Address(data.source, data.mode);
+    if (memos) {
+      tx.addData(memos);
+    }
 
-        let tx = new wrapperlib.zcash.Transaction()
-          .from(data.unspent.unspents.map(function (utxo) {
-            return { txId: utxo.txid,
-              outputIndex: utxo.txn,
-              address: utxo.address,
-              script: utxo.script,
-              satoshis: parseInt(utxo.amount)
-            };
-          }))
-          .to(recipientAddr, parseInt(data.amount))
-          .fee(parseInt(data.fee))
-          .change(changeAddr)
-          .sign(privKey);
+    tx.sign(data.keys.privKey);
 
-        return tx.serialize();
-      }
-    };
-
-    return functions;
+    return tx.serialize();
   }
-)();
+};
 
 // export the functionality to a pre-prepared var
 window.deterministic = wrapper;
