@@ -165,6 +165,10 @@ function createTransaction (data, dataCallback, errorCallback) {
     actualUnspent = data.unspent;
     console.log(' [.] Unspents           : ' + JSON.stringify(actualUnspent));
   }
+
+  const mode = data.result.details.mode;
+  const subMode = mode.split('.')[1];
+
   const tx = {
     symbol: data.result.details.symbol,
     amount: amount,
@@ -173,7 +177,7 @@ function createTransaction (data, dataCallback, errorCallback) {
     source: data.result.address,
     target: target || data.result.address,
     contract: data.result.details.contract,
-    mode: data.result.details.mode,
+    mode: subMode, // deterministic expects the submode, not the entire mode
     unspent: actualUnspent,
     factor: data.result.details.factor,
     time: coinSpecificTestData.time,
