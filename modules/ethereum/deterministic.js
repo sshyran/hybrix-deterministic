@@ -11,6 +11,13 @@ const wrapperlib = {
   hex2dec: require('../../common/crypto/hex2dec')
 };
 
+const GAS_TO_FEE = 21000;
+
+const GAS_BASE_FEE = 21000;
+/*
+ 21000 gas is charged for any transaction as a "base fee". This covers the cost of an elliptic curve operation to recover the sender address from the signature as well as the disk and bandwidth space of storing the transactio
+
+*/
 // shim for randomBytes to avoid require('crypto') incompatibilities
 // solves bug: "There was an error collecting entropy from the browser
 const randomBytes = crypto.randomBytes;
@@ -82,30 +89,38 @@ const deterministic = {
     // value, gasPrice and gasLimit should be in wei's (atomics)
 
     if (data.mode !== 'token') { // Base ETH mode
-      txParams = { // optional-> data: payloadData
+      txParams = {
         nonce: toHex(data.unspent.nonce), // nonce
-        gasPrice: toHex(new Decimal(String(data.fee)).dividedBy(21000).toString()), // we use toString(16) here to specify HEX radix
-        gasLimit: toHex(21000), //  but don't use it elsewhere
+        gasPrice: toHex(new Decimal(String(data.fee)).dividedBy(GAS_TO_FEE).toString()), // Convert fee from eth to gas
+        gasLimit: toHex(GAS_BASE_FEE), //  but don't use it elsewhere
         to: data.target, // send it to ...
         value: toHex(data.amount) // the amount to send
       };
-      console.log('gasPrice', new Decimal(String(data.fee)).dividedBy(21000).toString());
-      console.log('gasLimit', String(21000));
+
+      console.log('encoded', data.mode);
+
+      console.log('gasPrice', new Decimal(String(data.fee)).dividedBy(GAS_TO_FEE).toString());
+      console.log('gasLimit', String(GAS_BASE_FEE));
 
       if (hasValidMessage) {
         txParams.data = data.message;
       }
     } else { // ERC20-compatible token mode
       const tokenfeeMultiply = 16; // [!] must be same as the value in back-end module
+
       const encoded = encode({ 'func': 'transfer(address,uint256):(bool)', 'vars': ['target', 'amount'], 'target': data.target, 'amount': toHex(data.amount) }); // returns the encoded binary (as a Buffer) data to be sent
+      console.log(txParams);
+
       txParams = {
         nonce: toHex(data.unspent.nonce), // nonce
-        gasPrice: toHex(new Decimal(String(data.fee)).dividedBy(21000 * tokenfeeMultiply).times(2).toString()), // must be 2x normal tx!
+        gasPrice: toHex(new Decimal(String(data.fee)).dividedBy(GAS_BASE_FEE * tokenfeeMultiply).times(2).toString()), // must be 2x normal tx!
         gasLimit: toHex(new Decimal(String(21000 * tokenfeeMultiply)).dividedBy(2).toString()), // should not exceed 300000 !
         to: data.contract, // send payload to contract address
         value: '0x0', // set to zero, since we're sending tokens
         data: encoded // payload as encoded using the smart contract
       };
+      console.log('encoded', encoded);
+
       console.log('gasPrice', new Decimal(String(data.fee)).dividedBy(21000 * tokenfeeMultiply).times(2).toString());
       console.log('gasLimit', new Decimal(String(21000 * tokenfeeMultiply)).dividedBy(2).toString());
     }
