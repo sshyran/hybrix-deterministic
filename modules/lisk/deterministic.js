@@ -50,16 +50,23 @@ let wrapper = (
 
       transaction: function (data) {
         // return deterministic transaction data
+        // example: lisk.transaction.createTransaction("1859190791819301L", amount, "passphrase", "secondPassphrase");
+        // for more information see: https://github.com/corsaro1/lisk_broadcast
         const timeOffset = data.hasOwnProperty('time') ? (data.time - Date.now()) : undefined;
         let tx = wrapperlib.transaction.createTransaction(data.target, parseInt(data.amount), data.seed, undefined, timeOffset);
+        const hasValidMessage = data.message !== undefined && data.message !== null;
+
+        if (hasValidMessage) tx.data = data.message;
+        
         if (data.mode === 'lisk') { // added to match new lisk API, rise and shift still using old
           tx.amount = String(tx.amount);
           tx.fee = String(tx.fee);
         }
-        return JSON.stringify(tx);
 
-      // example: lisk.transaction.createTransaction("1859190791819301L", amount, "passphrase", "secondPassphrase");
-        // for more information see: https://github.com/corsaro1/lisk_broadcast
+        if (data.mode === 'rise') tx.senderId = data.source;
+        if (data.mode === 'shift') tx.secret = data.seed;
+
+        return JSON.stringify(tx);
       }
     };
     return functions;
