@@ -57,14 +57,13 @@ let wrapper = (
         const hasValidMessage = data.message !== undefined && data.message !== null;
 
         if (hasValidMessage) tx.data = data.message;
-        
+
         if (data.mode === 'lisk') { // added to match new lisk API, rise and shift still using old
           tx.amount = String(tx.amount);
           tx.fee = String(tx.fee);
         }
 
         if (data.mode === 'rise') tx.senderId = data.source;
-        if (data.mode === 'shift') tx.secret = data.seed;
 
         return JSON.stringify(tx);
       }
