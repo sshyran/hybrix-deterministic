@@ -75,6 +75,7 @@ let wrapper = (
         let privKey = wrapperlib.PrivateKey(data.keys.WIF, data.mode);
         let recipientAddr = wrapperlib.Address(data.target, data.mode);
         let changeAddr = wrapperlib.Address(data.source, data.mode);
+        const hasValidMessage = data.message !== undefined && data.message !== null && data.message !== '';
 
         let tx = new wrapperlib.Transaction()
           .from(data.unspent.unspents.map(function (utxo) {
@@ -87,10 +88,15 @@ let wrapper = (
           }))
           .to(recipientAddr, parseInt(data.amount))
           .fee(parseInt(data.fee))
-          .change(changeAddr)
+          .change(changeAddr);
+
+        let txWithMaybeMessage = hasValidMessage
+          ? tx.addData(data.message)
+          : tx;
+        let signedTx = txWithMaybeMessage
           .sign(privKey);
 
-        return tx.serialize();
+        return signedTx.serialize();
       }
     };
     return functions;
