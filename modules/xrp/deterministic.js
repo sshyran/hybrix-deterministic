@@ -73,7 +73,7 @@ let wrapper = {
     const instructions = {
       fee: data.fee,
       sequence: parseInt(data.unspent.sequence),
-      maxLedgerVersion: parseInt(data.unspent.lastLedgerSequencePlus)
+      maxLedgerVersion: data.unspent.lastLedgerSequencePlus
     };
     const keypair = {
       privateKey: data.keys.privateKey,
