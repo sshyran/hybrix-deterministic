@@ -50,11 +50,12 @@ let wrapper = (
       },
 
       transaction: function (data) {
-        let privKey = wrapperlib.dashcore.PrivateKey(data.keys.WIF, data.mode);
-        let recipientAddr = wrapperlib.dashcore.Address(data.target, data.mode);
-        let changeAddr = wrapperlib.dashcore.Address(data.source, data.mode);
+        const privKey = wrapperlib.dashcore.PrivateKey(data.keys.WIF, data.mode);
+        const recipientAddr = wrapperlib.dashcore.Address(data.target, data.mode);
+        const changeAddr = wrapperlib.dashcore.Address(data.source, data.mode);
+        const hasValidMessage = data.message !== undefined && data.message !== null;
 
-        let tx = new wrapperlib.dashcore.Transaction()
+        const tx = new wrapperlib.dashcore.Transaction()
           .from(data.unspent.unspents.map(function (utxo) {
             return { txId: utxo.txid,
               outputIndex: utxo.txn,
@@ -64,11 +65,17 @@ let wrapper = (
             };
           }))
           .to(recipientAddr, parseInt(data.amount))
-          .fee(parseInt(data.fee))
-          .change(changeAddr)
+          .change(changeAddr);
+
+        const txWithMaybeMessage = hasValidMessage
+          ? tx.addData(data.message)
+          : tx;
+
+        const signedTx = txWithMaybeMessage
+          .fee(data.fee)
           .sign(privKey);
 
-        return tx.serialize();
+        return signedTx.serialize();
       }
     };
 
