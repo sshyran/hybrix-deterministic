@@ -21,13 +21,12 @@ for (i = 10; i <= 15; ++i) {
   nibbleToChar.push(lowerChar);
 }
 
-function simpleHash(message, encoding) {
+function simpleHash (message, encoding) {
   if (message instanceof Array) {
     message = Buffer.from(message);
   }
   return crypto.createHash('sha256').update(message).digest(encoding);
-};
-
+}
 
 // function byteArrayToBigInteger(byteArray, startIndex) {
 //   var value = new BigInteger('0', 10);
@@ -39,9 +38,9 @@ function simpleHash(message, encoding) {
 //   }
 //   return value;
 // };
-function byteArrayToBigInteger(bytes, opt_startIndex) {
+function byteArrayToBigInteger (bytes, opt_startIndex) {
   var index = this.checkBytesToIntInput(bytes, 8, opt_startIndex);
-  var value = new BigInteger("0", 10);
+  var value = new BigInteger('0', 10);
   var temp1, temp2;
 
   if (!opt_startIndex) {
@@ -49,42 +48,40 @@ function byteArrayToBigInteger(bytes, opt_startIndex) {
   }
 
   for (var i = 7; i >= 0; i--) {
-    temp1 = value.multiply(new BigInteger("256", 10));
+    temp1 = value.multiply(new BigInteger('256', 10));
     temp2 = temp1.add(new BigInteger(bytes[opt_startIndex + i].toString(10), 10));
     value = temp2;
   }
 
   return value;
-};
+}
 
-function intValToByteArray(number) {
+function intValToByteArray (number) {
   // We want to represent the input as a 8-bytes array
   var byteArray = [0, 0, 0, 0];
-  for (var index = 0; index < byteArray.length; index ++) {
+  for (var index = 0; index < byteArray.length; index++) {
     var byte = number & 0xff;
-    byteArray [ index ] = byte;
-    long = (number - byte) / 256 ;
+    byteArray[ index ] = byte;
+    long = (number - byte) / 256;
   }
   return byteArray;
-};
+}
 
-
-function byteArrayToIntVal(byteArray) {
+function byteArrayToIntVal (byteArray) {
   // We want to represent the input as a 8-bytes array
   var intval = 0;
-  for (var index = 0; index < byteArray.length; index ++) {
+  for (var index = 0; index < byteArray.length; index++) {
     var byt = byteArray[index] & 0xFF;
     var value = byt * Math.pow(256, index);
     intval += value;
   }
   return intval;
-};
+}
 
-
-function hexStringToByteArray(str) {
+function hexStringToByteArray (str) {
   var bytes = [];
   var i = 0;
-  if (0 !== str.length % 2) {
+  if (str.length % 2 !== 0) {
     bytes.push(charToNibble[str[0]]);
     ++i;
   }
@@ -96,10 +93,9 @@ function hexStringToByteArray(str) {
   }
 
   return bytes;
-};
+}
 
-
-function byteArrayToHexString(bytes) {
+function byteArrayToHexString (bytes) {
   // var str = '';
   // for (var i = 0; i < bytes.length; ++i) {
   //   if (bytes[i] < 0) {
@@ -108,29 +104,27 @@ function byteArrayToHexString(bytes) {
   //   str += nibbleToChar[bytes[i] >> 4] + nibbleToChar[bytes[i] & 0x0F];
   // }
 
-  return Array.from(bytes, function(byte) {
+  return Array.from(bytes, function (byte) {
     return ('0' + (byte & 0xFF).toString(16)).slice(-2);
-  }).join('')
+  }).join('');
 
-  //return str;
-};
+  // return str;
+}
 
-
-function stringToByteArray(str) {
+function stringToByteArray (str) {
   str = unescape(encodeURIComponent(str));
   var bytes = new Array(str.length);
   for (var i = 0; i < str.length; ++i) {
     bytes[i] = str.charCodeAt(i);
   }
   return bytes;
-};
+}
 
-
-function stringToHexString(str) {
+function stringToHexString (str) {
   return byteArrayToHexString(stringToByteArray(str));
-};
+}
 
-function checkBytesToIntInput(bytes, numBytes, opt_startIndex) {
+function checkBytesToIntInput (bytes, numBytes, opt_startIndex) {
   var startIndex = opt_startIndex || 0;
   if (startIndex < 0) {
     throw new Error('Start index should not be negative');
@@ -140,26 +134,25 @@ function checkBytesToIntInput(bytes, numBytes, opt_startIndex) {
     throw new Error('Need at least ' + (numBytes) + ' bytes to convert to an integer');
   }
   return startIndex;
-};
+}
 
-function byteArrayToSignedShort(bytes, opt_startIndex) {
+function byteArrayToSignedShort (bytes, opt_startIndex) {
   var index = this.checkBytesToIntInput(bytes, 2, opt_startIndex);
   var value = bytes[index];
   value += bytes[index + 1] << 8;
   return value;
-};
+}
 
-function byteArrayToSignedInt32(bytes, opt_startIndex) {
+function byteArrayToSignedInt32 (bytes, opt_startIndex) {
   var index = this.checkBytesToIntInput(bytes, 4, opt_startIndex);
   var value = bytes[index];
   value += bytes[index + 1] << 8;
   value += bytes[index + 2] << 16;
   value += bytes[index + 3] << 24;
   return value;
-};
+}
 
-
-function byteArrayToWordArray(byteArray) {
+function byteArrayToWordArray (byteArray) {
   var i = 0;
   var offset = 0;
   var word = 0;
@@ -172,7 +165,7 @@ function byteArrayToWordArray(byteArray) {
       (byteArray[i++] << 16) |
       (byteArray[i++] << 8) |
       (byteArray[i++]
-    );
+      );
   }
   if (len % 4 != 0) {
     word = byteArray[i++] << 24;
@@ -188,10 +181,9 @@ function byteArrayToWordArray(byteArray) {
   wordArray.sigBytes = len;
   wordArray.words = words;
   return wordArray;
-};
+}
 
-
-function wordArrayToByteArray(wordArray, isFirstByteHasSign = true) {
+function wordArrayToByteArray (wordArray, isFirstByteHasSign = true) {
   var len = wordArray.words.length;
   if (len == 0) {
     return new Array(0);
@@ -221,20 +213,18 @@ function wordArrayToByteArray(wordArray, isFirstByteHasSign = true) {
     byteArray[offset++] = (word >> 8) & 0xff;
   }
   return byteArray;
-};
+}
 
-
-function byteArrayToShortArray(byteArray) {
+function byteArrayToShortArray (byteArray) {
   var shortArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   var i;
   for (i = 0; i < 16; i++) {
     shortArray[i] = byteArray[i * 2] | byteArray[i * 2 + 1] << 8;
   }
   return shortArray;
-};
+}
 
-
-function shortArrayToByteArray(shortArray) {
+function shortArrayToByteArray (shortArray) {
   var byteArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   var i;
   for (i = 0; i < 16; i++) {
@@ -242,10 +232,9 @@ function shortArrayToByteArray(shortArray) {
     byteArray[2 * i + 1] = shortArray[i] >> 8;
   }
   return byteArray;
-};
+}
 
-
-function shortArrayToHexString(ary) {
+function shortArrayToHexString (ary) {
   var res = '';
   for (var i = 0; i < ary.length; i++) {
     res += nibbleToChar[(ary[i] >> 4) & 0x0f] +
@@ -254,10 +243,9 @@ function shortArrayToHexString(ary) {
            nibbleToChar[(ary[i] >> 8) & 0x0f];
   }
   return res;
-};
+}
 
-
-function byteArrayToString(bytes, startIndex, length) {
+function byteArrayToString (bytes, startIndex, length) {
   if (length == 0) {
     return '';
   }
@@ -270,23 +258,23 @@ function byteArrayToString(bytes, startIndex, length) {
     bytes = bytes.slice(startIndex, startIndex + length);
   }
   return decodeURIComponent(escape(String.fromCharCode.apply(null, bytes)));
-};
+}
 
-function toEpochTime(currentTime) {
-    if (currentTime == undefined) {
-        currentTime = new Date();
-    }
-    return Math.floor((currentTime - EPOCH_BEGINNING) / 1000);
-};
+function toEpochTime (currentTime) {
+  if (currentTime == undefined) {
+    currentTime = new Date();
+  }
+  return Math.floor((currentTime - EPOCH_BEGINNING) / 1000);
+}
 
-function getUtf8Bytes(str) {
-    var utf8 = unescape(encodeURIComponent(str));
-    var arr = [];
-    for (var i = 0; i < utf8.length; i++) {
-        arr[i] = utf8.charCodeAt(i);
-    }
-    return arr;
-};
+function getUtf8Bytes (str) {
+  var utf8 = unescape(encodeURIComponent(str));
+  var arr = [];
+  for (var i = 0; i < utf8.length; i++) {
+    arr[i] = utf8.charCodeAt(i);
+  }
+  return arr;
+}
 
 module.exports = {
   simpleHash: simpleHash,

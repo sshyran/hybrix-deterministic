@@ -1,5 +1,4 @@
-(function() {
-
+(function () {
   var account = require('./lib/account');
 
   module.exports = {
@@ -12,5 +11,4 @@
     generateToken: account.generateToken,
     decryptNote: account.decryptNote
   };
-
 })();
