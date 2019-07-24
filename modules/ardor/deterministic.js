@@ -33,7 +33,7 @@ const wrapper = {
 
   // return private key
   privatekey: data => {
-    return data.privateKey;
+    return data.secretPhrase;
   },
   // return deterministic transaction data
   transaction: data => {
