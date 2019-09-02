@@ -19,7 +19,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "setup": "sh scripts/npm/setup.sh",
+    "setup": "sh scripts/npm/setup.sh 'public'",
+    "setup:dev": "sh scripts/npm/setup.sh 'dev'",
     "compile": "sh scripts/npm/compile.sh",
     "diag": "sh scripts/npm/diag.sh",
     "dist": "sh scripts/npm/dist.sh",

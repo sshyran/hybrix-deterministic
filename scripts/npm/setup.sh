@@ -12,6 +12,20 @@ NODEJS="$HYBRIXD/nodejs"
 COMMON="$HYBRIXD/common"
 INTERFACE="$HYBRIXD/interface"
 WEB_WALLET="$HYBRIXD/web-wallet"
+ENVIRONMENT=$1
+
+if [ "$ENVIRONMENT" == "dev" ]; then
+    URL_COMMON="https://gitlab.com/hybrix/hybrixd/common.git"
+    URL_INTERFACE="https://www.gitlab.com/hybrix/hybrixd/interface.git"
+    echo "[i] Environment is development..."
+elif [ "$ENVIRONMENT" == "public" ]; then
+    URL_COMMON="https://github.com/hybrix-io/hybrixd-common.git"
+    URL_INTERFACE="https://github.com/hybrix-io/hybrixd-interface.git"
+    echo "[i] Environment is public..."
+else
+    echo "[!] Unknown Environment (please use npm run setup[:dev])"
+    exit 1
+fi
 
 
 if [ "`uname`" = "Darwin" ]; then
@@ -33,7 +47,7 @@ if [ ! -e "$DETERMINISTIC/node_binaries" ];then
     if [ ! -e "$NODEJS" ];then
         cd "$HYBRIXD"
         echo " [i] Clone node js runtimes files"
-        git clone https://www.gitlab.com/hybrix/hybrixd/dependencies/nodejs.git
+        git clone https://www.gitlab.com/hybrix/hybrixd/dependencies/nodejs.git #TODO find this on github for public consumption!
     fi
     echo " [i] Link node_binaries files"
     ln -sf "$NODEJS/$SYSTEM" "$DETERMINISTIC/node_binaries"
@@ -49,7 +63,7 @@ if [ ! -e "$DETERMINISTIC/common" ];then
     if [ ! -e "$COMMON" ];then
         cd "$HYBRIXD"
         echo " [i] Clone common files"
-        git clone https://www.gitlab.com/hybrix/hybrixd/common.git
+        git clone $URL_COMMON
     fi
     echo " [i] Link common files"
     ln -sf "$COMMON" "$DETERMINISTIC/common"
@@ -64,7 +78,7 @@ if [ ! -e "$DETERMINISTIC/interface" ];then
     if [ ! -e "$INTERFACE" ];then
         cd "$HYBRIXD"
         echo " [i] Clone interface files"
-        git clone https://www.gitlab.com/hybrix/hybrixd/interface.git
+        git clone $URL_INTERFACE
     fi
     echo " [i] Link interface files"
     ln -sf "$INTERFACE/dist" "$DETERMINISTIC/interface"
