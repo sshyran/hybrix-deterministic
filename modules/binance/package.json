@@ -1,0 +1,15 @@
+{
+  "name": "bnb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "deterministic.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jacob Petrovic",
+  "license": "ISC",
+  "dependencies": {
+    "@binance-chain/javascript-sdk": "^2.14.1",
+    "acorn": "^6.2.0"
+  }
+}
