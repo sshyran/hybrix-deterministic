@@ -64,10 +64,7 @@ if [ ! -e "$DETERMINISTIC/common" ];then
         cd "$HYBRIXD"
         echo " [i] Clone common files"
         git clone $URL_COMMON
-        if [ "$ENVIRONMENT" = "public" ]; then
-            echo " [i] Renaming common folder"
-            mv hybrixd-common common
-        fi
+        ln -sf "hybrixd-common" "common"
 
     fi
     echo " [i] Link common files"
@@ -84,10 +81,7 @@ if [ ! -e "$DETERMINISTIC/interface" ];then
         cd "$HYBRIXD"
         echo " [i] Clone interface files"
         git clone $URL_INTERFACE
-        if [ "$ENVIRONMENT" = "public" ]; then
-            echo " [i] Renaming interface folder"
-            mv hybrixd-interface interface
-        fi
+        ln -sf "hybrixd-interface" "interface"
 
     fi
     echo " [i] Link interface files"
