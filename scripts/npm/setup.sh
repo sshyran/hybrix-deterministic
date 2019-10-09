@@ -14,11 +14,11 @@ INTERFACE="$HYBRIXD/interface"
 WEB_WALLET="$HYBRIXD/web-wallet"
 ENVIRONMENT=$1
 
-if [ "$ENVIRONMENT" == "dev" ]; then
+if [ "$ENVIRONMENT" = "dev" ]; then
     URL_COMMON="https://gitlab.com/hybrix/hybrixd/common.git"
     URL_INTERFACE="https://www.gitlab.com/hybrix/hybrixd/interface.git"
     echo "[i] Environment is development..."
-elif [ "$ENVIRONMENT" == "public" ]; then
+elif [ "$ENVIRONMENT" = "public" ]; then
     URL_COMMON="https://github.com/hybrix-io/hybrixd-common.git"
     URL_INTERFACE="https://github.com/hybrix-io/hybrixd-interface.git"
     echo "[i] Environment is public..."
@@ -64,6 +64,11 @@ if [ ! -e "$DETERMINISTIC/common" ];then
         cd "$HYBRIXD"
         echo " [i] Clone common files"
         git clone $URL_COMMON
+        if [ "$ENVIRONMENT" = "public" ]; then
+            echo " [i] Renaming common folder"
+            mv hybrixd-common common
+        fi
+
     fi
     echo " [i] Link common files"
     ln -sf "$COMMON" "$DETERMINISTIC/common"
@@ -79,6 +84,11 @@ if [ ! -e "$DETERMINISTIC/interface" ];then
         cd "$HYBRIXD"
         echo " [i] Clone interface files"
         git clone $URL_INTERFACE
+        if [ "$ENVIRONMENT" = "public" ]; then
+            echo " [i] Renaming interface folder"
+            mv hybrixd-interface interface
+        fi
+
     fi
     echo " [i] Link interface files"
     ln -sf "$INTERFACE/dist" "$DETERMINISTIC/interface"
