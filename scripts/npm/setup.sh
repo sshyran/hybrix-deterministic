@@ -26,6 +26,8 @@ elif [ "$ENVIRONMENT" = "public" ]; then
     echo "[i] Environment is public..."
 else
     echo "[!] Unknown Environment (please use npm run setup[:dev])"
+    export PATH="$OLDPATH"
+    cd "$WHEREAMI"
     exit 1
 fi
 
@@ -49,7 +51,11 @@ if [ ! -e "$DETERMINISTIC/node_binaries" ];then
     if [ ! -e "$NODEJS" ];then
         cd "$HYBRIXD"
         echo " [i] Clone node js runtimes files"
-        git clone $URL_NODEJS
+        git clone "$URL_NODEJS"
+        if [ "$ENVIRONMENT" = "public" ]; then
+            echo " [i] Link hybrixd-dependencies-nodejs files"
+            ln -sf "hybrixd-dependencies-nodejs" "nodejs"
+        fi
     fi
     echo " [i] Link node_binaries files"
     ln -sf "$NODEJS/$SYSTEM" "$DETERMINISTIC/node_binaries"
@@ -65,8 +71,9 @@ if [ ! -e "$DETERMINISTIC/common" ];then
     if [ ! -e "$COMMON" ];then
         cd "$HYBRIXD"
         echo " [i] Clone common files"
-        git clone $URL_COMMON
+        git clone "$URL_COMMON"
         if [ "$ENVIRONMENT" = "public" ]; then
+            echo " [i] Link hybrixd-common files"
             ln -sf "hybrixd-common" "common"
         fi
 
@@ -84,8 +91,9 @@ if [ ! -e "$DETERMINISTIC/interface" ];then
     if [ ! -e "$INTERFACE" ];then
         cd "$HYBRIXD"
         echo " [i] Clone interface files"
-        git clone $URL_INTERFACE
+        git clone "$URL_INTERFACE"
         if [ "$ENVIRONMENT" = "public" ]; then
+            echo " [i] Link hybrixd-interface files"
             ln -sf "hybrixd-interface" "interface"
         fi
 
