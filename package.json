@@ -44,7 +44,7 @@
   "author": "Internet of Coins",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/hybrix-io/hybrixd-client-modules-deterministic/pulls"
+    "url": "https://github.com/hybrix-io/hybrixd-client-modules-deterministic/issues"
   },
   "homepage": "https://github.com/hybrix-io/hybrixd-client-modules-deterministic#readme"
 }
