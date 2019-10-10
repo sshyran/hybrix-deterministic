@@ -50,9 +50,6 @@ if [ ! -e "$DETERMINISTIC/node_binaries" ];then
         cd "$HYBRIXD"
         echo " [i] Clone node js runtimes files"
         git clone $URL_NODEJS
-        # if [ "$ENVIRONMENT" = "public" ]; then
-        #     ln -sf "hybrixd-nodejs" "nodejs"
-        # fi
     fi
     echo " [i] Link node_binaries files"
     ln -sf "$NODEJS/$SYSTEM" "$DETERMINISTIC/node_binaries"
