@@ -7,35 +7,35 @@ let dummylib = {
 
   // create deterministic public and private keys based on a seed
   keys: function (data) {
-    let key = (data.seed.charCodeAt(0) * 3 + data.seed.charCodeAt(5) * 11 + data.seed.charCodeAt(3) * 101 + data.seed.charCodeAt(2) * 1323) % 997;
-    return {public: key, private: key};
+    const key = (data.seed.charCodeAt(0) * 3 + data.seed.charCodeAt(5) * 11 + data.seed.charCodeAt(3) * 101 + data.seed.charCodeAt(2) * 1323) % 997;
+    return {public: key.toString(), private: key.toString()};
   },
 
   // generate a unique wallet address from a given public key
   address: function (data) {
-    return data.public;
+    return data.public.toString();
   },
 
   publickey: function (data) {
-    return data.public;
+    return data.public.toString();
   },
 
   privatekey: function (data) {
-    return data.private;
+    return data.private.toString();
   },
 
   transaction: function (data, callback) {
-    let source = data.source;
+    const source = data.source;
     if (data.keys.public !== source) {
       throw ('Illegal keys.');
     } else {
-      let target = data.target;
-      let contract = data.contract;
-      let amount = data.amount;
-      let fee = data.fee;
-      let message = typeof data.message === 'string' ? data.message : '';
-      let signature = source * target + amount + fee * 3.14 + contract.length * 1001 + message.length * 123;
-      let newTransaction = {source, target, contract, amount, fee, signature, message};
+      const target = data.target;
+      const contract = data.contract;
+      const amount = data.amount;
+      const fee = data.fee;
+      const message = typeof data.message === 'string' ? data.message : '';
+      const signature = Number(source) * Number(target) + Number(amount) + Number(fee) * 3.14 + contract.length * 1001 + message.length * 123;
+      const newTransaction = {source, target, contract, amount, fee, signature, message};
       callback(JSON.stringify(newTransaction));
     }
   }
