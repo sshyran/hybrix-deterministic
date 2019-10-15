@@ -19,7 +19,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "setup": "sh scripts/npm/setup.sh",
+    "setup": "sh scripts/npm/setup.sh 'public'",
+    "setup:dev": "sh scripts/npm/setup.sh 'dev'",
     "compile": "sh scripts/npm/compile.sh",
     "diag": "sh scripts/npm/diag.sh",
     "dist": "sh scripts/npm/dist.sh",
@@ -30,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/iochq/module-deterministic.git"
+    "url": "git+https://github.com/hybrix-io/hybrixd-client-modules-deterministic.git"
   },
   "keywords": [
     "cryptocurrency",
@@ -43,7 +44,7 @@
   "author": "Internet of Coins",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://gitlab.com/iochq/module-deterministic/issues"
+    "url": "https://github.com/hybrix-io/hybrixd-client-modules-deterministic/issues"
   },
-  "homepage": "https://gitlab.com/iochq/module-deterministic#README"
+  "homepage": "https://github.com/hybrix-io/hybrixd-client-modules-deterministic#readme"
 }

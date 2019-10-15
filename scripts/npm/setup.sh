@@ -12,6 +12,24 @@ NODEJS="$HYBRIXD/nodejs"
 COMMON="$HYBRIXD/common"
 INTERFACE="$HYBRIXD/interface"
 WEB_WALLET="$HYBRIXD/web-wallet"
+ENVIRONMENT="$1"
+
+if [ "$ENVIRONMENT" = "dev" ]; then
+    URL_COMMON="https://gitlab.com/hybrix/hybrixd/common.git"
+    URL_INTERFACE="https://www.gitlab.com/hybrix/hybrixd/interface.git"
+    URL_NODEJS="https://www.gitlab.com/hybrix/hybrixd/dependencies/nodejs.git"
+    echo "[i] Environment is development..."
+elif [ "$ENVIRONMENT" = "public" ]; then
+    URL_COMMON="https://github.com/hybrix-io/hybrixd-common.git"
+    URL_INTERFACE="https://github.com/hybrix-io/hybrixd-interface.git"
+    URL_NODEJS="https://github.com/hybrix-io/nodejs.git"
+    echo "[i] Environment is public..."
+else
+    echo "[!] Unknown Environment (please use npm run setup[:dev])"
+    export PATH="$OLDPATH"
+    cd "$WHEREAMI"
+    exit 1
+fi
 
 
 if [ "`uname`" = "Darwin" ]; then
@@ -33,7 +51,11 @@ if [ ! -e "$DETERMINISTIC/node_binaries" ];then
     if [ ! -e "$NODEJS" ];then
         cd "$HYBRIXD"
         echo " [i] Clone node js runtimes files"
-        git clone https://www.gitlab.com/hybrix/hybrixd/dependencies/nodejs.git
+        git clone "$URL_NODEJS"
+        if [ "$ENVIRONMENT" = "public" ]; then
+            echo " [i] Link hybrixd-dependencies-nodejs files"
+            ln -sf "hybrixd-dependencies-nodejs" "nodejs"
+        fi
     fi
     echo " [i] Link node_binaries files"
     ln -sf "$NODEJS/$SYSTEM" "$DETERMINISTIC/node_binaries"
@@ -49,7 +71,12 @@ if [ ! -e "$DETERMINISTIC/common" ];then
     if [ ! -e "$COMMON" ];then
         cd "$HYBRIXD"
         echo " [i] Clone common files"
-        git clone https://www.gitlab.com/hybrix/hybrixd/common.git
+        git clone "$URL_COMMON"
+        if [ "$ENVIRONMENT" = "public" ]; then
+            echo " [i] Link hybrixd-common files"
+            ln -sf "hybrixd-common" "common"
+        fi
+
     fi
     echo " [i] Link common files"
     ln -sf "$COMMON" "$DETERMINISTIC/common"
@@ -64,11 +91,21 @@ if [ ! -e "$DETERMINISTIC/interface" ];then
     if [ ! -e "$INTERFACE" ];then
         cd "$HYBRIXD"
         echo " [i] Clone interface files"
-        git clone https://www.gitlab.com/hybrix/hybrixd/interface.git
+        git clone "$URL_INTERFACE"
+        if [ "$ENVIRONMENT" = "public" ]; then
+            echo " [i] Link hybrixd-interface files"
+            ln -sf "hybrixd-interface" "interface"
+        fi
+
     fi
     echo " [i] Link interface files"
     ln -sf "$INTERFACE/dist" "$DETERMINISTIC/interface"
 fi
+
+# Linking hybrixd-client-modules-deterministic to deterministic
+cd "$HYBRIXD"
+echo " [i] Link hybrixd-client-modules-deterministic files"
+ln -sf "hybrixd-client-modules-deterministic" "deterministic"
 
 # GIT HOOKS
 sh "$COMMON/hooks/hooks.sh" "$DETERMINISTIC"
