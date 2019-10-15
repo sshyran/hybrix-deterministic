@@ -102,6 +102,11 @@ if [ ! -e "$DETERMINISTIC/interface" ];then
     ln -sf "$INTERFACE/dist" "$DETERMINISTIC/interface"
 fi
 
+# Linking hybrixd-client-modules-deterministic to deterministic
+cd "$HYBRIXD"
+echo " [i] Link hybrixd-client-modules-deterministic files"
+ln -sf "hybrixd-client-modules-deterministic" "deterministic"
+
 # GIT HOOKS
 sh "$COMMON/hooks/hooks.sh" "$DETERMINISTIC"
 
