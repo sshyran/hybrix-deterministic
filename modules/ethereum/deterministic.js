@@ -15,8 +15,8 @@ const GAS_TO_FEE = 21000;
 
 const GAS_BASE_FEE = 21000;
 
-const DEFAULT_GAS_LIMIT = 90000; /* TODO pass limit from recipe */
-const DEFAULT_TOKEN_GAS_LIMIT = 400000;
+const DEFAULT_GAS_LIMIT = 90000; // used if no gasLimit is passed through unspents
+const DEFAULT_TOKEN_GAS_LIMIT = 400000; // used if no gasLimit is passed through unspents
 /*
  21000 gas is charged for any transaction as a "base fee". This covers the cost of an elliptic curve operation to recover the sender address from the signature as well as the disk and bandwidth space of storing the transactio
 
@@ -90,14 +90,17 @@ const deterministic = {
   transaction: function (data) {
     console.log('transaction', data);
     const hasValidMessage = typeof data.message !== 'undefined' && data.message !== null && data.message !== '';
+
     let txParams;
     // value, gasPrice and gasLimit should be in wei's (atomics)
 
     if (data.mode !== 'token') { // Base ETH mode
+      const gasLimit = data.hasOwnProperty('unspent') && data.unspent.hasOwnProperty('gasLimit') ? data.unspent.gasLimit : DEFAULT_GAS_LIMIT;
+
       txParams = {
         nonce: toHex(data.unspent.nonce), // nonce
         gasPrice: toHex(new Decimal(String(data.fee)).dividedBy(GAS_TO_FEE).toString()), // Convert fee from eth to gas
-        gasLimit: toHex(DEFAULT_GAS_LIMIT), //  but don't use it elsewhere
+        gasLimit: toHex(String(gasLimit)), //  but don't use it elsewhere
         to: data.target, // send it to ...
         value: toHex(data.amount) // the amount to send
       };
@@ -106,12 +109,14 @@ const deterministic = {
         txParams.data = data.message;
       }
     } else { // ERC20-compatible token mode
+      const gasLimit = data.hasOwnProperty('unspent') && data.unspent.hasOwnProperty('gasLimit') ? data.unspent.gasLimit : DEFAULT_TOKEN_GAS_LIMIT;
+
       const encoded = encode({ 'func': 'transfer(address,uint256):(bool)', 'vars': ['target', 'amount'], 'target': data.target, 'amount': toHex(data.amount) }); // returns the encoded binary (as a Buffer) data to be sent
 
       txParams = {
         nonce: toHex(data.unspent.nonce), // nonce
         gasPrice: toHex(new Decimal(String(data.fee)).dividedBy(GAS_TO_FEE).toString()), // Convert fee from eth to gas
-        gasLimit: toHex(new Decimal(String(DEFAULT_TOKEN_GAS_LIMIT)).toString()),
+        gasLimit: toHex(String(gasLimit)),
         to: data.contract, // send payload to contract address
         value: '0x0', // set to zero, since we're sending tokens
         data: encoded // payload as encoded using the smart contract
