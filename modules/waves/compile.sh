@@ -42,11 +42,11 @@ $DETERMINISTIC/scripts/lzma/lzmapack.js "$BUNDLE/bundle.noundefs.js"
 mv "$BUNDLE/bundle.noundefs.js.lzma" "$MODULE/deterministic.js.lzma"
 
 # clean up
-rm "$BUNDLE/bundle.js"
-rm "$BUNDLE/bundle.noundefs.js"
-rm "$BUNDLE/bundle.noundefs.js-e"
-rm "$MODULE/wrapperlib.js"
-rm "$MODULE/wrapperlib.js-e"
+rm -f "$BUNDLE/bundle.js"
+rm -f  "$BUNDLE/bundle.noundefs.js"
+rm -f  "$BUNDLE/bundle.noundefs.js-e"
+rm -f  "$MODULE/wrapperlib.js"
+rm -f  "$MODULE/wrapperlib.js-e"
 
 export PATH="$OLDPATH"
 cd "$WHEREAMI"
