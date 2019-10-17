@@ -14,10 +14,13 @@ const wrapperlib = {
 const GAS_TO_FEE = 21000;
 
 const GAS_BASE_FEE = 21000;
-const DEFAULT_GAS_LIMIT = 21000;
+
+const DEFAULT_GAS_LIMIT = 90000; /* TODO pass limit from recipe */
 const DEFAULT_TOKEN_GAS_LIMIT = 400000;
 /*
  21000 gas is charged for any transaction as a "base fee". This covers the cost of an elliptic curve operation to recover the sender address from the signature as well as the disk and bandwidth space of storing the transactio
+
+Lower gas price means a slower transaction, but higher chance the tx doesn't burn thru its gas limit when the Eth network mempool is busy.
 
 */
 // shim for randomBytes to avoid require('crypto') incompatibilities
