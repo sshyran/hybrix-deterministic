@@ -11,7 +11,6 @@ const wrapperlib = {
   hex2dec: require('../../common/crypto/hex2dec')
 };
 
-
 /*
  21000 gas is charged for any transaction as a "base fee". This covers the cost of an elliptic curve operation to recover the sender address from the signature as well as the disk and bandwidth space of storing the transactio
 
@@ -86,16 +85,16 @@ const deterministic = {
     const hasValidMessage = typeof data.message !== 'undefined' && data.message !== null && data.message !== '';
 
     let txParams;
-	const fee = new Decimal(data.fee);
-	const gasBaseFee = new Decimal(data.unspent.gasBaseFee);
-	const gasLimit = new Decimal(data.unspent.gasLimit);
-	const gasPrice = new Decimal(data.unspent.gasPrice);
-	const gasDataFee = new Decimal(data.unspent.gasDataFee);
+    const fee = new Decimal(data.fee);
+    const gasBaseFee = new Decimal(data.unspent.gasBaseFee);
+    const gasLimit = new Decimal(data.unspent.gasLimit);
+    const gasPrice = new Decimal(data.unspent.gasPrice);
+    const gasDataFee = new Decimal(data.unspent.gasDataFee);
 
     if (data.mode !== 'token') { // Base ETH mode
       txParams = {
         nonce: toHex(data.unspent.nonce), // nonce
-        gasPrice: toHex(String( (fee.minus(gasPrice.times(gasBaseFee.plus(gasDataFee)))).dividedBy(gasBaseFee.plus(gasDataFee)) )),
+        gasPrice: toHex(String((fee.minus(gasPrice.times(gasBaseFee.plus(gasDataFee)))).dividedBy(gasBaseFee.plus(gasDataFee)))),
         gasLimit: toHex(String(gasLimit)), // maximum amount of gas units that may be used
         to: data.target, // send it to ...
         value: toHex(data.amount) // the amount to send
@@ -107,10 +106,10 @@ const deterministic = {
     } else { // ERC20-compatible token mode
       const encoded = encode({ 'func': 'transfer(address,uint256):(bool)', 'vars': ['target', 'amount'], 'target': data.target, 'amount': toHex(data.amount) }); // returns the encoded binary (as a Buffer) data to be sent
       // TODO: optionally add a message to the transaction
-      if (hasValidMessage) { console.log("TODO: cannot send attachment data with ERC20 tokens yet!"); }
+      if (hasValidMessage) { console.log('TODO: cannot send attachment data with ERC20 tokens yet!'); }
       txParams = {
         nonce: toHex(data.unspent.nonce), // nonce
-        gasPrice: toHex(String( (fee.minus(gasPrice.times(gasBaseFee.plus(gasDataFee)))).dividedBy(gasBaseFee.plus(gasDataFee)) )),
+        gasPrice: toHex(String((fee.minus(gasPrice.times(gasBaseFee.plus(gasDataFee)))).dividedBy(gasBaseFee.plus(gasDataFee)))),
         gasLimit: toHex(String(gasLimit)), // maximum amount of gas units that may be used
         to: data.contract, // send payload to contract address
         value: '0x0', // set to zero, since we're only sending tokens
