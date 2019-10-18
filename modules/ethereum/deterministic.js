@@ -11,12 +11,7 @@ const wrapperlib = {
   hex2dec: require('../../common/crypto/hex2dec')
 };
 
-const GAS_TO_FEE = 21000;
 
-const GAS_BASE_FEE = 21000;
-
-const DEFAULT_GAS_LIMIT = 90000; // used if no gasLimit is passed through unspents
-const DEFAULT_TOKEN_GAS_LIMIT = 400000; // used if no gasLimit is passed through unspents
 /*
  21000 gas is charged for any transaction as a "base fee". This covers the cost of an elliptic curve operation to recover the sender address from the signature as well as the disk and bandwidth space of storing the transactio
 
@@ -88,41 +83,40 @@ const deterministic = {
 
   // create and sign a transaction
   transaction: function (data) {
-    console.log('transaction', data);
     const hasValidMessage = typeof data.message !== 'undefined' && data.message !== null && data.message !== '';
 
     let txParams;
-    // value, gasPrice and gasLimit should be in wei's (atomics)
+	const fee = new Decimal(data.fee);
+	const gasBaseFee = new Decimal(data.unspent.gasBaseFee);
+	const gasLimit = new Decimal(data.unspent.gasLimit);
+	const gasPrice = new Decimal(data.unspent.gasPrice);
+	const gasDataFee = new Decimal(data.unspent.gasDataFee);
 
     if (data.mode !== 'token') { // Base ETH mode
-      const gasLimit = data.hasOwnProperty('unspent') && data.unspent.hasOwnProperty('gasLimit') ? data.unspent.gasLimit : DEFAULT_GAS_LIMIT;
-
       txParams = {
         nonce: toHex(data.unspent.nonce), // nonce
-        gasPrice: toHex(new Decimal(String(data.fee)).dividedBy(GAS_TO_FEE).toString()), // Convert fee from eth to gas
-        gasLimit: toHex(String(gasLimit)), //  but don't use it elsewhere
+        gasPrice: toHex(String( (fee.minus(gasPrice.times(gasBaseFee.plus(gasDataFee)))).dividedBy(gasBaseFee.plus(gasDataFee)) )),
+        gasLimit: toHex(String(gasLimit)), // maximum amount of gas units that may be used
         to: data.target, // send it to ...
         value: toHex(data.amount) // the amount to send
       };
-
+      // optionally add a message to the transaction
       if (hasValidMessage) {
         txParams.data = data.message;
       }
     } else { // ERC20-compatible token mode
-      const gasLimit = data.hasOwnProperty('unspent') && data.unspent.hasOwnProperty('gasLimit') ? data.unspent.gasLimit : DEFAULT_TOKEN_GAS_LIMIT;
-
       const encoded = encode({ 'func': 'transfer(address,uint256):(bool)', 'vars': ['target', 'amount'], 'target': data.target, 'amount': toHex(data.amount) }); // returns the encoded binary (as a Buffer) data to be sent
-
+      // TODO: optionally add a message to the transaction
+      if (hasValidMessage) { console.log("TODO: cannot send attachment data with ERC20 tokens yet!"); }
       txParams = {
         nonce: toHex(data.unspent.nonce), // nonce
-        gasPrice: toHex(new Decimal(String(data.fee)).dividedBy(GAS_TO_FEE).toString()), // Convert fee from eth to gas
-        gasLimit: toHex(String(gasLimit)),
+        gasPrice: toHex(String( (fee.minus(gasPrice.times(gasBaseFee.plus(gasDataFee)))).dividedBy(gasBaseFee.plus(gasDataFee)) )),
+        gasLimit: toHex(String(gasLimit)), // maximum amount of gas units that may be used
         to: data.contract, // send payload to contract address
-        value: '0x0', // set to zero, since we're sending tokens
+        value: '0x0', // set to zero, since we're only sending tokens
         data: encoded // payload as encoded using the smart contract
       };
     }
-    console.log(txParams);
 
     // Transaction is created
     const tx = new wrapperlib.EthTx(txParams);
