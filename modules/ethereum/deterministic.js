@@ -81,40 +81,55 @@ const deterministic = {
   },
 
   // create and sign a transaction
-  transaction: function (data) {
+  transaction: function (data, dataCallback, errorCallback) {
     const hasValidMessage = typeof data.message !== 'undefined' && data.message !== null && data.message !== '';
 
-    let txParams;
     const fee = new Decimal(data.fee);
+    if (!data.hasOwnProperty('unspent')) {
+      errorCallback('Missing unspent (pre-transactional) data');
+      return;
+    }
+
     const gasBaseFee = new Decimal(data.unspent.gasBaseFee);
     const gasLimit = new Decimal(data.unspent.gasLimit);
-    const gasPrice = new Decimal(data.unspent.gasPrice);
     const gasDataFee = new Decimal(data.unspent.gasDataFee);
+    /*
+
+     The calculation done in the recipe:
+
+     local::fee = gasPrice*gasBaseFee
+     fee = local::fee + gasPrice * gasEstimation
+         = gasPrice * gasBaseFee + gasPrice * gasEstimation
+         = gasPrice * (gasBaseFee + gasEstimation)
+
+     The reverse calculation to retrieve the gasPrice:
+     => gasPrice = fee / (gasBaseFee+gasEstimation)
+
+    */
+    const gasPrice = fee.dividedBy(gasBaseFee.plus(gasDataFee));
+
+    const txParams = {
+      nonce: toHex(data.unspent.nonce),
+      gasPrice: toHex(String(gasPrice)),
+      gasLimit: toHex(String(gasLimit))
+    };
 
     if (data.mode !== 'token') { // Base ETH mode
-      txParams = {
-        nonce: toHex(data.unspent.nonce), // nonce
-        gasPrice: toHex(String((fee.minus(gasPrice.times(gasBaseFee.plus(gasDataFee)))).dividedBy(gasBaseFee.plus(gasDataFee)))),
-        gasLimit: toHex(String(gasLimit)), // maximum amount of gas units that may be used
-        to: data.target, // send it to ...
-        value: toHex(data.amount) // the amount to send
-      };
-      // optionally add a message to the transaction
-      if (hasValidMessage) {
+      txParams.to = data.target; // send it to ...
+      txParams.value = toHex(data.amount); // the amount to send
+      if (hasValidMessage) { // optionally add a message to the transaction
         txParams.data = data.message;
       }
     } else { // ERC20-compatible token mode
-      const encoded = encode({ 'func': 'transfer(address,uint256):(bool)', 'vars': ['target', 'amount'], 'target': data.target, 'amount': toHex(data.amount) }); // returns the encoded binary (as a Buffer) data to be sent
+      const encoded = encode({ 'func': 'transfer(address,uint256):(bool)', 'vars': ['target', 'amount'], 'target': data.target, 'amount': toHex(data.amount) }); // returns the encoded binary data to be sent
       // TODO: optionally add a message to the transaction
-      if (hasValidMessage) { console.log('TODO: cannot send attachment data with ERC20 tokens yet!'); }
-      txParams = {
-        nonce: toHex(data.unspent.nonce), // nonce
-        gasPrice: toHex(String((fee.minus(gasPrice.times(gasBaseFee.plus(gasDataFee)))).dividedBy(gasBaseFee.plus(gasDataFee)))),
-        gasLimit: toHex(String(gasLimit)), // maximum amount of gas units that may be used
-        to: data.contract, // send payload to contract address
-        value: '0x0', // set to zero, since we're only sending tokens
-        data: encoded // payload as encoded using the smart contract
-      };
+      if (hasValidMessage) {
+        errorCallback('Cannot send attachment data with ERC20 tokens yet!');
+        return;
+      }
+      txParams.to = data.contract; // send payload to contract address
+      txParams.value = '0x0'; // set to zero, since we're only sending tokens
+      txParams.data = encoded; // payload as encoded using the smart contract
     }
 
     // Transaction is created
@@ -124,7 +139,7 @@ const deterministic = {
     tx.sign(data.keys.privateKey);
     const serializedTx = tx.serialize();
     const rawTx = '0x' + serializedTx.toString('hex');
-    return rawTx;
+    dataCallback(rawTx);
   },
   encode: function (data) { return encode(data); } // used to compute token balances by ethereum/module.js
 };
