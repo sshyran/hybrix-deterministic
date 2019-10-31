@@ -106,12 +106,13 @@ const deterministic = {
      => gasPrice = fee / (gasBaseFee+gasEstimation)
 
     */
+
     const gasPrice = fee.dividedBy(gasBaseFee.plus(gasDataFee));
 
     const txParams = {
       nonce: toHex(data.unspent.nonce),
-      gasPrice: toHex(String(gasPrice)),
-      gasLimit: toHex(String(gasLimit))
+      gasPrice: toHex(gasPrice.toInteger().toString()),
+      gasLimit: toHex(gasLimit.toInteger().toString())
     };
 
     if (data.mode !== 'token') { // Base ETH mode
@@ -131,7 +132,6 @@ const deterministic = {
       txParams.value = '0x0'; // set to zero, since we're only sending tokens
       txParams.data = encoded; // payload as encoded using the smart contract
     }
-
     // Transaction is created
     const tx = new wrapperlib.EthTx(txParams);
 
