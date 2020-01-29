@@ -7,7 +7,7 @@ Decimal.set({ precision: 64 });
 const wrapperlib = {
   ethUtil: require('ethereumjs-util'),
   EthTx: require('ethereumjs-tx'),
-  ethABI: require('ethereumjs-abi'),
+  ethABI: require('ethereumjs-abi')
 };
 
 /*
@@ -113,7 +113,7 @@ const deterministic = {
         value: '0x0', // set to zero, since we're only sending tokens
         data: encoded // payload as encoded using the smart contract
       };
-      return '>> '+data.amount+'  '+toHex(data.amount);
+      return '>> ' + data.amount + '  ' + toHex(data.amount);
     }
 
     // Transaction is created

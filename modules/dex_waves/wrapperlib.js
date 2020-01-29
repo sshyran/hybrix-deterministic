@@ -8,23 +8,23 @@ Decimal = require('../../common/crypto/decimal-light'); Decimal.set({ precision:
 // solves bug: "There was an error collecting entropy from the browser
 const randomBytes = crypto.randomBytes;
 if (typeof window === 'object') {
-  const wCrypto = window.crypto = window.crypto || {}
+  const wCrypto = window.crypto = window.crypto || {};
   if (!wCrypto.getRandomValues) {
     wCrypto.getRandomValues = function getRandomValues (arr) {
-      const bytes = randomBytes(arr.length)
+      const bytes = randomBytes(arr.length);
       for (var i = 0; i < bytes.length; i++) {
-        arr[i] = bytes[i]
+        arr[i] = bytes[i];
       }
-    }
+    };
   }
 }
 
 // inclusion of necessary requires
 var ethereumjs = {
-  base58    : require('base-58'),
+  base58: require('base-58'),
   crypto_lib: require('./crypto.js'),
-  lodash    : require('lodash'),
-  web3utils : require('web3-utils')
-}
+  lodash: require('lodash'),
+  web3utils: require('web3-utils')
+};
 
 module.exports = ethereumjs;
