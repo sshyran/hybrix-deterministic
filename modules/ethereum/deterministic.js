@@ -1,6 +1,6 @@
 // (C) 2017 Internet of Coins / Joachim de Koning
 // Deterministic encryption wrapper for Ethereum
-const Decimal = require('../../common/crypto/decimal-light');
+const Decimal = require('../../common/crypto/decimal');
 Decimal.set({ precision: 64 });
 
 // inclusion of necessary requires
@@ -36,15 +36,15 @@ if (typeof window === 'object') {
 //
 // EXAMPLES:
 //            encode({ 'func':'balanceOf(address):(uint256)', 'vars':['target'], 'target':data.target });
-//            encode({ 'func':'transfer(address,uint256):(uint256)', 'vars':['target','amount'], 'target':data.target,'amount':parseLargeIntToHex(data.amount).toString('hex') });
+//            encode({ 'func':'transfer(address,uint256):(uint256)', 'vars':['target','amount'], 'target':data.target,'amount':toHex(data.amount) });
 function encode (data) {
   return '0x' + (new Function('wrapperlib', 'data', 'return wrapperlib.ethABI.simpleEncode(data.func,data.' + data.vars.join(',data.') + ');'))(wrapperlib, data).toString('hex');
 }
 
 // Expects string input and parses it to hexadecimal format
 function toHex (input) {
-  const result = new Decimal(input).toString('hex');
-  return result !== null ? result : '0x0';
+  let result = new Decimal(input).toHex().toString('hex');
+  return result ? result : '0x0';
 }
 
 const deterministic = {
@@ -109,8 +109,8 @@ const deterministic = {
 
     const txParams = {
       nonce: toHex(data.unspent.nonce),
-      gasPrice: toHex(gasPrice.toInteger().toString()),
-      gasLimit: toHex(gasLimit.toInteger().toString())
+      gasPrice: toHex(gasPrice.toFixed(0).toString()),
+      gasLimit: toHex(gasLimit.toFixed(0).toString())
     };
 
     if (data.mode !== 'token') { // Base ETH mode
@@ -129,7 +129,6 @@ const deterministic = {
       txParams.to = data.contract; // send payload to contract address
       txParams.value = '0x0'; // set to zero, since we're only sending tokens
       txParams.data = encoded; // payload as encoded using the smart contract
-      return '>> ' + data.amount + '  ' + toHex(data.amount);
     }
     // Transaction is created
     const tx = new wrapperlib.EthTx(txParams);
