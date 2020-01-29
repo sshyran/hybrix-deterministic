@@ -25,7 +25,6 @@ let ethereumjs = {
   ethUtil: require('ethereumjs-util'),
   ethTx: require('ethereumjs-tx'),
   ethABI: require('ethereumjs-abi'),
-  hex2dec: require('../../common/crypto/hex2dec'),
   web3utils: require('web3-utils')
 };
 

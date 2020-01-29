@@ -8,7 +8,6 @@ const wrapperlib = {
   ethUtil: require('ethereumjs-util'),
   EthTx: require('ethereumjs-tx'),
   ethABI: require('ethereumjs-abi'),
-  hex2dec: require('../../common/crypto/hex2dec')
 };
 
 /*
@@ -44,8 +43,7 @@ function encode (data) {
 
 // Expects string input and parses it to hexadecimal format
 function toHex (input) {
-  const integer = new Decimal(String(input)).toInteger();
-  const result = wrapperlib.hex2dec.toHex(integer);
+  const result = new Decimal(input).toString('hex');
   return result !== null ? result : '0x0';
 }
 
@@ -115,6 +113,7 @@ const deterministic = {
         value: '0x0', // set to zero, since we're only sending tokens
         data: encoded // payload as encoded using the smart contract
       };
+      return '>> '+data.amount+'  '+toHex(data.amount);
     }
 
     // Transaction is created

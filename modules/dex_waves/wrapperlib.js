@@ -24,7 +24,6 @@ var ethereumjs = {
   base58    : require('base-58'),
   crypto_lib: require('./crypto.js'),
   lodash    : require('lodash'),
-  hex2dec   : require('../../common/crypto/hex2dec'),
   web3utils : require('web3-utils')
 }
 
