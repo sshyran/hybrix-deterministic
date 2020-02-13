@@ -6,8 +6,14 @@ const apiFactory = require('x-address-codec');
 const createHash = require('create-hash');
 const api = new RippleAPI();
 
+function atomicToRegular (fee, factorString) {
+  const factor = Number(factorString);
+  if (fee.length < factor) { fee = '0'.repeat(factor - fee.length) + fee; }
+  return fee.substr(0, fee.length - factor) + '.' + fee.substr(fee.length - factor);
+}
+
 // instantiate Ripple in offline mode for securing keysfrom the ripplenetwork
-let wrapper = {
+const wrapper = {
   // create deterministic public and private keys based on a seed
   keys: data => {
     let api2 = apiFactory({
@@ -19,10 +25,10 @@ let wrapper = {
       }
     });
     const seed = Buffer.from(data.seed, 'utf8');
-    let hash = nacl.to_hex(nacl.crypto_hash_sha256(seed));
-    let secret = Buffer.from(hash.substr(0, 32), 'hex');
+    const hash = nacl.to_hex(nacl.crypto_hash_sha256(seed));
+    const secret = Buffer.from(hash.substr(0, 32), 'hex');
     // It can encode a Buffer
-    let encoded = api2.encodeSeed(secret);
+    const encoded = api2.encodeSeed(secret);
     return rippleKeyPairs.deriveKeypair(encoded);
   },
 
@@ -52,6 +58,7 @@ let wrapper = {
     const currency = data.symbol === 'xrp' ? 'drops' : data.symbol.replace(/XRP./gi, '').toUpperCase();
     const hasValidMessage = data.message !== undefined && data.message !== null && data.message !== '';
     const memos = hasValidMessage ? [{data: data.message}] : [];
+    const fee = atomicToRegular(data.fee, data.factor);
     const payment = {
       source: {
         address: address,
@@ -71,9 +78,9 @@ let wrapper = {
     };
 
     const instructions = {
-      fee: data.fee,
+      fee: fee.toString(),
       sequence: parseInt(data.unspent.sequence),
-      maxLedgerVersion: data.unspent.lastLedgerSequencePlus
+      maxLedgerVersion: null
     };
     const keypair = {
       privateKey: data.keys.privateKey,

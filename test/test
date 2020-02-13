@@ -1,13 +1,17 @@
 #!/bin/sh
 OLDPATH=$PATH
 WHEREAMI=`pwd`
+
+SCRIPTDIR="`dirname \"$0\"`"
+TEST="`cd \"$SCRIPTDIR\" && pwd`"
+
+cd "$TEST"
+
 export PATH=$WHEREAMI/node_binaries/bin:"$PATH"
 NODEINST=`which node`
 
-#TODO set node
-
 echo " [i] using node executable $NODEINST"
-node $@
+node test.js $@
 
-export PATH=$OLDPATH
+export PATH="$OLDPATH"
 cd "$WHEREAMI"
