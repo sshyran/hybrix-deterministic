@@ -184,6 +184,8 @@ function createTransaction (data, dataCallback, errorCallback) {
     seed: data.result.keys.seed
   };
 
+  console.log(' [.] data passed to deterministic           : ', tx);
+
   const result = window.deterministic.transaction(tx, dataCallback, errorCallback);
   if (typeof result !== 'undefined') {
     dataCallback(result);
