@@ -192,7 +192,7 @@ than the corresponding LZMA) are compiled by executing:
 
 **Testing**
 
-Use `$HYBRIXD/interface/test/run test.js --symbol $YOUR_ASSET_NAME` to
+Use `$HYBRIXD/interface/test/test --symbol $YOUR_ASSET_NAME` to
 test your implementation for nodejs or browse to:
 
 `file://$HYBRIXD/interface/test/test.html?symbol=$YOUR_ASSET_NAME`
@@ -202,7 +202,7 @@ to test your implementation for web.
 If you encounter issues you can do a partial testing (without webpack)
 by running:
 
-`$HYBRIXD/deterministic/test/run test.js --symbol $YOUR_ASSET_NAME`
+`$HYBRIXD/deterministic/test/test --symbol $YOUR_ASSET_NAME`
 
 Note that this will not incorporate any custom `precompile.sh` and
 `compile.sh` steps.
