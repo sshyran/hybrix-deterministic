@@ -11,18 +11,29 @@ DETERMINISTIC="$HYBRIXD/deterministic"
 NODEJS="$HYBRIXD/nodejs"
 COMMON="$HYBRIXD/common"
 INTERFACE="$HYBRIXD/interface"
-WEB_WALLET="$HYBRIXD/web-wallet"
-ENVIRONMENT="$1"
+
+if [ -e "$HYBRIXD/hybrixd" ] || [ "$1" = "public" ] ; then
+    ENVIRONMENT="public"
+    echo "[i] Environment is public..."
+elif [ -e "$HYBRIXD/node" ] || [ "$1" = "dev" ] ; then
+    ENVIRONMENT="dev"
+    echo "[i] Environment is development..."
+else
+    echo "[i] Could not determine environment"
+    read -p " [?] Please enter environment [dev/public] " ENVIRONMENT
+fi
 
 if [ "$ENVIRONMENT" = "dev" ]; then
     URL_COMMON="https://gitlab.com/hybrix/hybrixd/common.git"
     URL_INTERFACE="https://www.gitlab.com/hybrix/hybrixd/interface.git"
     URL_NODEJS="https://www.gitlab.com/hybrix/hybrixd/dependencies/nodejs.git"
+    URL_NODE="https://www.gitlab.com/hybrix/hybrixd/node.git"
     echo "[i] Environment is development..."
 elif [ "$ENVIRONMENT" = "public" ]; then
-    URL_COMMON="https://github.com/hybrix-io/hybrixd-common.git"
-    URL_INTERFACE="https://github.com/hybrix-io/hybrixd-interface.git"
+    URL_COMMON="https://github.com/hybrix-io/common.git"
+    URL_INTERFACE="https://github.com/hybrix-io/hybrix-jslib.git"
     URL_NODEJS="https://github.com/hybrix-io/nodejs.git"
+    URL_NODE="https://github.com/hybrix-io/hybrixd.git"
     echo "[i] Environment is public..."
 else
     echo "[!] Unknown Environment (please use npm run setup[:dev])"
@@ -34,30 +45,31 @@ fi
 
 if [ "`uname`" = "Darwin" ]; then
     SYSTEM="darwin-x64"
-elif [ "`uname -m`" = "i386" ] || [ "`uname -m`" = "i686" ]; then
-    SYSTEM="x86"
-elif [ "`uname -m`" = "x86_64" ]; then
-    SYSTEM="x86_64"
+elif [ "`uname -m`" = "i386" ] || [ "`uname -m`" = "i686" ] || [ "`uname -m`" = "x86_64" ]; then
+    SYSTEM="linux-x64"
 else
     echo "[!] Unknown Architecture (or incomplete implementation)"
+    export PATH="$OLDPATH"
+    cd "$WHEREAMI"
     exit 1;
 fi
 
-# NODE
+
+# NODE_BINARIES
 if [ ! -e "$DETERMINISTIC/node_binaries" ];then
 
-    echo " [!] deterministic/node_binaries not found."
+    echo "[!] deterministic/node_binaries not found."
 
     if [ ! -e "$NODEJS" ];then
         cd "$HYBRIXD"
-        echo " [i] Clone node js runtimes files"
+        echo "[i] Clone node js runtimes files"
         git clone "$URL_NODEJS"
         if [ "$ENVIRONMENT" = "public" ]; then
-            echo " [i] Link hybrixd-dependencies-nodejs files"
+            echo "[i] Link hybrixd-dependencies-nodejs files"
             ln -sf "hybrixd-dependencies-nodejs" "nodejs"
         fi
     fi
-    echo " [i] Link node_binaries files"
+    echo "[i] Link node_binaries files"
     ln -sf "$NODEJS/$SYSTEM" "$DETERMINISTIC/node_binaries"
 fi
 export PATH="$DETERMINISTIC/node_binaries/bin:$PATH"
@@ -66,47 +78,52 @@ export PATH="$DETERMINISTIC/node_binaries/bin:$PATH"
 # COMMON
 if [ ! -e "$DETERMINISTIC/common" ];then
 
-    echo " [!] deterministic/common not found."
+    echo "[!] deterministic/common not found."
 
     if [ ! -e "$COMMON" ];then
         cd "$HYBRIXD"
-        echo " [i] Clone common files"
+        echo "[i] Clone common files"
         git clone "$URL_COMMON"
         if [ "$ENVIRONMENT" = "public" ]; then
-            echo " [i] Link hybrixd-common files"
+            echo "[i] Link hybrixd-common files"
             ln -sf "hybrixd-common" "common"
         fi
-
     fi
-    echo " [i] Link common files"
+
+    echo "[i] Link common files"
     ln -sf "$COMMON" "$DETERMINISTIC/common"
 
 fi
 
 # INTERFACE
 if [ ! -e "$DETERMINISTIC/interface" ];then
-
-    echo " [!] deterministic/interface not found."
-
+    echo "[!] deterministic/interface not found."
     if [ ! -e "$INTERFACE" ];then
         cd "$HYBRIXD"
-        echo " [i] Clone interface files"
+        echo "[i] Clone interface files"
         git clone "$URL_INTERFACE"
-        if [ "$ENVIRONMENT" = "public" ]; then
-            echo " [i] Link hybrixd-interface files"
-            ln -sf "hybrixd-interface" "interface"
-        fi
 
+        ln -sf "hybrixd-interface" "interface"
+        echo "[i] Run node setup"
+        sh "$INTERFACE/scripts/npm/setup.sh"
     fi
-    echo " [i] Link interface files"
+
+    echo "[i] Link interface files"
     ln -sf "$INTERFACE/dist" "$DETERMINISTIC/interface"
 fi
 
-# Linking hybrixd-client-modules-deterministic to deterministic
-if [ "$ENVIRONMENT" = "public" ]; then
-    echo " [i] Link hybrixd-client-modules-deterministic files"
-    ln -sf "$HYBRIXD/hybrixd-client-modules-deterministic" "$HYBRIXD/deterministic"
+# NODE
+if [ ! -e "$HYBRIXD/node" ];then
+    echo "[!] node not found."
+    cd "$HYBRIXD"
+    echo "[i] Clone node files"
+    git clone "$URL_NODE"
+    ln -sf "hybrixd" "node"
+
+    echo "[i] Run node setup"
+    sh "$NODE/scripts/npm/setup.sh"
 fi
+
 
 # GIT HOOKS
 sh "$COMMON/hooks/hooks.sh" "$DETERMINISTIC"
