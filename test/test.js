@@ -8,15 +8,17 @@ const stdio = require('stdio');
 const fs = require('fs');
 const CommonUtils = require('../common/index');
 const Decimal = require('../common/crypto/decimal-light');
+const  DEFAULT_AMOUNT = '1000';
+const DEFAULT_USERNAME = 'BGQCUO55L57O266P';
 
 const ops = stdio.getopt({
   'symbol': {key: 's', args: 1, description: 'Select a symbol to run test.'},
-  'amount': {key: 'a', args: 1, description: 'Transaction amount. (Defaults to 100)'},
+  'amount': {key: 'a', args: 1, description: 'Transaction amount. (Defaults to ' + DEFAULT_AMOUNT + ')'},
   'unspent': {key: 'u', args: 1, description: 'Manually specify unspents.'},
   'target': {key: 't', args: 1, description: ' Target address (Defaults to source address)'},
   'fee': {key: 'f ', args: 1, description: 'Manually specify fee (Defaults to asset default fee).'},
   'seed': {args: 1, description: 'Manually specify seed. NOTE: Never store the credentials anywhere unencrypted, run the command through an IDE and not through a command line, and have a separate test account ready with only small amounts.'},
-  'username': {args: 1, description: 'Manually specify username.'},
+  'username': {args: 1, description: 'Manually specify username. (Defaults to ' + DEFAULT_USERNAME + ')'},
   'password': {args: 1, description: 'Manually specify password.'},
   'push': {key: 'p', args: 0, description: 'Push the signed transaction to the target chain. Restrictions such as transaction cost and funding requirements may apply. Also, you might want to specify --seed for this to work.'}
 });
@@ -24,17 +26,20 @@ const ops = stdio.getopt({
 // if we were called without arguments, display a message
 if (!ops.symbol) {
   console.log('\nThis script tests a deterministic wrapper. A Hybrixd needs to be running for it to work. \n\nUsage example:\n');
-  console.log('./run test.js --symbol=dummy\n');
+  console.log('./test --symbol=dummy\n');
   console.log('For help, type:\n');
-  console.log('./run test.js --help\n');
+  console.log('./test --help\n');
 
   process.exit(1);
 }
 
 let coinSpecificTestData = {};
-
-const username = ops.username || 'BGQCUO55L57O266P';
+const username = ops.username || DEFAULT_USERNAME;
 const password = ops.password || '6WAE5LYKAADLZ4P3YLE3EGBSNUKMLV4VGU4UJ6JZV7SEE276';
+
+console.log(' [=] SESSION ================================================');
+console.log(' [.] username            : ' + username + (username===DEFAULT_USERNAME?' [DEFAULT]':''));
+console.log(' [.] password            : ***');
 
 console.log(' [=] NODE SIDE MODULE =======================================');
 
@@ -47,7 +52,7 @@ if (fs.existsSync(recipePath + 'asset.' + ops.symbol + '.json')) {
   console.log(' [!] No Recipe file found. ($HYBRIXD/node/recipes/asset.' + ops.symbol + '.json or $HYBRIXD/node/recipes/token.' + ops.symbol + '.json)');
 }
 
-const amount = ops.amount || '1000';
+const amount = ops.amount || DEFAULT_AMOUNT; // Note amount in atomics
 let unspent;
 
 if (typeof ops.unspent === 'string') {
@@ -68,6 +73,11 @@ const showAddress = (dataCallback, errorCallback, keys, details, publicKey) => (
 };
 
 const showKeysGetAddress = (dataCallback, errorCallback, details) => (keys, seed) => {
+  const mode = details.mode;
+  const subMode = mode.split('.')[1];
+  keys.mode = subMode;
+  keys.seed = seed;
+
   console.log(' [.] Keys               :', keys);
   const publicKey = window.deterministic.publickey(keys);
   console.log(' [.] Seed               :', seed);
@@ -76,11 +86,6 @@ const showKeysGetAddress = (dataCallback, errorCallback, details) => (keys, seed
   const privateKey = window.deterministic.privatekey(keys);
   console.log(' [.] Private Key        :', privateKey);
 
-  const mode = details.mode;
-
-  const subMode = mode.split('.')[1];
-  keys.mode = subMode;
-  keys.seed = seed;
   const address = window.deterministic.address(keys, showAddress(dataCallback, errorCallback, keys, details, publicKey), errorCallback);
   if (typeof address !== 'undefined') {
     showAddress(dataCallback, errorCallback, keys, details, publicKey)(address);
@@ -154,6 +159,13 @@ let toIntLocal = function (input, factor) {
 };
 
 function createTransaction (data, dataCallback, errorCallback) {
+
+  if(new Decimal(data.balance).times(new Decimal(10).pow(data.result.details.factor)).lt(new Decimal(amount))){
+    console.log(' [!] Balance           : ' + data.balance + ' ' + data.result.details.symbol.toUpperCase()+ ' [Insufficient]');
+  }else{
+    console.log(' [.] Balance           : ' + data.balance + ' ' + data.result.details.symbol.toUpperCase());
+  }
+
   let actualUnspent;
   if (typeof unspent !== 'undefined') {
     actualUnspent = unspent;
@@ -250,6 +262,10 @@ hybrix.sequential(
       return {
         unspent: {
           data: {query: '/asset/' + ops.symbol + '/unspent/' + result.address + '/' + (Number(amount) + Number(typeof fee === 'undefined' ? result.details.fee : fee)) + '/' + result.address + '/' + result.publicKey},
+          step: 'rout'
+        },
+         balance: {
+          data: {query: '/asset/' + ops.symbol + '/balance/' + result.address},
           step: 'rout'
         },
         result: {data: result, step: 'id'}
