@@ -13,6 +13,7 @@
     "bigi": "^1.4.2",
     "bip66": "^1.1.5",
     "bitcoin-ops": "^1.4.1",
+    "bitcoinjs-lib": "^5.1.7",
     "bs58check": "^2.1.2",
     "buffer-reverse": "^1.0.1",
     "ecurve": "^1.0.6",
