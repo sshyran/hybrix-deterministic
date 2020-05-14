@@ -151,7 +151,7 @@ let wrapper = {
         target = data.target;
       }
       // add spend amount output
-      tx.addOutput(data.target, parseInt(data.amount));
+      tx.addOutput(target, parseInt(data.amount));
 
       // send back change
       const outchange = parseInt(data.unspent.change); // fee is already being deducted when calculating unspents
