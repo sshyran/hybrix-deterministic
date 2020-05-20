@@ -91,6 +91,7 @@ const deterministic = {
     const gasBaseFee = new Decimal(data.unspent.gasBaseFee);
     const gasLimit = new Decimal(data.unspent.gasLimit);
     const gasDataFee = new Decimal(data.unspent.gasDataFee);
+    const gasContractAvgFee =  new Decimal(data.unspent.gasContractAvgFee || 105000);
     /*
 
      The calculation done in the recipe:
@@ -99,13 +100,22 @@ const deterministic = {
      fee = local::fee + gasPrice * gasEstimation
          = gasPrice * gasBaseFee + gasPrice * gasEstimation
          = gasPrice * (gasBaseFee + gasEstimation)
+     => fee = gasPrice * (gasBaseFee + gasEstimation)
 
      The reverse calculation to retrieve the gasPrice:
-     => gasPrice = fee / (gasBaseFee+gasEstimation)
+     => gasPrice = fee / (gasBaseFee+gasEstimation) TODO pass gasEstimation
+
+     TOKEN:
+
+     fee = eth::local::fee/gasBaseFee * ($gasBaseFee+$gasContractAvgFee)
+         = gasPrice * (gasBaseFee+gasContractAvgFee)
+     => gasPrice = fee / (gasBaseFee+gasContractAvgFee)
 
     */
 
-    const gasPrice = fee.dividedBy(gasBaseFee.plus(gasDataFee));
+    const gasPrice = data.mode !== 'token'
+          ? fee.dividedBy(gasBaseFee) // TODO pass gasEstimation
+          : fee.dividedBy(gasBaseFee.plus(gasContractAvgFee))
 
     const txParams = {
       nonce: toHex(data.unspent.nonce),
